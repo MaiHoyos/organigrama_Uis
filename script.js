@@ -1,724 +1,683 @@
 (() => {
-  const STORAGE_KEY = "uis-organigrama-interactivo-v1";
+  "use strict";
 
-  const DEFAULT_STATE = {
-    roots: {
-      superior: {
-        label: "CONSEJO SUPERIOR",
-        color: "superior",
-        children: []
-      },
-      rectoria: {
-        label: "RECTORÍA",
-        color: "rectoria",
-        children: [
-          { id: "idr", label: "Instituto de Desarrollo Regional", style: "highlight", relation: "advisory", children: [] },
-          { id: "uiaes", label: "Unidad de Información y Análisis Estadístico - UIAES", relation: "advisory", children: [] },
-          { id: "planeacion", label: "Planeación", relation: "advisory", children: [] },
-          { id: "control-gestion", label: "Dirección de Control Interno y Evaluación de Gestión", relation: "advisory", children: [] },
-          { id: "control-disciplinario", label: "Oficina de Control Interno Disciplinario", relation: "advisory", children: [] },
-          { id: "uisalud", label: "Unidad Especializada en Salud - UISALUD", relation: "advisory", children: [] },
-          { id: "rel-ext", label: "Relaciones Exteriores", relation: "hierarchical", children: [] },
-          { id: "sec-general", label: "Secretaría General", relation: "hierarchical", children: [] },
-          { id: "cert-documental", label: "Dirección de Certificación y Gestión Documental", relation: "hierarchical", children: [] },
-          { id: "comunicaciones", label: "Dirección de Comunicaciones", relation: "advisory", children: [] }
-        ]
-      },
-      academico: {
-        label: "CONSEJO ACADÉMICO",
-        color: "academico",
-        children: []
-      },
-      investigacion: {
-        label: "VICERRECTORÍA DE INVESTIGACIÓN Y EXTENSIÓN",
-        color: "investigacion",
-        children: [
-          { id: "cie", label: "Consejo de Investigación y Extensión", children: [] },
-          { id: "ieia", label: "Instituto de Estudios Interdisciplinarios y Acción", children: [] },
-          { id: "transferencia", label: "Estrategia para la Dirección de Transferencia de Conocimiento", children: [] },
-          { id: "direcciones-ie", label: "Direcciones de Investigación y Extensión de las Facultades", children: [] },
-          { id: "comite-ie", label: "Comité Operativo de Investigación y Extensión", children: [] },
-          { id: "programas-proyectos", label: "Coordinación de Programas y Proyectos", children: [] },
-          { id: "centro-tecnico", label: "Centro Administrativo de Estudios Técnicos y Tecnológicos", style: "highlight", children: [] }
-        ]
-      },
-      vacademica: {
-        label: "VICERRECTORÍA ACADÉMICA",
-        color: "vacademica",
-        children: [
-          { id: "posgrados", label: "Dirección de Posgrados", children: [] },
-          { id: "calidad", label: "Coordinación de Evaluación de la Calidad", children: [] },
-          { id: "cultural", label: "Dirección Cultural", children: [] },
-          { id: "admisiones", label: "Dirección de Admisiones y Registro Académico", children: [] },
-          { id: "biblioteca", label: "Biblioteca", children: [] },
-          { id: "cededuis", label: "CEDEDUIS", children: [] },
-          {
-            id: "bienestar",
-            label: "Bienestar Estudiantil",
-            children: [
-              { id: "servicios-salud", label: "Coordinación de Servicios Integrales de Salud y Desarrollo", children: [] },
-              { id: "alimentacion", label: "Coordinación de Servicios de Alimentación", children: [] }
-            ]
-          },
-          {
-            id: "consejo-sedes",
-            label: "Consejo de Sedes",
-            style: "highlight",
-            children: [
-              { id: "barranca", label: "Escuela de Formación y Desarrollo Territorial Barrancabermeja", style: "highlight", children: [] },
-              { id: "malaga", label: "Sede Málaga", style: "highlight", children: [] },
-              { id: "socorro", label: "Sede Socorro", style: "highlight", children: [] },
-              { id: "barbosa", label: "Sede Barbosa", style: "highlight", children: [] }
-            ]
-          }
-        ]
-      },
-      administrativa: {
-        label: "VICERRECTORÍA ADMINISTRATIVA",
-        color: "administrativa",
-        children: [
-          {
-            id: "financiera",
-            label: "División Financiera",
-            children: [
-              { id: "inventarios", label: "Sección de Inventarios", children: [] },
-              { id: "recaudos", label: "Sección de Recaudos", children: [] },
-              { id: "presupuesto", label: "Sección de Presupuesto", children: [] },
-              { id: "tesoreria", label: "Sección de Tesorería", children: [] },
-              { id: "contabilidad", label: "Sección de Contabilidad", children: [] }
-            ]
-          },
-          { id: "talento", label: "División de Gestión de Talento Humano", children: [] },
-          { id: "contratacion", label: "División de Contratación", children: [] },
-          { id: "tic", label: "División de Tecnologías de la Información y la Comunicación", children: [] },
-          { id: "publicaciones", label: "División de Publicaciones", children: [] },
-          { id: "mantenimiento", label: "División de Mantenimiento Tecnológico", children: [] },
-          {
-            id: "planta-fisica",
-            label: "División de Planta Física",
-            children: [
-              { id: "seguridad", label: "Sección de Seguridad", children: [] }
-            ]
-          }
-        ]
-      },
-      facultades: {
-        label: "FACULTADES",
-        color: "facultades",
-        children: [
-          {
-            id: "fac-ciencias",
-            label: "FACULTAD DE CIENCIAS",
-            children: [
-              { id: "fc-consejo", label: "Consejo de Facultad", children: [] },
-              { id: "biologia", label: "Escuela de Biología", children: [] },
-              { id: "fisica", label: "Escuela de Física", children: [] },
-              { id: "matematicas", label: "Escuela de Matemáticas", children: [] },
-              { id: "quimica", label: "Escuela de Química", children: [] }
-            ]
-          },
-          {
-            id: "fac-humanas",
-            label: "FACULTAD DE CIENCIAS HUMANAS",
-            children: [
-              { id: "fch-consejo", label: "Consejo de Facultad", children: [] },
-              { id: "lenguas", label: "Instituto de Lenguas", children: [] },
-              { id: "artes", label: "Escuela de Artes", children: [] },
-              { id: "derecho", label: "Escuela de Derecho y Ciencia Política", children: [] },
-              { id: "economia", label: "Escuela de Economía y Administración", children: [] },
-              { id: "educacion", label: "Escuela de Educación", children: [] },
-              { id: "historia", label: "Escuela de Historia", children: [] },
-              { id: "idiomas", label: "Escuela de Idiomas", children: [] },
-              { id: "trabajo-social", label: "Escuela de Trabajo Social", children: [] },
-              { id: "filosofia", label: "Escuela de Filosofía", children: [] },
-              { id: "deportes", label: "Departamento de Educación Física y Deportes", children: [] },
-              { id: "admin-finanzas", label: "Escuela de Administración y Finanzas", children: [] }
-            ]
-          },
-          {
-            id: "fac-ingenierias",
-            label: "FACULTAD DE INGENIERÍAS",
-            children: [
-              { id: "fi-consejo", label: "Consejo de Facultad", children: [] },
-              { id: "diseno", label: "Escuela de Diseño Industrial", children: [] },
-              { id: "civil", label: "Escuela de Ingeniería Civil", children: [] },
-              { id: "electrica", label: "Escuela de Ingeniería Eléctrica, Electrónica y Telecomunicaciones", children: [] },
-              { id: "industriales", label: "Escuela de Estudios Industriales y Empresariales", children: [] },
-              { id: "mecanica", label: "Escuela de Ingeniería Mecánica", children: [] },
-              { id: "sistemas", label: "Escuela de Ingeniería de Sistemas e Informática", children: [] },
-              { id: "geologia", label: "Escuela de Geología", children: [] },
-              { id: "metalurgica", label: "Escuela de Ingeniería Metalúrgica y Ciencia de los Materiales", children: [] },
-              { id: "petroleos", label: "Escuela de Ingeniería de Petróleos", children: [] },
-              { id: "ing-quimica", label: "Escuela de Ingeniería Química", children: [] }
-            ]
-          },
-          {
-            id: "fac-salud",
-            label: "FACULTAD DE SALUD",
-            children: [
-              { id: "fs-consejo", label: "Consejo de Facultad", children: [] },
-              { id: "proinapsa", label: "PROINAPSA", children: [] },
-              { id: "microbiologia", label: "Escuela de Microbiología", children: [] },
-              { id: "enfermeria", label: "Escuela de Enfermería", children: [] },
-              { id: "fisioterapia", label: "Escuela de Fisioterapia", children: [] },
-              { id: "nutricion", label: "Escuela de Nutrición", children: [] },
-              {
-                id: "medicina",
-                label: "Escuela de Medicina",
-                children: [
-                  { id: "ciencias-basicas", label: "Departamento de Ciencias Básicas", children: [] },
-                  { id: "cirugia", label: "Departamento de Cirugía", children: [] },
-                  { id: "gineco", label: "Departamento de Ginecobstetricia", children: [] },
-                  { id: "med-interna", label: "Departamento de Medicina Interna", children: [] },
-                  { id: "patologia", label: "Departamento de Patología", children: [] },
-                  { id: "pediatria", label: "Departamento de Pediatría", children: [] },
-                  { id: "salud-mental", label: "Departamento de Salud Mental", children: [] },
-                  { id: "salud-publica", label: "Departamento de Salud Pública", children: [] }
-                ]
-              },
-              { id: "regencia", label: "Regencia de farmacia", style: "highlight", children: [] }
-            ]
-          }
-        ]
-      }
-    },
-    collapsed: {},
-    custom: true
+  const STORAGE_KEY = "uis-organigrama-canvas-v2";
+  const CANVAS_WIDTH = 2150;
+  const GRID = 5;
+
+  const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "facultades"];
+  const GROUP_BY_CORE = {
+    rectoria: "rectoria",
+    vie: "investigacion",
+    vacad: "vacademica",
+    vadmin: "administrativa",
+    facultades: "facultades"
   };
 
-  const $ = (selector) => document.querySelector(selector);
-  const $$ = (selector) => [...document.querySelectorAll(selector)];
+  const branchClass = {
+    rectoria: "branch-rectoria",
+    investigacion: "branch-turq",
+    vacademica: "branch-blue",
+    administrativa: "branch-admin",
+    facultades: "branch-purple",
+    core: ""
+  };
 
-  const detailPanel = $("#detailPanel");
-  const detailTitle = $("#detailTitle");
-  const detailHint = $("#detailHint");
-  const treeArea = $("#treeArea");
-  const editToggle = $("#editToggle");
-  const editToolbar = $("#editToolbar");
-  const addNodeBtn = $("#addNodeBtn");
-  const renameNodeBtn = $("#renameNodeBtn");
-  const moveNodeBtn = $("#moveNodeBtn");
-  const moveUpBtn = $("#moveUpBtn");
-  const moveDownBtn = $("#moveDownBtn");
-  const deleteNodeBtn = $("#deleteNodeBtn");
+  const connectionBranchClass = {
+    investigacion: "branch-turq",
+    vacademica: "branch-blue",
+    administrativa: "branch-admin",
+    facultades: "branch-purple"
+  };
+
+  const baseNodes = [];
+  const add = (id, label, x, y, w, h, parent = null, opts = {}) => {
+    baseNodes.push({
+      id, label, x, y, w, h, parent,
+      group: opts.group || "core",
+      kind: opts.kind || "normal",
+      relation: opts.relation || "hierarchical",
+      style: opts.style || "normal",
+      css: opts.css || "",
+      custom: false
+    });
+  };
+
+  // =========================
+  // Estructura principal
+  // =========================
+  add("superior", "CONSEJO SUPERIOR", 820, 55, 360, 54, null, {kind:"main", css:"dark"});
+  add("rectoria", "RECTORÍA", 820, 137, 360, 66, "superior", {kind:"main", css:"rectoria"});
+  add("academico", "CONSEJO ACADÉMICO", 820, 238, 360, 54, "rectoria", {kind:"main", css:"dark"});
+
+  add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 115, 355, 325, 72, "academico", {kind:"main", css:"turq"});
+  add("vacad", "VICERRECTORÍA\nACADÉMICA", 500, 355, 300, 72, "academico", {kind:"main", css:"blue"});
+  add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 865, 355, 360, 72, "academico", {kind:"main", css:"admin"});
+  add("facultades", "FACULTADES", 1490, 355, 235, 72, "academico", {kind:"main", css:"purple"});
+
+  // =========================
+  // Rectoría: asesorías/apoyos
+  // =========================
+  add("idr", "Instituto de Desarrollo\nRegional", 500, 42, 230, 40, "rectoria", {group:"rectoria", relation:"advisory", style:"highlight"});
+  add("uiaes", "Unidad de Información y\nAnálisis Estadístico - UIAES", 235, 100, 240, 47, "rectoria", {group:"rectoria", relation:"advisory"});
+  add("planeacion", "Planeación", 500, 100, 230, 40, "rectoria", {group:"rectoria", relation:"advisory"});
+  add("control-gestion", "Dirección de Control Interno\ny Evaluación de Gestión", 500, 151, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
+  add("control-disciplinario", "Oficina de Control Interno\nDisciplinario", 500, 209, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
+  add("uisalud", "Unidad Especializada en Salud\n- UISALUD", 500, 267, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
+
+  add("relaciones", "Relaciones Exteriores", 1285, 100, 235, 40, "rectoria", {group:"rectoria"});
+  add("secretaria", "Secretaría General", 1285, 151, 235, 40, "rectoria", {group:"rectoria"});
+  add("certificacion", "Dirección de Certificación\ny Gestión Documental", 1285, 202, 235, 47, "rectoria", {group:"rectoria"});
+  add("comunicaciones", "Dirección de Comunicaciones", 1285, 260, 235, 40, "rectoria", {group:"rectoria", relation:"advisory"});
+
+  // =========================
+  // Vicerrectoría de Investigación y Extensión
+  // =========================
+  let y = 460;
+  const vieX = 120, vieW = 315, rowH = 45, gap = 8;
+  [
+    ["cie","Consejo de Investigación\ny Extensión"],
+    ["ieia","Instituto de Estudios\nInterdisciplinarios y Acción"],
+    ["transferencia","Estrategia para la Dirección de\nTransferencia de Conocimiento"],
+    ["direcciones-ie","Direcciones de Investigación\ny Extensión de las Facultades"],
+    ["comite-ie","Comité Operativo de\nInvestigación y Extensión"],
+    ["programas","Coordinación de Programas\ny Proyectos"]
+  ].forEach(([id,label]) => { add(id,label,vieX,y,vieW,rowH,"vie",{group:"investigacion"}); y += rowH+gap; });
+  add("centro-tecnico","Centro Administrativo de Estudios\nTécnicos y Tecnológicos",vieX,y,vieW,52,"vie",{group:"investigacion",style:"highlight"});
+
+  // =========================
+  // Vicerrectoría Académica
+  // =========================
+  y = 460;
+  const vaX = 500, vaW = 300;
+  [
+    ["posgrados","Dirección de Posgrados"],
+    ["calidad","Coordinación de Evaluación\nde la Calidad"],
+    ["cultural","Dirección Cultural"],
+    ["admisiones","Dirección de Admisiones\ny Registro Académico"],
+    ["biblioteca","Biblioteca"],
+    ["cededuis","CEDEDUIS"],
+    ["bienestar","Bienestar Estudiantil"]
+  ].forEach(([id,label]) => { add(id,label,vaX,y,vaW,rowH,"vacad",{group:"vacademica"}); y += rowH+gap; });
+  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",520,y,260,52,"bienestar",{group:"vacademica"}); y += 60;
+  add("alimentacion","Coordinación de Servicios\nde Alimentación",520,y,260,47,"bienestar",{group:"vacademica"}); y += 58;
+  add("consejo-sedes","Consejo de Sedes",500,y,300,43,"vacad",{group:"vacademica",style:"highlight"}); y += 53;
+  [
+    ["barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja"],
+    ["malaga","Sede Málaga"],
+    ["socorro","Sede Socorro"],
+    ["barbosa","Sede Barbosa"]
+  ].forEach(([id,label]) => { add(id,label,520,y,260,45,"consejo-sedes",{group:"vacademica",style:"highlight"}); y += 53; });
+
+  // =========================
+  // Vicerrectoría Administrativa
+  // =========================
+  y = 460;
+  const adX = 865, adW = 360;
+  add("financiera","División Financiera",adX,y,adW,43,"vadmin",{group:"administrativa"}); y += 51;
+  [
+    ["inventarios","Sección de Inventarios"],
+    ["recaudos","Sección de Recaudos"],
+    ["presupuesto","Sección de Presupuesto"],
+    ["tesoreria","Sección de Tesorería"],
+    ["contabilidad","Sección de Contabilidad"]
+  ].forEach(([id,label]) => { add(id,label,885,y,320,35,"financiera",{group:"administrativa"}); y += 42; });
+  [
+    ["talento","División de Gestión de Talento Humano",43],
+    ["contratacion","División de Contratación",43],
+    ["tic","División de Tecnologías de la Información\ny la Comunicación",50],
+    ["publicaciones","División de Publicaciones",43],
+    ["mantenimiento","División de Mantenimiento Tecnológico",43],
+    ["planta","División de Planta Física",43]
+  ].forEach(([id,label,h]) => { add(id,label,adX,y,adW,h,"vadmin",{group:"administrativa"}); y += h+8; });
+  add("seguridad","Sección de Seguridad",885,y,320,35,"planta",{group:"administrativa"});
+
+  // =========================
+  // Facultades
+  // =========================
+  const fx = [1280, 1480, 1680, 1880];
+  const fw = 185;
+  const fHeaders = [
+    ["fac-ciencias","FACULTAD\nDE CIENCIAS",fx[0]],
+    ["fac-humanas","FACULTAD DE\nCIENCIAS HUMANAS",fx[1]],
+    ["fac-ingenierias","FACULTAD DE\nINGENIERÍAS",fx[2]],
+    ["fac-salud","FACULTAD\nDE SALUD",fx[3]]
+  ];
+  fHeaders.forEach(([id,label,x]) => add(id,label,x,460,fw,60,"facultades",{group:"facultades",kind:"faculty-header"}));
+
+  const addFacultyList = (parent, x, items) => {
+    let yy = 535;
+    items.forEach(item => {
+      const [id,label,h=40,style="normal",p=parent] = item;
+      add(id,label,x,yy,fw,h,p,{group:"facultades",style});
+      yy += h + 8;
+    });
+  };
+
+  addFacultyList("fac-ciencias", fx[0], [
+    ["fc-consejo","Consejo de Facultad"],
+    ["biologia","Escuela de Biología"],
+    ["fisica","Escuela de Física"],
+    ["matematicas","Escuela de Matemáticas"],
+    ["quimica","Escuela de Química"]
+  ]);
+
+  addFacultyList("fac-humanas", fx[1], [
+    ["fch-consejo","Consejo de Facultad"],
+    ["lenguas","Instituto de Lenguas"],
+    ["artes","Escuela de Artes"],
+    ["derecho","Escuela de Derecho y\nCiencia Política",46],
+    ["economia","Escuela de Economía\ny Administración",46],
+    ["educacion","Escuela de Educación"],
+    ["historia","Escuela de Historia"],
+    ["idiomas","Escuela de Idiomas"],
+    ["trabajo-social","Escuela de Trabajo Social"],
+    ["filosofia","Escuela de Filosofía"],
+    ["deportes","Departamento de Educación\nFísica y Deportes",46],
+    ["admin-finanzas","Escuela de Administración\ny Finanzas",46]
+  ]);
+
+  addFacultyList("fac-ingenierias", fx[2], [
+    ["fi-consejo","Consejo de Facultad"],
+    ["diseno","Escuela de Diseño\nIndustrial",44],
+    ["civil","Escuela de Ingeniería\nCivil",44],
+    ["electrica","Escuela de Ingeniería Eléctrica,\nElectrónica y Telecomunicaciones",54],
+    ["industriales","Escuela de Estudios Industriales\ny Empresariales",50],
+    ["mecanica","Escuela de Ingeniería\nMecánica",44],
+    ["sistemas","Escuela de Ingeniería de\nSistemas e Informática",50],
+    ["geologia","Escuela de Geología"],
+    ["metalurgica","Escuela de Ingeniería Metalúrgica\ny Ciencia de los Materiales",54],
+    ["petroleos","Escuela de Ingeniería de Petróleos",44],
+    ["ing-quimica","Escuela de Ingeniería Química",44]
+  ]);
+
+  addFacultyList("fac-salud", fx[3], [
+    ["fs-consejo","Consejo de Facultad"],
+    ["proinapsa","PROINAPSA"],
+    ["microbiologia","Escuela de Microbiología"],
+    ["enfermeria","Escuela de Enfermería"],
+    ["fisioterapia","Escuela de Fisioterapia"],
+    ["nutricion","Escuela de Nutrición"],
+    ["medicina","Escuela de Medicina"]
+  ]);
+
+  // Departamentos de Medicina, a la derecha del nodo Escuela de Medicina.
+  let my = 825;
+  [
+    ["ciencias-basicas","Departamento de Ciencias Básicas"],
+    ["cirugia","Departamento de Cirugía"],
+    ["gineco","Departamento de Ginecobstetricia"],
+    ["med-interna","Departamento de Medicina Interna"],
+    ["patologia","Departamento de Patología"],
+    ["pediatria","Departamento de Pediatría"],
+    ["salud-mental","Departamento de Salud Mental"],
+    ["salud-publica","Departamento de Salud Pública"]
+  ].forEach(([id,label]) => { add(id,label,1880,my,185,34,"medicina",{group:"facultades"}); my += 41; });
+  add("regencia","Regencia de farmacia",1700,1148,180,38,"fac-salud",{group:"facultades",style:"highlight"});
+
+  const baseState = {
+    nodes: baseNodes,
+    expanded: Object.fromEntries(GROUPS.map(g => [g,false])),
+    collapsedNodes: {}
+  };
+
+  const $ = s => document.querySelector(s);
+  const canvas = $("#orgCanvas");
+  const nodesLayer = $("#nodesLayer");
+  const svg = $("#connections");
+  const shell = $("#canvasShell");
+
+  const editBtn = $("#editBtn");
+  const editBar = $("#editBar");
+  const addBtn = $("#addBtn");
+  const renameBtn = $("#renameBtn");
+  const parentBtn = $("#parentBtn");
+  const deleteBtn = $("#deleteBtn");
+  const doneBtn = $("#doneBtn");
+  const expandBtn = $("#expandBtn");
+  const collapseBtn = $("#collapseBtn");
   const resetBtn = $("#resetBtn");
-  const expandAllBtn = $("#expandAllBtn");
-  const collapseAllBtn = $("#collapseAllBtn");
 
-  const nodeDialog = $("#nodeDialog");
-  const nodeForm = $("#nodeForm");
+  const dialog = $("#nodeDialog");
   const dialogTitle = $("#dialogTitle");
-  const nodeId = $("#nodeId");
-  const nodeLabel = $("#nodeLabel");
-  const nodeParent = $("#nodeParent");
-  const nodeRelation = $("#nodeRelation");
-  const nodeStyle = $("#nodeStyle");
-  const parentField = $("#parentField");
-  const saveNodeBtn = $("#saveNodeBtn");
+  const labelInput = $("#labelInput");
+  const parentWrap = $("#parentWrap");
+  const parentSelect = $("#parentSelect");
+  const relationSelect = $("#relationSelect");
+  const styleSelect = $("#styleSelect");
+  const saveDialogBtn = $("#saveDialogBtn");
 
   let state = loadState();
-  let activeRootKey = null;
   let editMode = false;
-  let selectedNodeId = null;
+  let selectedId = null;
   let dialogMode = "add";
+  let drag = null;
 
-  function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
+  function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
 
-  function normalizeNode(node) {
-    if (!node.id) node.id = makeId();
-    if (!node.children) node.children = [];
-    if (!node.relation) node.relation = "hierarchical";
-    if (!node.style) node.style = "normal";
-    node.children.forEach(normalizeNode);
-  }
-
-  function normalizeState(s) {
-    Object.values(s.roots).forEach(root => root.children.forEach(normalizeNode));
-    s.collapsed = s.collapsed || {};
-    return s;
-  }
-
-  function loadState() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return normalizeState(saved ? JSON.parse(saved) : clone(DEFAULT_STATE));
-    } catch {
-      return normalizeState(clone(DEFAULT_STATE));
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return deepClone(baseState);
+      const parsed = JSON.parse(raw);
+      // Keep saved nodes only for this version. If malformed, fall back safely.
+      if(!Array.isArray(parsed.nodes) || !parsed.expanded) return deepClone(baseState);
+      return parsed;
+    }catch(e){
+      return deepClone(baseState);
     }
   }
 
-  function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function byId(id){ return state.nodes.find(n => n.id === id); }
+  function childrenOf(id){ return state.nodes.filter(n => n.parent === id); }
+
+  function isNodeCollapsedByParent(node){
+    let p = node.parent;
+    while(p){
+      if(state.collapsedNodes[p]) return true;
+      p = byId(p)?.parent || null;
+    }
+    return false;
   }
 
-  function makeId() {
-    return "n-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+  function isVisible(node){
+    if(node.group !== "core" && !state.expanded[node.group]) return false;
+    if(isNodeCollapsedByParent(node)) return false;
+    return true;
   }
 
-  function allNodesInRoot(rootKey) {
-    const out = [];
-    const walk = (nodes, parentId = null) => {
-      nodes.forEach((n, index) => {
-        out.push({ node: n, parentId, index });
-        walk(n.children || [], n.id);
+  function hasExpandableContent(node){
+    if(GROUP_BY_CORE[node.id]) return true;
+    return childrenOf(node.id).some(isVisible) || childrenOf(node.id).length > 0;
+  }
+
+  function isExpandedForNode(node){
+    const g = GROUP_BY_CORE[node.id];
+    if(g) return !!state.expanded[g];
+    return !state.collapsedNodes[node.id];
+  }
+
+  function nodeBranch(node){
+    if(node.group && node.group !== "core") return node.group;
+    if(["vie"].includes(node.id)) return "investigacion";
+    if(["vacad"].includes(node.id)) return "vacademica";
+    if(["vadmin"].includes(node.id)) return "administrativa";
+    if(["facultades"].includes(node.id)) return "facultades";
+    if(["rectoria"].includes(node.id)) return "rectoria";
+    return "core";
+  }
+
+  function render(){
+    nodesLayer.innerHTML = "";
+
+    state.nodes.forEach(node => {
+      if(!isVisible(node)) return;
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "org-node";
+      el.dataset.id = node.id;
+      el.style.left = node.x + "px";
+      el.style.top = node.y + "px";
+      el.style.width = node.w + "px";
+      el.style.height = node.h + "px";
+
+      const branch = nodeBranch(node);
+      if(branchClass[branch]) el.classList.add(branchClass[branch]);
+      if(node.kind === "main") el.classList.add("main", node.css || "dark");
+      if(node.kind === "faculty-header") el.classList.add("faculty-header");
+      if(node.style === "highlight") el.classList.add("highlight");
+      if(node.relation === "advisory") el.classList.add("advisory");
+      if(selectedId === node.id) el.classList.add("selected");
+      if(editMode) el.classList.add("editable");
+
+      const span = document.createElement("span");
+      span.className = "label";
+      node.label.split("\n").forEach((part,i) => {
+        if(i) span.appendChild(document.createElement("br"));
+        span.appendChild(document.createTextNode(part));
       });
-    };
-    walk(state.roots[rootKey]?.children || []);
-    return out;
-  }
+      el.appendChild(span);
 
-  function findNode(rootKey, id) {
-    return allNodesInRoot(rootKey).find(item => item.node.id === id) || null;
-  }
-
-  function getChildrenContainer(rootKey, parentId) {
-    if (!parentId) return state.roots[rootKey].children;
-    const found = findNode(rootKey, parentId);
-    return found ? found.node.children : null;
-  }
-
-  function findParentId(rootKey, nodeId) {
-    const found = findNode(rootKey, nodeId);
-    return found?.parentId ?? null;
-  }
-
-  function removeNode(rootKey, nodeId) {
-    const found = findNode(rootKey, nodeId);
-    if (!found) return null;
-    const container = getChildrenContainer(rootKey, found.parentId);
-    const [removed] = container.splice(found.index, 1);
-    return removed;
-  }
-
-  function isDescendant(rootKey, possibleAncestorId, possibleDescendantId) {
-    const ancestor = findNode(rootKey, possibleAncestorId)?.node;
-    if (!ancestor) return false;
-    let yes = false;
-    const walk = (nodes) => {
-      for (const n of nodes) {
-        if (n.id === possibleDescendantId) { yes = true; return; }
-        walk(n.children || []);
-        if (yes) return;
+      if(hasExpandableContent(node) && !editMode){
+        const badge = document.createElement("span");
+        badge.className = "toggle-badge";
+        badge.textContent = isExpandedForNode(node) ? "−" : "+";
+        el.appendChild(badge);
       }
-    };
-    walk(ancestor.children || []);
-    return yes;
-  }
 
-  function selectMainButton(rootKey) {
-    $$(".major-button").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.root === rootKey);
-      btn.setAttribute("aria-expanded", btn.dataset.root === rootKey ? "true" : "false");
-    });
-  }
-
-  function openRoot(rootKey) {
-    activeRootKey = rootKey;
-    selectedNodeId = null;
-    selectMainButton(rootKey);
-    detailPanel.classList.remove("hidden");
-    detailTitle.textContent = state.roots[rootKey].label;
-    updateToolbarButtons();
-    renderTree();
-    detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function branchClass() {
-    return "branch-" + activeRootKey;
-  }
-
-  function gridClass(count) {
-    if (count <= 1) return "one";
-    if (count === 2) return "two";
-    if (count === 3) return "three";
-    return "four";
-  }
-
-  function renderTree() {
-    if (!activeRootKey) return;
-    const root = state.roots[activeRootKey];
-    treeArea.innerHTML = "";
-    treeArea.className = "tree-area " + branchClass() + (editMode ? " editing" : "");
-
-    if (!root.children.length) {
-      treeArea.innerHTML = `
-        <div class="empty-state">
-          <strong>${escapeHtml(root.label)}</strong><br>
-          No hay dependencias cargadas para este nivel.
-          ${editMode ? "<br>Usa <b>Agregar casilla</b> para crear la primera." : ""}
-        </div>`;
-      return;
-    }
-
-    // Facultades are intentionally shown as four parallel columns, matching the reference.
-    // Other roots use one or more columns according to the number of top-level items.
-    const columns = activeRootKey === "facultades"
-      ? root.children.map(node => [node])
-      : chunkForColumns(root.children);
-
-    const grid = document.createElement("div");
-    grid.className = `root-grid ${gridClass(columns.length)}`;
-
-    columns.forEach(group => {
-      const col = document.createElement("div");
-      col.className = "tree-column";
-
-      group.forEach((node, index) => {
-        if (activeRootKey === "facultades" && node.children?.length) {
-          const title = document.createElement("div");
-          title.className = "column-title";
-          title.textContent = node.label;
-          col.appendChild(title);
-
-          // In edit mode the faculty title itself becomes selectable/movable.
-          if (editMode) {
-            title.style.cursor = "pointer";
-            title.dataset.nodeId = node.id;
-            title.addEventListener("click", () => selectNode(node.id));
-            title.addEventListener("dblclick", () => {
-              selectNode(node.id);
-              openRenameDialog();
-            });
-          }
-
-          const collapsed = !!state.collapsed[node.id];
-          if (!collapsed) {
-            node.children.forEach(child => col.appendChild(renderNode(child, 0)));
-          }
-          if (!editMode) {
-            title.title = "Clic para desplegar / contraer";
-            title.addEventListener("click", () => {
-              state.collapsed[node.id] = !state.collapsed[node.id];
-              saveState();
-              renderTree();
-            });
-          }
-        } else {
-          col.appendChild(renderNode(node, 0));
-        }
-      });
-      grid.appendChild(col);
-    });
-
-    treeArea.appendChild(grid);
-  }
-
-  function chunkForColumns(nodes) {
-    if (nodes.length <= 7) return [nodes];
-    if (nodes.length <= 14) {
-      const split = Math.ceil(nodes.length / 2);
-      return [nodes.slice(0, split), nodes.slice(split)];
-    }
-    const size = Math.ceil(nodes.length / 3);
-    return [nodes.slice(0, size), nodes.slice(size, size * 2), nodes.slice(size * 2)];
-  }
-
-  function renderNode(node, depth) {
-    const block = document.createElement("div");
-    block.className = `node-block depth-${Math.min(depth, 3)}`;
-    block.dataset.nodeId = node.id;
-
-    const row = document.createElement("div");
-    row.className = "node-row";
-
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "node-card" + (node.style === "highlight" ? " highlight" : "");
-    card.dataset.nodeId = node.id;
-    card.dataset.relation = node.relation || "hierarchical";
-    card.innerHTML = `<span class="edit-mark">⋮⋮</span><span class="node-label">${escapeHtml(node.label)}</span>`;
-
-    if (node.children?.length) {
-      const mark = document.createElement("span");
-      mark.className = "toggle-mark";
-      mark.textContent = state.collapsed[node.id] ? "+" : "−";
-      card.appendChild(mark);
-    }
-
-    if (selectedNodeId === node.id) card.classList.add("selected");
-
-    card.addEventListener("click", (ev) => {
-      ev.stopPropagation();
-      if (editMode) {
+      el.addEventListener("click", ev => onNodeClick(ev,node));
+      el.addEventListener("dblclick", ev => {
+        if(!editMode) return;
+        ev.preventDefault();
         selectNode(node.id);
-      } else if (node.children?.length) {
-        state.collapsed[node.id] = !state.collapsed[node.id];
-        saveState();
-        renderTree();
-      }
+        openRename();
+      });
+      el.addEventListener("pointerdown", ev => startDrag(ev,node,el));
+      nodesLayer.appendChild(el);
     });
 
-    card.addEventListener("dblclick", (ev) => {
-      if (!editMode) return;
-      ev.preventDefault();
+    resizeCanvas();
+    requestAnimationFrame(drawConnections);
+    updateEditButtons();
+  }
+
+  function onNodeClick(ev,node){
+    ev.stopPropagation();
+    if(editMode){
       selectNode(node.id);
-      openRenameDialog();
-    });
-
-    if (editMode) {
-      card.draggable = true;
-      card.addEventListener("dragstart", (ev) => {
-        selectNode(node.id);
-        ev.dataTransfer.effectAllowed = "move";
-        ev.dataTransfer.setData("text/plain", node.id);
-      });
-      card.addEventListener("dragover", (ev) => {
-        ev.preventDefault();
-        if (selectedNodeId && selectedNodeId !== node.id && !isDescendant(activeRootKey, selectedNodeId, node.id)) {
-          card.classList.add("drop-target");
-        }
-      });
-      card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
-      card.addEventListener("drop", (ev) => {
-        ev.preventDefault();
-        card.classList.remove("drop-target");
-        const draggedId = ev.dataTransfer.getData("text/plain");
-        if (!draggedId || draggedId === node.id) return;
-        if (isDescendant(activeRootKey, draggedId, node.id)) return;
-        moveNode(draggedId, node.id);
-      });
-    }
-
-    row.appendChild(card);
-    block.appendChild(row);
-
-    if (node.children?.length) {
-      const children = document.createElement("div");
-      children.className = "children-wrap" + (state.collapsed[node.id] ? " collapsed" : "");
-      node.children.forEach(child => children.appendChild(renderNode(child, depth + 1)));
-      block.appendChild(children);
-    }
-
-    return block;
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  function selectNode(id) {
-    selectedNodeId = id;
-    renderTree();
-    updateToolbarButtons();
-  }
-
-  function updateToolbarButtons() {
-    const hasSelection = !!selectedNodeId;
-    [renameNodeBtn, moveNodeBtn, moveUpBtn, moveDownBtn, deleteNodeBtn].forEach(btn => {
-      btn.disabled = !hasSelection;
-    });
-  }
-
-  function setEditMode(on) {
-    editMode = on;
-    editToggle.classList.toggle("on", on);
-    editToggle.textContent = on ? "✓ Terminar edición" : "✎ Modo editar";
-    editToolbar.classList.toggle("hidden", !on);
-    detailHint.textContent = on
-      ? "Selecciona una casilla. Puedes renombrarla, cambiarla de dependencia, reordenarla o arrastrarla encima de otra casilla."
-      : "Haz clic sobre las casillas con el símbolo + para desplegar u ocultar sus niveles.";
-    if (!on) selectedNodeId = null;
-    updateToolbarButtons();
-    if (activeRootKey) renderTree();
-  }
-
-  function fillParentOptions(excludeId = null) {
-    nodeParent.innerHTML = "";
-    const rootOpt = document.createElement("option");
-    rootOpt.value = "";
-    rootOpt.textContent = "— Directamente bajo " + state.roots[activeRootKey].label + " —";
-    nodeParent.appendChild(rootOpt);
-
-    allNodesInRoot(activeRootKey).forEach(({ node }) => {
-      if (node.id === excludeId) return;
-      if (excludeId && isDescendant(activeRootKey, excludeId, node.id)) return;
-      const opt = document.createElement("option");
-      opt.value = node.id;
-      opt.textContent = node.label;
-      nodeParent.appendChild(opt);
-    });
-  }
-
-  function openAddDialog() {
-    if (!activeRootKey) return;
-    dialogMode = "add";
-    dialogTitle.textContent = "Agregar casilla";
-    nodeId.value = "";
-    nodeLabel.value = "";
-    nodeRelation.value = "hierarchical";
-    nodeStyle.value = "normal";
-    parentField.classList.remove("hidden");
-    fillParentOptions();
-    nodeParent.value = selectedNodeId || "";
-    nodeDialog.showModal();
-    setTimeout(() => nodeLabel.focus(), 50);
-  }
-
-  function openRenameDialog() {
-    if (!selectedNodeId) return;
-    const found = findNode(activeRootKey, selectedNodeId);
-    if (!found) return;
-    dialogMode = "rename";
-    dialogTitle.textContent = "Renombrar casilla";
-    nodeId.value = selectedNodeId;
-    nodeLabel.value = found.node.label;
-    nodeRelation.value = found.node.relation || "hierarchical";
-    nodeStyle.value = found.node.style || "normal";
-    parentField.classList.add("hidden");
-    nodeDialog.showModal();
-    setTimeout(() => nodeLabel.select(), 50);
-  }
-
-  function openMoveDialog() {
-    if (!selectedNodeId) return;
-    const found = findNode(activeRootKey, selectedNodeId);
-    if (!found) return;
-    dialogMode = "move";
-    dialogTitle.textContent = "Mover casilla";
-    nodeId.value = selectedNodeId;
-    nodeLabel.value = found.node.label;
-    nodeRelation.value = found.node.relation || "hierarchical";
-    nodeStyle.value = found.node.style || "normal";
-    parentField.classList.remove("hidden");
-    fillParentOptions(selectedNodeId);
-    nodeParent.value = found.parentId || "";
-    nodeDialog.showModal();
-  }
-
-  function saveDialog() {
-    const label = nodeLabel.value.trim();
-    if (!label) {
-      nodeLabel.focus();
       return;
     }
-
-    if (dialogMode === "add") {
-      const newNode = {
-        id: makeId(),
-        label,
-        relation: nodeRelation.value,
-        style: nodeStyle.value,
-        children: []
-      };
-      const container = getChildrenContainer(activeRootKey, nodeParent.value || null);
-      if (!container) return;
-      container.push(newNode);
-      selectedNodeId = newNode.id;
-    } else if (dialogMode === "rename") {
-      const found = findNode(activeRootKey, selectedNodeId);
-      if (!found) return;
-      found.node.label = label;
-      found.node.relation = nodeRelation.value;
-      found.node.style = nodeStyle.value;
-    } else if (dialogMode === "move") {
-      const current = findNode(activeRootKey, selectedNodeId);
-      if (!current) return;
-      current.node.label = label;
-      current.node.relation = nodeRelation.value;
-      current.node.style = nodeStyle.value;
-      moveNode(selectedNodeId, nodeParent.value || null, false);
+    const group = GROUP_BY_CORE[node.id];
+    if(group){
+      state.expanded[group] = !state.expanded[group];
+      saveState();
+      render();
+      return;
     }
-
-    saveState();
-    nodeDialog.close();
-    renderTree();
-    updateToolbarButtons();
-  }
-
-  function moveNode(nodeIdToMove, newParentId, rerender = true) {
-    if (newParentId === nodeIdToMove) return;
-    if (newParentId && isDescendant(activeRootKey, nodeIdToMove, newParentId)) return;
-
-    const removed = removeNode(activeRootKey, nodeIdToMove);
-    if (!removed) return;
-    const target = getChildrenContainer(activeRootKey, newParentId || null);
-    if (!target) return;
-    target.push(removed);
-    state.collapsed[newParentId] = false;
-    saveState();
-    if (rerender) {
-      selectedNodeId = nodeIdToMove;
-      renderTree();
-      updateToolbarButtons();
+    if(childrenOf(node.id).length){
+      state.collapsedNodes[node.id] = !state.collapsedNodes[node.id];
+      saveState();
+      render();
     }
   }
 
-  function reorderSelected(delta) {
-    if (!selectedNodeId) return;
-    const found = findNode(activeRootKey, selectedNodeId);
-    if (!found) return;
-    const container = getChildrenContainer(activeRootKey, found.parentId);
-    const newIndex = found.index + delta;
-    if (newIndex < 0 || newIndex >= container.length) return;
-    [container[found.index], container[newIndex]] = [container[newIndex], container[found.index]];
-    saveState();
-    renderTree();
+  function selectNode(id){
+    selectedId = id;
+    document.querySelectorAll(".org-node").forEach(el => el.classList.toggle("selected",el.dataset.id === id));
+    updateEditButtons();
   }
 
-  function deleteSelected() {
-    if (!selectedNodeId) return;
-    const found = findNode(activeRootKey, selectedNodeId);
-    if (!found) return;
-    const suffix = found.node.children?.length
-      ? `\n\nTambién se eliminarán ${found.node.children.length} subdependencia(s) directa(s).`
-      : "";
-    if (!confirm(`¿Eliminar "${found.node.label}"?${suffix}`)) return;
-    removeNode(activeRootKey, selectedNodeId);
-    selectedNodeId = null;
-    saveState();
-    renderTree();
-    updateToolbarButtons();
+  function updateEditButtons(){
+    const disabled = !selectedId;
+    renameBtn.disabled = disabled;
+    parentBtn.disabled = disabled || ["superior","rectoria","academico"].includes(selectedId);
+    deleteBtn.disabled = disabled || ["superior","rectoria","academico","vie","vacad","vadmin","facultades"].includes(selectedId);
   }
 
-  function setAllCollapsed(collapsed) {
-    if (!activeRootKey) return;
-    allNodesInRoot(activeRootKey).forEach(({ node }) => {
-      if (node.children?.length) state.collapsed[node.id] = collapsed;
+  function startDrag(ev,node,el){
+    if(!editMode || ev.button !== 0) return;
+    ev.preventDefault();
+    selectNode(node.id);
+    const rect = canvas.getBoundingClientRect();
+    drag = {
+      id:node.id,
+      pointerId:ev.pointerId,
+      startClientX:ev.clientX,
+      startClientY:ev.clientY,
+      startX:node.x,
+      startY:node.y,
+      canvasScale:rect.width / CANVAS_WIDTH
+    };
+    el.setPointerCapture(ev.pointerId);
+    el.addEventListener("pointermove", moveDrag);
+    el.addEventListener("pointerup", endDrag, {once:true});
+    el.addEventListener("pointercancel", endDrag, {once:true});
+  }
+
+  function moveDrag(ev){
+    if(!drag || ev.pointerId !== drag.pointerId) return;
+    const node = byId(drag.id);
+    if(!node) return;
+    const scale = drag.canvasScale || 1;
+    const dx = (ev.clientX - drag.startClientX)/scale;
+    const dy = (ev.clientY - drag.startClientY)/scale;
+    node.x = Math.max(5, Math.round((drag.startX + dx)/GRID)*GRID);
+    node.y = Math.max(5, Math.round((drag.startY + dy)/GRID)*GRID);
+    const el = document.querySelector(`.org-node[data-id="${CSS.escape(node.id)}"]`);
+    if(el){ el.style.left=node.x+"px"; el.style.top=node.y+"px"; }
+    resizeCanvas();
+    drawConnections();
+  }
+
+  function endDrag(ev){
+    if(!drag) return;
+    const el = ev.currentTarget;
+    try{ el.releasePointerCapture(drag.pointerId); }catch(e){}
+    el.removeEventListener("pointermove", moveDrag);
+    drag = null;
+    saveState();
+    drawConnections();
+  }
+
+  function nodeRect(node){
+    return {x:node.x,y:node.y,w:node.w,h:node.h,cx:node.x+node.w/2,cy:node.y+node.h/2};
+  }
+
+  function pathFor(parent, child){
+    const p=nodeRect(parent), c=nodeRect(child);
+    const dx=c.cx-p.cx, dy=c.cy-p.cy;
+    if(Math.abs(dx) > Math.abs(dy)*1.25){
+      const goRight = dx>0;
+      const x1 = goRight ? p.x+p.w : p.x;
+      const y1 = p.cy;
+      const x2 = goRight ? c.x : c.x+c.w;
+      const y2 = c.cy;
+      const mid = x1 + (x2-x1)*0.52;
+      return `M ${x1} ${y1} H ${mid} V ${y2} H ${x2}`;
+    }
+    const downward = dy>=0;
+    const x1=p.cx, y1=downward ? p.y+p.h : p.y;
+    const x2=c.cx, y2=downward ? c.y : c.y+c.h;
+    const mid=y1+(y2-y1)*0.5;
+    return `M ${x1} ${y1} V ${mid} H ${x2} V ${y2}`;
+  }
+
+  function drawConnections(){
+    const visibleIds = new Set(state.nodes.filter(isVisible).map(n=>n.id));
+    const height = parseFloat(canvas.style.height) || canvas.clientHeight || 650;
+    svg.setAttribute("viewBox",`0 0 ${CANVAS_WIDTH} ${height}`);
+    svg.innerHTML="";
+
+    state.nodes.forEach(node => {
+      if(!visibleIds.has(node.id) || !node.parent || !visibleIds.has(node.parent)) return;
+      const parent=byId(node.parent);
+      if(!parent) return;
+      const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d",pathFor(parent,node));
+      let cls="connector";
+      if(node.relation==="advisory") cls += " advisory";
+      const br=nodeBranch(node);
+      if(connectionBranchClass[br]) cls += " "+connectionBranchClass[br];
+      path.setAttribute("class",cls);
+      svg.appendChild(path);
     });
-    saveState();
-    renderTree();
   }
 
-  $$(".major-button").forEach(btn => {
-    btn.addEventListener("click", () => openRoot(btn.dataset.root));
-  });
+  function resizeCanvas(){
+    const visible = state.nodes.filter(isVisible);
+    let maxY=610;
+    visible.forEach(n => maxY=Math.max(maxY,n.y+n.h+70));
+    canvas.style.height=Math.min(Math.max(maxY,650),1550)+"px";
+  }
 
-  editToggle.addEventListener("click", () => {
-    if (!activeRootKey) openRoot("rectoria");
-    setEditMode(!editMode);
-  });
+  function setEditMode(value){
+    editMode=value;
+    editBar.classList.toggle("is-hidden",!value);
+    editBtn.classList.toggle("active",value);
+    editBtn.textContent=value?"✓ Editando":"✎ Editar organigrama";
+    if(!value) selectedId=null;
+    render();
+  }
 
-  addNodeBtn.addEventListener("click", openAddDialog);
-  renameNodeBtn.addEventListener("click", openRenameDialog);
-  moveNodeBtn.addEventListener("click", openMoveDialog);
-  moveUpBtn.addEventListener("click", () => reorderSelected(-1));
-  moveDownBtn.addEventListener("click", () => reorderSelected(1));
-  deleteNodeBtn.addEventListener("click", deleteSelected);
+  function fillParents(excludeId=null){
+    parentSelect.innerHTML="";
+    state.nodes.forEach(n=>{
+      if(n.id===excludeId) return;
+      if(excludeId && isDescendant(excludeId,n.id)) return;
+      const option=document.createElement("option");
+      option.value=n.id;
+      option.textContent=n.label.replaceAll("\n"," ");
+      parentSelect.appendChild(option);
+    });
+  }
 
-  expandAllBtn.addEventListener("click", () => setAllCollapsed(false));
-  collapseAllBtn.addEventListener("click", () => setAllCollapsed(true));
+  function isDescendant(ancestorId, candidateId){
+    let p=byId(candidateId)?.parent;
+    while(p){
+      if(p===ancestorId) return true;
+      p=byId(p)?.parent || null;
+    }
+    return false;
+  }
 
-  saveNodeBtn.addEventListener("click", saveDialog);
+  function inheritedGroup(parent){
+    if(!parent) return "core";
+    if(parent.group!=="core") return parent.group;
+    return GROUP_BY_CORE[parent.id] || "core";
+  }
 
-  nodeForm.addEventListener("submit", (ev) => {
-    // "X" and Cancel close normally. Save is handled by the explicit button.
-    if (ev.submitter?.value !== "cancel") ev.preventDefault();
-  });
+  function openAdd(){
+    dialogMode="add";
+    dialogTitle.textContent="Agregar nueva casilla";
+    labelInput.value="";
+    parentWrap.classList.remove("is-hidden");
+    fillParents();
+    parentSelect.value=selectedId || "academico";
+    relationSelect.value="hierarchical";
+    styleSelect.value="normal";
+    dialog.showModal();
+    setTimeout(()=>labelInput.focus(),30);
+  }
 
-  resetBtn.addEventListener("click", () => {
-    if (!confirm("¿Restablecer el organigrama original? Se perderán los cambios guardados en este navegador.")) return;
-    state = normalizeState(clone(DEFAULT_STATE));
-    localStorage.removeItem(STORAGE_KEY);
-    selectedNodeId = null;
+  function openRename(){
+    if(!selectedId) return;
+    const node=byId(selectedId); if(!node) return;
+    dialogMode="rename";
+    dialogTitle.textContent="Renombrar / editar casilla";
+    labelInput.value=node.label.replaceAll("\n"," ");
+    parentWrap.classList.add("is-hidden");
+    relationSelect.value=node.relation || "hierarchical";
+    styleSelect.value=node.style || "normal";
+    dialog.showModal();
+    setTimeout(()=>labelInput.select(),30);
+  }
+
+  function openChangeParent(){
+    if(!selectedId) return;
+    const node=byId(selectedId); if(!node) return;
+    dialogMode="parent";
+    dialogTitle.textContent="Cambiar dependencia";
+    labelInput.value=node.label.replaceAll("\n"," ");
+    parentWrap.classList.remove("is-hidden");
+    fillParents(selectedId);
+    parentSelect.value=node.parent || "academico";
+    relationSelect.value=node.relation || "hierarchical";
+    styleSelect.value=node.style || "normal";
+    dialog.showModal();
+  }
+
+  function saveDialog(){
+    const label=labelInput.value.trim();
+    if(!label){labelInput.focus();return;}
+    const cleanLabel=label.replace(/\s*\n\s*/g," ");
+
+    if(dialogMode==="add"){
+      const parent=byId(parentSelect.value);
+      if(!parent) return;
+      const id="custom-"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+      const group=inheritedGroup(parent);
+      if(group!=="core") state.expanded[group]=true;
+      const siblings=childrenOf(parent.id);
+      const offset=siblings.length*18;
+      state.nodes.push({
+        id,
+        label:cleanLabel,
+        x:Math.max(10,parent.x+20+offset),
+        y:parent.y+parent.h+65+offset,
+        w:Math.max(190,Math.min(330,parent.w)),
+        h:46,
+        parent:parent.id,
+        group,
+        kind:"normal",
+        relation:relationSelect.value,
+        style:styleSelect.value,
+        css:"",
+        custom:true
+      });
+      selectedId=id;
+    }else{
+      const node=byId(selectedId); if(!node) return;
+      node.label=cleanLabel;
+      node.relation=relationSelect.value;
+      node.style=styleSelect.value;
+      if(dialogMode==="parent"){
+        const newParent=byId(parentSelect.value);
+        if(newParent){
+          node.parent=newParent.id;
+          node.group=inheritedGroup(newParent);
+          if(node.group!=="core") state.expanded[node.group]=true;
+        }
+      }
+    }
     saveState();
-    if (activeRootKey) renderTree();
+    dialog.close();
+    render();
+  }
+
+  function deleteSelected(){
+    if(!selectedId) return;
+    const node=byId(selectedId); if(!node) return;
+    const descendants=[];
+    const collect=id=>childrenOf(id).forEach(ch=>{descendants.push(ch.id);collect(ch.id)});
+    collect(node.id);
+    const extra=descendants.length?`\nTambién se eliminarán ${descendants.length} casilla(s) dependiente(s).`:"";
+    if(!confirm(`¿Eliminar “${node.label.replaceAll("\n"," ")}”?${extra}`)) return;
+    const remove=new Set([selectedId,...descendants]);
+    state.nodes=state.nodes.filter(n=>!remove.has(n.id));
+    selectedId=null;
+    saveState();
+    render();
+  }
+
+  editBtn.addEventListener("click",()=>setEditMode(!editMode));
+  doneBtn.addEventListener("click",()=>setEditMode(false));
+  addBtn.addEventListener("click",openAdd);
+  renameBtn.addEventListener("click",openRename);
+  parentBtn.addEventListener("click",openChangeParent);
+  deleteBtn.addEventListener("click",deleteSelected);
+  saveDialogBtn.addEventListener("click",saveDialog);
+
+  expandBtn.addEventListener("click",()=>{
+    GROUPS.forEach(g=>state.expanded[g]=true);
+    state.collapsedNodes={};
+    saveState();render();
+  });
+  collapseBtn.addEventListener("click",()=>{
+    GROUPS.forEach(g=>state.expanded[g]=false);
+    state.collapsedNodes={};
+    selectedId=null;
+    saveState();render();
+  });
+  resetBtn.addEventListener("click",()=>{
+    if(!confirm("¿Restablecer el organigrama a la distribución inicial? Se eliminarán las casillas y movimientos guardados.")) return;
+    state=deepClone(baseState);
+    selectedId=null;
+    localStorage.removeItem(STORAGE_KEY);
+    render();
   });
 
-  // Open the main detailed branch initially so the page demonstrates the interaction.
-  // The overview still remains the first visual level.
-  selectMainButton(null);
+  nodesLayer.addEventListener("click",()=>{
+    if(editMode){selectedId=null;render();}
+  });
+
+  window.addEventListener("resize",drawConnections);
+
+  // Nudge with keyboard arrows while editing.
+  window.addEventListener("keydown",ev=>{
+    if(!editMode || !selectedId || ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)) return;
+    const node=byId(selectedId); if(!node) return;
+    const step=ev.shiftKey?20:5;
+    let moved=true;
+    if(ev.key==="ArrowLeft") node.x=Math.max(5,node.x-step);
+    else if(ev.key==="ArrowRight") node.x+=step;
+    else if(ev.key==="ArrowUp") node.y=Math.max(5,node.y-step);
+    else if(ev.key==="ArrowDown") node.y+=step;
+    else moved=false;
+    if(moved){ev.preventDefault();saveState();render();}
+  });
+
+  render();
+  // Position initial viewport around the institutional center, without hiding the left branch.
+  requestAnimationFrame(()=>{ shell.scrollLeft=Math.max(0,(CANVAS_WIDTH-shell.clientWidth)/2-120); });
 })();

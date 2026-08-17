@@ -1,30 +1,33 @@
-ORGANIGRAMA UIS INTERACTIVO
-===========================
+ORGANIGRAMA UIS — EDITOR INTERACTIVO V2
+=======================================
 
-Archivos:
+Esta versión mantiene el organigrama dentro del mismo lienzo: las dependencias se despliegan en su posición jerárquica y las líneas permanecen conectadas.
+
+ARCHIVOS
 - index.html
 - styles.css
 - script.js
 - assets/uis-marca.png
 
-USO
-1. Mantén todos los archivos dentro de la misma carpeta.
-2. Abre index.html en un navegador.
-3. Haz clic en Rectoría, Vicerrectorías o Facultades para desplegar su información.
-4. Las casillas con + / − permiten desplegar y contraer niveles internos.
+CÓMO PROBARLO
+1. Descomprime la carpeta.
+2. Abre index.html en Chrome o Edge.
+3. Haz clic en Rectoría, las Vicerrectorías o Facultades para desplegar/contraer su información.
 
-MODO EDITAR
-- Activa "Modo editar".
-- "Agregar casilla": crea una nueva dependencia y permite elegir su dependencia padre.
-- Selecciona una casilla para:
-  * Renombrar.
-  * Mover a otra dependencia.
-  * Subir / bajar dentro del mismo nivel.
-  * Eliminar.
-- También puedes arrastrar una casilla encima de otra para convertirla en su subdependencia.
-- Los cambios se guardan automáticamente en localStorage del navegador.
-- "Restablecer" recupera la versión inicial.
+EDICIÓN
+1. Haz clic en “Editar organigrama”.
+2. Arrastra cualquier casilla visible para moverla libremente dentro del organigrama.
+3. Al mover una casilla, las líneas jerárquicas se redibujan automáticamente.
+4. Selecciona una casilla para habilitar:
+   - Renombrar.
+   - Cambiar dependencia.
+   - Eliminar.
+5. “Agregar casilla” crea una nueva casilla y permite escoger de cuál dependencia cuelga.
+6. También puedes usar las flechas del teclado para mover una casilla seleccionada (Shift + flecha = movimiento mayor).
 
-NOTA
-El proyecto usa HTML + CSS + JavaScript (no Java).
-No requiere servidor ni librerías externas.
+GUARDADO
+Los movimientos, nuevas casillas y cambios se guardan en localStorage del navegador.
+“Restablecer” devuelve la estructura inicial.
+
+TECNOLOGÍA
+HTML + CSS + JavaScript puro. No requiere librerías externas ni servidor.
