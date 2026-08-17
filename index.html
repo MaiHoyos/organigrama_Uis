@@ -13,6 +13,13 @@
     <h1>ORGANIGRAMA INSTITUCIONAL</h1>
 
     <div class="main-tools">
+      <div class="zoom-tools" aria-label="Zoom del organigrama">
+        <span class="zoom-icon" aria-hidden="true">🔍</span>
+        <button id="zoomOutBtn" class="btn zoom-btn" type="button" title="Alejar">−</button>
+        <span id="zoomValue" class="zoom-value" aria-live="polite">100%</span>
+        <button id="zoomInBtn" class="btn zoom-btn" type="button" title="Acercar">＋</button>
+        <button id="fitBtn" class="btn" type="button" title="Ajustar el organigrama al ancho disponible">Ajustar</button>
+      </div>
       <button id="editBtn" class="btn edit">✎ Editar organigrama</button>
       <button id="expandBtn" class="btn">⊞ Desplegar todo</button>
       <button id="collapseBtn" class="btn">⊟ Contraer todo</button>
@@ -37,9 +44,11 @@
 
   <main>
     <div class="canvas-shell" id="canvasShell">
-      <div id="orgCanvas" class="org-canvas" aria-label="Organigrama UIS">
-        <svg id="connections" class="connections" aria-hidden="true"></svg>
-        <div id="nodesLayer" class="nodes-layer"></div>
+      <div id="canvasStage" class="canvas-stage">
+        <div id="orgCanvas" class="org-canvas" aria-label="Organigrama UIS">
+          <svg id="connections" class="connections" aria-hidden="true"></svg>
+          <div id="nodesLayer" class="nodes-layer"></div>
+        </div>
       </div>
     </div>
 

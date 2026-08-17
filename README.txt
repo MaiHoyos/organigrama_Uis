@@ -31,3 +31,14 @@ Los movimientos, nuevas casillas y cambios se guardan en localStorage del navega
 
 TECNOLOGÍA
 HTML + CSS + JavaScript puro. No requiere librerías externas ni servidor.
+
+
+CAMBIOS V4
+----------
+- Controles de zoom: lupa, −, porcentaje, + y botón Ajustar.
+- Los enlaces directos de Consejo Académico salen desde abajo.
+- Los enlaces directos de Facultades salen desde abajo.
+- Dirección de Certificación y Gestión Documental depende de Secretaría General.
+- Escuela de Medicina queda visible y sus departamentos aparecen debajo sin solaparla.
+- Regencia de farmacia se mantiene amarilla como elemento nuevo y se ubica junto a Facultad de Salud.
+- Se migra automáticamente la información guardada de la versión V3 para conservar cambios previos.
