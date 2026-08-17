@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organigrama Institucional UIS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="top-line"></div>
+    <img class="uis-logo" src="assets/uis-marca.png" alt="Universidad Industrial de Santander" />
+    <h1>ORGANIGRAMA INSTITUCIONAL</h1>
+
+    <div class="header-actions">
+      <button id="editToggle" class="toolbar-btn edit-btn" type="button">
+        ✎ Modo editar
+      </button>
+      <button id="resetBtn" class="toolbar-btn ghost-btn" type="button" title="Restablecer el organigrama original">
+        ↺ Restablecer
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="overview-section" aria-label="Estructura principal">
+      <div class="chain">
+        <button class="org-button dark-green major-button" data-root="superior">
+          CONSEJO SUPERIOR
+        </button>
+        <span class="vertical-line"></span>
+
+        <button class="org-button bright-green major-button" data-root="rectoria">
+          RECTORÍA
+        </button>
+        <span class="vertical-line"></span>
+
+        <button class="org-button dark-green major-button" data-root="academico">
+          CONSEJO ACADÉMICO
+        </button>
+        <span class="vertical-line long"></span>
+      </div>
+
+      <div class="branch-wrap">
+        <div class="branch-line" aria-hidden="true"></div>
+        <div class="branch-row" id="mainBranches">
+          <button class="org-button turquoise major-button" data-root="investigacion">
+            VICERRECTORÍA DE<br />INVESTIGACIÓN Y EXTENSIÓN
+          </button>
+          <button class="org-button blue major-button" data-root="vacademica">
+            VICERRECTORÍA<br />ACADÉMICA
+          </button>
+          <button class="org-button admin-green major-button" data-root="administrativa">
+            VICERRECTORÍA<br />ADMINISTRATIVA
+          </button>
+          <button class="org-button purple major-button" data-root="facultades">
+            FACULTADES
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="detailPanel" class="detail-panel hidden" aria-live="polite">
+      <div class="detail-topbar">
+        <div>
+          <span class="eyebrow">Dependencias</span>
+          <h2 id="detailTitle">Selecciona una dependencia</h2>
+          <p id="detailHint">
+            Haz clic sobre las casillas con el símbolo + para desplegar u ocultar sus niveles.
+          </p>
+        </div>
+
+        <div class="detail-actions">
+          <button id="expandAllBtn" class="small-btn" type="button">Expandir todo</button>
+          <button id="collapseAllBtn" class="small-btn" type="button">Contraer</button>
+        </div>
+      </div>
+
+      <div id="editToolbar" class="edit-toolbar hidden">
+        <div class="edit-toolbar-left">
+          <button id="addNodeBtn" class="toolbar-btn primary-btn" type="button">＋ Agregar casilla</button>
+          <button id="renameNodeBtn" class="toolbar-btn" type="button" disabled>Renombrar</button>
+          <button id="moveNodeBtn" class="toolbar-btn" type="button" disabled>Mover a…</button>
+          <button id="moveUpBtn" class="toolbar-btn" type="button" disabled>↑ Subir</button>
+          <button id="moveDownBtn" class="toolbar-btn" type="button" disabled>↓ Bajar</button>
+          <button id="deleteNodeBtn" class="toolbar-btn danger-btn" type="button" disabled>Eliminar</button>
+        </div>
+        <div class="save-status">
+          <span class="save-dot"></span>
+          Cambios guardados automáticamente en este navegador
+        </div>
+      </div>
+
+      <div id="treeArea" class="tree-area"></div>
+    </section>
+
+    <section class="legend">
+      <div><span class="line-sample solid"></span>Relación jerárquica</div>
+      <div><span class="line-sample dotted"></span>Relación de asesoría o apoyo</div>
+      <div><span class="yellow-chip"></span>Unidad / sede destacada</div>
+    </section>
+  </main>
+
+  <dialog id="nodeDialog" class="node-dialog">
+    <form id="nodeForm" method="dialog">
+      <div class="dialog-header">
+        <h3 id="dialogTitle">Agregar casilla</h3>
+        <button class="icon-btn" value="cancel" aria-label="Cerrar" type="submit">×</button>
+      </div>
+
+      <input id="nodeId" type="hidden" />
+
+      <label>
+        Nombre de la casilla
+        <textarea id="nodeLabel" rows="3" required></textarea>
+      </label>
+
+      <label id="parentField">
+        Depende de
+        <select id="nodeParent"></select>
+      </label>
+
+      <div class="form-grid">
+        <label>
+          Relación
+          <select id="nodeRelation">
+            <option value="hierarchical">Jerárquica</option>
+            <option value="advisory">Asesoría / apoyo</option>
+          </select>
+        </label>
+
+        <label>
+          Estilo
+          <select id="nodeStyle">
+            <option value="normal">Normal</option>
+            <option value="highlight">Destacada (amarillo)</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="toolbar-btn ghost-btn" value="cancel" type="submit">Cancelar</button>
+        <button id="saveNodeBtn" class="toolbar-btn primary-btn" value="default" type="button">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
