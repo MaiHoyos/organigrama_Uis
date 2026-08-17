@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "uis-organigrama-canvas-v2";
+  const STORAGE_KEY = "uis-organigrama-canvas-v3";
   const CANVAS_WIDTH = 2150;
   const GRID = 5;
 
@@ -38,6 +38,8 @@
       kind: opts.kind || "normal",
       relation: opts.relation || "hierarchical",
       style: opts.style || "normal",
+      sourceSide: opts.sourceSide || "auto",
+      targetSide: opts.targetSide || "auto",
       css: opts.css || "",
       custom: false
     });
@@ -58,8 +60,8 @@
   // =========================
   // Rectoría: asesorías/apoyos
   // =========================
-  add("idr", "Instituto de Desarrollo\nRegional", 500, 42, 230, 40, "rectoria", {group:"rectoria", relation:"advisory", style:"highlight"});
-  add("uiaes", "Unidad de Información y\nAnálisis Estadístico - UIAES", 235, 100, 240, 47, "rectoria", {group:"rectoria", relation:"advisory"});
+  add("idr", "Instituto de Desarrollo\nRegional", 500, 42, 230, 40, "rectoria", {group:"rectoria", relation:"advisory", style:"new"});
+  add("uiaes", "Unidad de Información y\nAnálisis Estadístico - UIAES", 235, 100, 240, 47, "planeacion", {group:"rectoria", relation:"hierarchical", sourceSide:"left", targetSide:"right"});
   add("planeacion", "Planeación", 500, 100, 230, 40, "rectoria", {group:"rectoria", relation:"advisory"});
   add("control-gestion", "Dirección de Control Interno\ny Evaluación de Gestión", 500, 151, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
   add("control-disciplinario", "Oficina de Control Interno\nDisciplinario", 500, 209, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
@@ -83,7 +85,7 @@
     ["comite-ie","Comité Operativo de\nInvestigación y Extensión"],
     ["programas","Coordinación de Programas\ny Proyectos"]
   ].forEach(([id,label]) => { add(id,label,vieX,y,vieW,rowH,"vie",{group:"investigacion"}); y += rowH+gap; });
-  add("centro-tecnico","Centro Administrativo de Estudios\nTécnicos y Tecnológicos",vieX,y,vieW,52,"vie",{group:"investigacion",style:"highlight"});
+  add("centro-tecnico","Centro Administrativo de Estudios\nTécnicos y Tecnológicos",vieX,y,vieW,52,"vie",{group:"investigacion",style:"new"});
 
   // =========================
   // Vicerrectoría Académica
@@ -99,15 +101,15 @@
     ["cededuis","CEDEDUIS"],
     ["bienestar","Bienestar Estudiantil"]
   ].forEach(([id,label]) => { add(id,label,vaX,y,vaW,rowH,"vacad",{group:"vacademica"}); y += rowH+gap; });
-  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",520,y,260,52,"bienestar",{group:"vacademica"}); y += 60;
-  add("alimentacion","Coordinación de Servicios\nde Alimentación",520,y,260,47,"bienestar",{group:"vacademica"}); y += 58;
-  add("consejo-sedes","Consejo de Sedes",500,y,300,43,"vacad",{group:"vacademica",style:"highlight"}); y += 53;
+  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",520,y,260,52,"bienestar",{group:"vacademica",style:"sublevel"}); y += 60;
+  add("alimentacion","Coordinación de Servicios\nde Alimentación",520,y,260,47,"bienestar",{group:"vacademica",style:"sublevel"}); y += 58;
+  add("consejo-sedes","Consejo de Sedes",500,y,300,43,"vacad",{group:"vacademica",style:"new"}); y += 53;
   [
     ["barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja"],
     ["malaga","Sede Málaga"],
     ["socorro","Sede Socorro"],
     ["barbosa","Sede Barbosa"]
-  ].forEach(([id,label]) => { add(id,label,520,y,260,45,"consejo-sedes",{group:"vacademica",style:"highlight"}); y += 53; });
+  ].forEach(([id,label]) => { add(id,label,520,y,260,45,"consejo-sedes",{group:"vacademica",style:"new"}); y += 53; });
 
   // =========================
   // Vicerrectoría Administrativa
@@ -121,7 +123,7 @@
     ["presupuesto","Sección de Presupuesto"],
     ["tesoreria","Sección de Tesorería"],
     ["contabilidad","Sección de Contabilidad"]
-  ].forEach(([id,label]) => { add(id,label,885,y,320,35,"financiera",{group:"administrativa"}); y += 42; });
+  ].forEach(([id,label]) => { add(id,label,885,y,320,35,"financiera",{group:"administrativa",style:"sublevel"}); y += 42; });
   [
     ["talento","División de Gestión de Talento Humano",43],
     ["contratacion","División de Contratación",43],
@@ -130,7 +132,7 @@
     ["mantenimiento","División de Mantenimiento Tecnológico",43],
     ["planta","División de Planta Física",43]
   ].forEach(([id,label,h]) => { add(id,label,adX,y,adW,h,"vadmin",{group:"administrativa"}); y += h+8; });
-  add("seguridad","Sección de Seguridad",885,y,320,35,"planta",{group:"administrativa"});
+  add("seguridad","Sección de Seguridad",885,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
 
   // =========================
   // Facultades
@@ -212,8 +214,18 @@
     ["pediatria","Departamento de Pediatría"],
     ["salud-mental","Departamento de Salud Mental"],
     ["salud-publica","Departamento de Salud Pública"]
-  ].forEach(([id,label]) => { add(id,label,1880,my,185,34,"medicina",{group:"facultades"}); my += 41; });
-  add("regencia","Regencia de farmacia",1700,1148,180,38,"fac-salud",{group:"facultades",style:"highlight"});
+  ].forEach(([id,label]) => { add(id,label,1880,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
+  add("regencia","Regencia de farmacia",1700,1148,180,38,"fac-salud",{group:"facultades",style:"new"});
+
+
+  // =========================
+  // Modelo interno de Escuela (recuadro informativo de la referencia)
+  // =========================
+  add("modelo-escuela-frame", "Modelo interno de Escuela", 1705, 65, 405, 215, null, {kind:"model-frame"});
+  add("modelo-direccion", "Dirección de\nEscuela", 1765, 128, 130, 54, null, {kind:"model-item", style:"sublevel"});
+  add("modelo-consejo", "Consejo de\nEscuela", 1940, 148, 110, 54, null, {kind:"model-item", style:"sublevel"});
+  add("modelo-personal", "Personal docente\ny administrativo", 1765, 202, 130, 64, null, {kind:"model-item", style:"sublevel"});
+
 
   const baseState = {
     nodes: baseNodes,
@@ -232,6 +244,7 @@
   const addBtn = $("#addBtn");
   const renameBtn = $("#renameBtn");
   const parentBtn = $("#parentBtn");
+  const linkBtn = $("#linkBtn");
   const deleteBtn = $("#deleteBtn");
   const doneBtn = $("#doneBtn");
   const expandBtn = $("#expandBtn");
@@ -240,29 +253,56 @@
 
   const dialog = $("#nodeDialog");
   const dialogTitle = $("#dialogTitle");
+  const labelWrap = $("#labelWrap");
   const labelInput = $("#labelInput");
   const parentWrap = $("#parentWrap");
+  const parentLabel = $("#parentLabel");
   const parentSelect = $("#parentSelect");
+  const relationWrap = $("#relationWrap");
   const relationSelect = $("#relationSelect");
+  const styleWrap = $("#styleWrap");
   const styleSelect = $("#styleSelect");
+  const anchorWrap = $("#anchorWrap");
+  const sourceSideSelect = $("#sourceSideSelect");
+  const targetSideSelect = $("#targetSideSelect");
+  const newNodeHint = $("#newNodeHint");
   const saveDialogBtn = $("#saveDialogBtn");
 
   let state = loadState();
   let editMode = false;
   let selectedId = null;
+  let selectedLinkChildId = null;
   let dialogMode = "add";
   let drag = null;
 
+  const PROTECTED_NODES = new Set([
+    "superior","rectoria","academico","vie","vacad","vadmin","facultades"
+  ]);
+
   function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  function normalizeState(parsed){
+    parsed.nodes.forEach(n => {
+      if(!n.relation) n.relation = "hierarchical";
+      if(!n.style) n.style = "normal";
+      if(!n.sourceSide) n.sourceSide = "auto";
+      if(!n.targetSide) n.targetSide = "auto";
+      if(typeof n.custom !== "boolean") n.custom = false;
+    });
+    parsed.collapsedNodes ||= {};
+    GROUPS.forEach(g => {
+      if(typeof parsed.expanded[g] !== "boolean") parsed.expanded[g] = false;
+    });
+    return parsed;
+  }
 
   function loadState(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
       if(!raw) return deepClone(baseState);
       const parsed = JSON.parse(raw);
-      // Keep saved nodes only for this version. If malformed, fall back safely.
       if(!Array.isArray(parsed.nodes) || !parsed.expanded) return deepClone(baseState);
-      return parsed;
+      return normalizeState(parsed);
     }catch(e){
       return deepClone(baseState);
     }
@@ -289,7 +329,7 @@
 
   function hasExpandableContent(node){
     if(GROUP_BY_CORE[node.id]) return true;
-    return childrenOf(node.id).some(isVisible) || childrenOf(node.id).length > 0;
+    return childrenOf(node.id).length > 0;
   }
 
   function isExpandedForNode(node){
@@ -300,19 +340,33 @@
 
   function nodeBranch(node){
     if(node.group && node.group !== "core") return node.group;
-    if(["vie"].includes(node.id)) return "investigacion";
-    if(["vacad"].includes(node.id)) return "vacademica";
-    if(["vadmin"].includes(node.id)) return "administrativa";
-    if(["facultades"].includes(node.id)) return "facultades";
-    if(["rectoria"].includes(node.id)) return "rectoria";
+    if(node.id === "vie") return "investigacion";
+    if(node.id === "vacad") return "vacademica";
+    if(node.id === "vadmin") return "administrativa";
+    if(node.id === "facultades") return "facultades";
+    if(node.id === "rectoria") return "rectoria";
     return "core";
   }
 
   function render(){
     nodesLayer.innerHTML = "";
+    canvas.classList.toggle("editing", editMode);
 
     state.nodes.forEach(node => {
       if(!isVisible(node)) return;
+
+      if(node.kind === "model-frame"){
+        const frame = document.createElement("div");
+        frame.className = "model-frame";
+        frame.style.left = node.x + "px";
+        frame.style.top = node.y + "px";
+        frame.style.width = node.w + "px";
+        frame.style.height = node.h + "px";
+        frame.textContent = node.label;
+        nodesLayer.appendChild(frame);
+        return;
+      }
+
       const el = document.createElement("button");
       el.type = "button";
       el.className = "org-node";
@@ -326,7 +380,9 @@
       if(branchClass[branch]) el.classList.add(branchClass[branch]);
       if(node.kind === "main") el.classList.add("main", node.css || "dark");
       if(node.kind === "faculty-header") el.classList.add("faculty-header");
-      if(node.style === "highlight") el.classList.add("highlight");
+      if(node.kind === "model-item") el.classList.add("model-item");
+      if(node.style === "sublevel") el.classList.add("sublevel");
+      if(node.style === "new") el.classList.add("new-node");
       if(node.relation === "advisory") el.classList.add("advisory");
       if(selectedId === node.id) el.classList.add("selected");
       if(editMode) el.classList.add("editable");
@@ -353,7 +409,11 @@
         selectNode(node.id);
         openRename();
       });
-      el.addEventListener("pointerdown", ev => startDrag(ev,node,el));
+
+      if(node.kind !== "model-item" || editMode){
+        el.addEventListener("pointerdown", ev => startDrag(ev,node,el));
+      }
+
       nodesLayer.appendChild(el);
     });
 
@@ -364,10 +424,12 @@
 
   function onNodeClick(ev,node){
     ev.stopPropagation();
+
     if(editMode){
       selectNode(node.id);
       return;
     }
+
     const group = GROUP_BY_CORE[node.id];
     if(group){
       state.expanded[group] = !state.expanded[group];
@@ -375,6 +437,7 @@
       render();
       return;
     }
+
     if(childrenOf(node.id).length){
       state.collapsedNodes[node.id] = !state.collapsedNodes[node.id];
       saveState();
@@ -384,21 +447,33 @@
 
   function selectNode(id){
     selectedId = id;
-    document.querySelectorAll(".org-node").forEach(el => el.classList.toggle("selected",el.dataset.id === id));
-    updateEditButtons();
+    selectedLinkChildId = null;
+    render();
+  }
+
+  function selectLink(childId){
+    if(!editMode) return;
+    selectedId = null;
+    selectedLinkChildId = childId;
+    render();
   }
 
   function updateEditButtons(){
-    const disabled = !selectedId;
-    renameBtn.disabled = disabled;
-    parentBtn.disabled = disabled || ["superior","rectoria","academico"].includes(selectedId);
-    deleteBtn.disabled = disabled || ["superior","rectoria","academico","vie","vacad","vadmin","facultades"].includes(selectedId);
+    const node = selectedId ? byId(selectedId) : null;
+    const hasNode = !!node;
+    const hasEditableLink = !!selectedLinkChildId || !!(node && node.parent);
+
+    renameBtn.disabled = !hasNode;
+    parentBtn.disabled = !hasNode || !node.parent || PROTECTED_NODES.has(node.id);
+    linkBtn.disabled = !hasEditableLink;
+    deleteBtn.disabled = !hasNode || PROTECTED_NODES.has(node.id);
   }
 
   function startDrag(ev,node,el){
     if(!editMode || ev.button !== 0) return;
     ev.preventDefault();
-    selectNode(node.id);
+    selectNodeWithoutRender(node.id);
+
     const rect = canvas.getBoundingClientRect();
     drag = {
       id:node.id,
@@ -409,23 +484,41 @@
       startY:node.y,
       canvasScale:rect.width / CANVAS_WIDTH
     };
+
     el.setPointerCapture(ev.pointerId);
     el.addEventListener("pointermove", moveDrag);
     el.addEventListener("pointerup", endDrag, {once:true});
     el.addEventListener("pointercancel", endDrag, {once:true});
   }
 
+  function selectNodeWithoutRender(id){
+    selectedId = id;
+    selectedLinkChildId = null;
+    document.querySelectorAll(".org-node").forEach(el => {
+      el.classList.toggle("selected",el.dataset.id === id);
+    });
+    drawConnections();
+    updateEditButtons();
+  }
+
   function moveDrag(ev){
     if(!drag || ev.pointerId !== drag.pointerId) return;
     const node = byId(drag.id);
     if(!node) return;
+
     const scale = drag.canvasScale || 1;
     const dx = (ev.clientX - drag.startClientX)/scale;
     const dy = (ev.clientY - drag.startClientY)/scale;
+
     node.x = Math.max(5, Math.round((drag.startX + dx)/GRID)*GRID);
     node.y = Math.max(5, Math.round((drag.startY + dy)/GRID)*GRID);
+
     const el = document.querySelector(`.org-node[data-id="${CSS.escape(node.id)}"]`);
-    if(el){ el.style.left=node.x+"px"; el.style.top=node.y+"px"; }
+    if(el){
+      el.style.left=node.x+"px";
+      el.style.top=node.y+"px";
+    }
+
     resizeCanvas();
     drawConnections();
   }
@@ -441,31 +534,83 @@
   }
 
   function nodeRect(node){
-    return {x:node.x,y:node.y,w:node.w,h:node.h,cx:node.x+node.w/2,cy:node.y+node.h/2};
+    return {
+      x:node.x, y:node.y, w:node.w, h:node.h,
+      cx:node.x+node.w/2, cy:node.y+node.h/2
+    };
+  }
+
+  function resolveAutoSides(parent, child, sourceSide, targetSide){
+    const p=nodeRect(parent), c=nodeRect(child);
+    const dx=c.cx-p.cx, dy=c.cy-p.cy;
+
+    if(sourceSide === "auto" && targetSide === "auto"){
+      if(Math.abs(dx) > Math.abs(dy)*1.25){
+        return dx >= 0
+          ? {source:"right", target:"left"}
+          : {source:"left", target:"right"};
+      }
+      return dy >= 0
+        ? {source:"bottom", target:"top"}
+        : {source:"top", target:"bottom"};
+    }
+
+    const opposite = {top:"bottom",bottom:"top",left:"right",right:"left"};
+
+    if(sourceSide === "auto"){
+      if(targetSide !== "auto") sourceSide = opposite[targetSide];
+      else sourceSide = dy >= 0 ? "bottom" : "top";
+    }
+
+    if(targetSide === "auto"){
+      targetSide = opposite[sourceSide] || (dy >= 0 ? "top" : "bottom");
+    }
+
+    return {source:sourceSide, target:targetSide};
+  }
+
+  function anchorPoint(rect, side){
+    if(side === "top") return {x:rect.cx, y:rect.y};
+    if(side === "bottom") return {x:rect.cx, y:rect.y+rect.h};
+    if(side === "left") return {x:rect.x, y:rect.cy};
+    return {x:rect.x+rect.w, y:rect.cy}; // right
   }
 
   function pathFor(parent, child){
     const p=nodeRect(parent), c=nodeRect(child);
-    const dx=c.cx-p.cx, dy=c.cy-p.cy;
-    if(Math.abs(dx) > Math.abs(dy)*1.25){
-      const goRight = dx>0;
-      const x1 = goRight ? p.x+p.w : p.x;
-      const y1 = p.cy;
-      const x2 = goRight ? c.x : c.x+c.w;
-      const y2 = c.cy;
-      const mid = x1 + (x2-x1)*0.52;
-      return `M ${x1} ${y1} H ${mid} V ${y2} H ${x2}`;
+    const sides = resolveAutoSides(
+      parent,
+      child,
+      child.sourceSide || "auto",
+      child.targetSide || "auto"
+    );
+
+    const a = anchorPoint(p, sides.source);
+    const b = anchorPoint(c, sides.target);
+    const sourceHorizontal = ["left","right"].includes(sides.source);
+    const targetHorizontal = ["left","right"].includes(sides.target);
+
+    if(sourceHorizontal && targetHorizontal){
+      const midX = a.x + (b.x-a.x)*0.5;
+      return `M ${a.x} ${a.y} H ${midX} V ${b.y} H ${b.x}`;
     }
-    const downward = dy>=0;
-    const x1=p.cx, y1=downward ? p.y+p.h : p.y;
-    const x2=c.cx, y2=downward ? c.y : c.y+c.h;
-    const mid=y1+(y2-y1)*0.5;
-    return `M ${x1} ${y1} V ${mid} H ${x2} V ${y2}`;
+
+    if(!sourceHorizontal && !targetHorizontal){
+      const midY = a.y + (b.y-a.y)*0.5;
+      return `M ${a.x} ${a.y} V ${midY} H ${b.x} V ${b.y}`;
+    }
+
+    if(sourceHorizontal){
+      return `M ${a.x} ${a.y} H ${b.x} V ${b.y}`;
+    }
+
+    return `M ${a.x} ${a.y} V ${b.y} H ${b.x}`;
   }
 
   function drawConnections(){
     const visibleIds = new Set(state.nodes.filter(isVisible).map(n=>n.id));
     const height = parseFloat(canvas.style.height) || canvas.clientHeight || 650;
+
     svg.setAttribute("viewBox",`0 0 ${CANVAS_WIDTH} ${height}`);
     svg.innerHTML="";
 
@@ -473,13 +618,41 @@
       if(!visibleIds.has(node.id) || !node.parent || !visibleIds.has(node.parent)) return;
       const parent=byId(node.parent);
       if(!parent) return;
+
+      const d = pathFor(parent,node);
+
+      // Línea invisible más ancha para que sea fácil seleccionarla con el mouse.
+      const hit=document.createElementNS("http://www.w3.org/2000/svg","path");
+      hit.setAttribute("d",d);
+      hit.setAttribute("class","connector-hit");
+      hit.dataset.childId=node.id;
+      hit.addEventListener("click",ev=>{
+        if(!editMode) return;
+        ev.stopPropagation();
+        selectLink(node.id);
+      });
+      svg.appendChild(hit);
+
       const path=document.createElementNS("http://www.w3.org/2000/svg","path");
-      path.setAttribute("d",pathFor(parent,node));
+      path.setAttribute("d",d);
+
       let cls="connector";
       if(node.relation==="advisory") cls += " advisory";
-      const br=nodeBranch(node);
-      if(connectionBranchClass[br]) cls += " "+connectionBranchClass[br];
+
+      // Las líneas que bajan desde Consejo Académico conservan el verde institucional.
+      // El color de rama se aplica en los niveles internos.
+      if(node.group !== "core"){
+        const br=nodeBranch(node);
+        if(connectionBranchClass[br]) cls += " "+connectionBranchClass[br];
+      }
+
+      if(selectedLinkChildId === node.id) cls += " selected-link";
       path.setAttribute("class",cls);
+
+      const title=document.createElementNS("http://www.w3.org/2000/svg","title");
+      title.textContent=`${parent.label.replaceAll("\n"," ")} → ${node.label.replaceAll("\n"," ")}`;
+      path.appendChild(title);
+
       svg.appendChild(path);
     });
   }
@@ -488,7 +661,7 @@
     const visible = state.nodes.filter(isVisible);
     let maxY=610;
     visible.forEach(n => maxY=Math.max(maxY,n.y+n.h+70));
-    canvas.style.height=Math.min(Math.max(maxY,650),1550)+"px";
+    canvas.style.height=Math.min(Math.max(maxY,650),1600)+"px";
   }
 
   function setEditMode(value){
@@ -496,20 +669,29 @@
     editBar.classList.toggle("is-hidden",!value);
     editBtn.classList.toggle("active",value);
     editBtn.textContent=value?"✓ Editando":"✎ Editar organigrama";
-    if(!value) selectedId=null;
+
+    if(!value){
+      selectedId=null;
+      selectedLinkChildId=null;
+    }
+
     render();
   }
 
   function fillParents(excludeId=null){
     parentSelect.innerHTML="";
-    state.nodes.forEach(n=>{
-      if(n.id===excludeId) return;
-      if(excludeId && isDescendant(excludeId,n.id)) return;
-      const option=document.createElement("option");
-      option.value=n.id;
-      option.textContent=n.label.replaceAll("\n"," ");
-      parentSelect.appendChild(option);
-    });
+
+    state.nodes
+      .filter(n => n.kind !== "model-frame")
+      .forEach(n=>{
+        if(n.id===excludeId) return;
+        if(excludeId && isDescendant(excludeId,n.id)) return;
+
+        const option=document.createElement("option");
+        option.value=n.id;
+        option.textContent=n.label.replaceAll("\n"," ");
+        parentSelect.appendChild(option);
+      });
   }
 
   function isDescendant(ancestorId, candidateId){
@@ -527,59 +709,122 @@
     return GROUP_BY_CORE[parent.id] || "core";
   }
 
+  function setDialogVisibility({
+    label=true,
+    parent=true,
+    style=true,
+    relation=true,
+    anchors=false,
+    newHint=false
+  }={}){
+    labelWrap.classList.toggle("is-hidden",!label);
+    parentWrap.classList.toggle("is-hidden",!parent);
+    styleWrap.classList.toggle("is-hidden",!style);
+    relationWrap.classList.toggle("is-hidden",!relation);
+    anchorWrap.classList.toggle("is-hidden",!anchors);
+    newNodeHint.classList.toggle("is-hidden",!newHint);
+  }
+
   function openAdd(){
     dialogMode="add";
     dialogTitle.textContent="Agregar nueva casilla";
+    parentLabel.textContent="Depende de";
+    setDialogVisibility({label:true,parent:true,style:false,relation:true,anchors:true,newHint:true});
+
     labelInput.value="";
-    parentWrap.classList.remove("is-hidden");
     fillParents();
     parentSelect.value=selectedId || "academico";
     relationSelect.value="hierarchical";
-    styleSelect.value="normal";
+    styleSelect.value="new";
+    sourceSideSelect.value="auto";
+    targetSideSelect.value="auto";
+
     dialog.showModal();
     setTimeout(()=>labelInput.focus(),30);
   }
 
   function openRename(){
     if(!selectedId) return;
-    const node=byId(selectedId); if(!node) return;
+    const node=byId(selectedId);
+    if(!node) return;
+
     dialogMode="rename";
-    dialogTitle.textContent="Renombrar / editar casilla";
+    dialogTitle.textContent="Editar casilla";
+    parentLabel.textContent="Depende de";
+    setDialogVisibility({label:true,parent:false,style:true,relation:true,anchors:false,newHint:false});
+
     labelInput.value=node.label.replaceAll("\n"," ");
-    parentWrap.classList.add("is-hidden");
     relationSelect.value=node.relation || "hierarchical";
     styleSelect.value=node.style || "normal";
+
     dialog.showModal();
     setTimeout(()=>labelInput.select(),30);
   }
 
   function openChangeParent(){
     if(!selectedId) return;
-    const node=byId(selectedId); if(!node) return;
+    const node=byId(selectedId);
+    if(!node || !node.parent) return;
+
     dialogMode="parent";
     dialogTitle.textContent="Cambiar dependencia";
+    parentLabel.textContent="Depende de";
+    setDialogVisibility({label:true,parent:true,style:true,relation:true,anchors:true,newHint:false});
+
     labelInput.value=node.label.replaceAll("\n"," ");
-    parentWrap.classList.remove("is-hidden");
     fillParents(selectedId);
-    parentSelect.value=node.parent || "academico";
+    parentSelect.value=node.parent;
     relationSelect.value=node.relation || "hierarchical";
     styleSelect.value=node.style || "normal";
+    sourceSideSelect.value=node.sourceSide || "auto";
+    targetSideSelect.value=node.targetSide || "auto";
+
+    dialog.showModal();
+  }
+
+  function openEditLink(){
+    const childId = selectedLinkChildId || (selectedId && byId(selectedId)?.parent ? selectedId : null);
+    if(!childId) return;
+
+    const node=byId(childId);
+    if(!node || !node.parent) return;
+
+    selectedLinkChildId = childId;
+    selectedId = null;
+
+    dialogMode="link";
+    dialogTitle.textContent="Editar enlace";
+    parentLabel.textContent="La línea viene de";
+    setDialogVisibility({label:false,parent:true,style:false,relation:true,anchors:true,newHint:false});
+
+    // Se conserva el valor aunque el campo esté oculto.
+    labelInput.value=node.label.replaceAll("\n"," ");
+    fillParents(node.id);
+    parentSelect.value=node.parent;
+    relationSelect.value=node.relation || "hierarchical";
+    sourceSideSelect.value=node.sourceSide || "auto";
+    targetSideSelect.value=node.targetSide || "auto";
+
     dialog.showModal();
   }
 
   function saveDialog(){
-    const label=labelInput.value.trim();
-    if(!label){labelInput.focus();return;}
-    const cleanLabel=label.replace(/\s*\n\s*/g," ");
+    let node = selectedId ? byId(selectedId) : null;
+    const cleanLabel=labelInput.value.trim().replace(/\s*\n\s*/g," ");
 
     if(dialogMode==="add"){
+      if(!cleanLabel){labelInput.focus();return;}
+
       const parent=byId(parentSelect.value);
       if(!parent) return;
+
       const id="custom-"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
       const group=inheritedGroup(parent);
       if(group!=="core") state.expanded[group]=true;
+
       const siblings=childrenOf(parent.id);
       const offset=siblings.length*18;
+
       state.nodes.push({
         id,
         label:cleanLabel,
@@ -591,25 +836,57 @@
         group,
         kind:"normal",
         relation:relationSelect.value,
-        style:styleSelect.value,
+        style:"new",             // Todo elemento recién creado queda amarillo
+        sourceSide:sourceSideSelect.value,
+        targetSide:targetSideSelect.value,
         css:"",
         custom:true
       });
+
       selectedId=id;
-    }else{
-      const node=byId(selectedId); if(!node) return;
+      selectedLinkChildId=null;
+    }
+
+    else if(dialogMode==="rename"){
+      if(!node || !cleanLabel){labelInput.focus();return;}
       node.label=cleanLabel;
       node.relation=relationSelect.value;
       node.style=styleSelect.value;
-      if(dialogMode==="parent"){
-        const newParent=byId(parentSelect.value);
-        if(newParent){
-          node.parent=newParent.id;
-          node.group=inheritedGroup(newParent);
-          if(node.group!=="core") state.expanded[node.group]=true;
-        }
-      }
     }
+
+    else if(dialogMode==="parent"){
+      if(!node || !cleanLabel){labelInput.focus();return;}
+      const newParent=byId(parentSelect.value);
+      if(!newParent) return;
+
+      node.label=cleanLabel;
+      node.parent=newParent.id;
+      node.group=inheritedGroup(newParent);
+      node.relation=relationSelect.value;
+      node.style=styleSelect.value;
+      node.sourceSide=sourceSideSelect.value;
+      node.targetSide=targetSideSelect.value;
+
+      if(node.group!=="core") state.expanded[node.group]=true;
+    }
+
+    else if(dialogMode==="link"){
+      const childId = selectedLinkChildId;
+      node = byId(childId);
+      if(!node) return;
+
+      const newParent=byId(parentSelect.value);
+      if(!newParent) return;
+
+      node.parent=newParent.id;
+      node.group=inheritedGroup(newParent);
+      node.relation=relationSelect.value;
+      node.sourceSide=sourceSideSelect.value;
+      node.targetSide=targetSideSelect.value;
+
+      if(node.group!=="core") state.expanded[node.group]=true;
+    }
+
     saveState();
     dialog.close();
     render();
@@ -617,15 +894,23 @@
 
   function deleteSelected(){
     if(!selectedId) return;
-    const node=byId(selectedId); if(!node) return;
+    const node=byId(selectedId);
+    if(!node) return;
+
     const descendants=[];
     const collect=id=>childrenOf(id).forEach(ch=>{descendants.push(ch.id);collect(ch.id)});
     collect(node.id);
-    const extra=descendants.length?`\nTambién se eliminarán ${descendants.length} casilla(s) dependiente(s).`:"";
+
+    const extra=descendants.length
+      ? `\nTambién se eliminarán ${descendants.length} casilla(s) dependiente(s).`
+      : "";
+
     if(!confirm(`¿Eliminar “${node.label.replaceAll("\n"," ")}”?${extra}`)) return;
+
     const remove=new Set([selectedId,...descendants]);
     state.nodes=state.nodes.filter(n=>!remove.has(n.id));
     selectedId=null;
+    selectedLinkChildId=null;
     saveState();
     render();
   }
@@ -635,49 +920,76 @@
   addBtn.addEventListener("click",openAdd);
   renameBtn.addEventListener("click",openRename);
   parentBtn.addEventListener("click",openChangeParent);
+  linkBtn.addEventListener("click",openEditLink);
   deleteBtn.addEventListener("click",deleteSelected);
   saveDialogBtn.addEventListener("click",saveDialog);
 
   expandBtn.addEventListener("click",()=>{
     GROUPS.forEach(g=>state.expanded[g]=true);
     state.collapsedNodes={};
-    saveState();render();
+    saveState();
+    render();
   });
+
   collapseBtn.addEventListener("click",()=>{
     GROUPS.forEach(g=>state.expanded[g]=false);
     state.collapsedNodes={};
     selectedId=null;
-    saveState();render();
+    selectedLinkChildId=null;
+    saveState();
+    render();
   });
+
   resetBtn.addEventListener("click",()=>{
-    if(!confirm("¿Restablecer el organigrama a la distribución inicial? Se eliminarán las casillas y movimientos guardados.")) return;
+    if(!confirm("¿Restablecer el organigrama a la distribución inicial? Se eliminarán las casillas, enlaces y movimientos guardados.")) return;
+
     state=deepClone(baseState);
     selectedId=null;
+    selectedLinkChildId=null;
     localStorage.removeItem(STORAGE_KEY);
     render();
   });
 
-  nodesLayer.addEventListener("click",()=>{
-    if(editMode){selectedId=null;render();}
+  canvas.addEventListener("click",()=>{
+    if(editMode){
+      selectedId=null;
+      selectedLinkChildId=null;
+      render();
+    }
   });
 
   window.addEventListener("resize",drawConnections);
 
-  // Nudge with keyboard arrows while editing.
+  // Mover con flechas del teclado mientras se edita.
   window.addEventListener("keydown",ev=>{
-    if(!editMode || !selectedId || ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)) return;
-    const node=byId(selectedId); if(!node) return;
+    if(
+      !editMode ||
+      !selectedId ||
+      ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)
+    ) return;
+
+    const node=byId(selectedId);
+    if(!node) return;
+
     const step=ev.shiftKey?20:5;
     let moved=true;
+
     if(ev.key==="ArrowLeft") node.x=Math.max(5,node.x-step);
     else if(ev.key==="ArrowRight") node.x+=step;
     else if(ev.key==="ArrowUp") node.y=Math.max(5,node.y-step);
     else if(ev.key==="ArrowDown") node.y+=step;
     else moved=false;
-    if(moved){ev.preventDefault();saveState();render();}
+
+    if(moved){
+      ev.preventDefault();
+      saveState();
+      render();
+    }
   });
 
   render();
-  // Position initial viewport around the institutional center, without hiding the left branch.
-  requestAnimationFrame(()=>{ shell.scrollLeft=Math.max(0,(CANVAS_WIDTH-shell.clientWidth)/2-120); });
+
+  requestAnimationFrame(()=>{
+    shell.scrollLeft=Math.max(0,(CANVAS_WIDTH-shell.clientWidth)/2-120);
+  });
 })();

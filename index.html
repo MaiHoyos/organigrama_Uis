@@ -23,12 +23,13 @@
   <section id="editBar" class="edit-bar is-hidden" aria-label="Herramientas de edición">
     <div class="edit-bar-left">
       <strong>Modo edición</strong>
-      <span class="edit-help">Arrastra cualquier casilla para moverla. Las líneas se ajustan automáticamente.</span>
+      <span class="edit-help">Arrastra casillas para moverlas. También puedes hacer clic sobre una línea para editar de qué casilla sale y por qué lado se conecta.</span>
     </div>
     <div class="edit-actions">
       <button id="addBtn" class="btn primary">＋ Agregar casilla</button>
       <button id="renameBtn" class="btn" disabled>Renombrar</button>
       <button id="parentBtn" class="btn" disabled>Cambiar dependencia</button>
+      <button id="linkBtn" class="btn" disabled>Editar enlace</button>
       <button id="deleteBtn" class="btn danger" disabled>Eliminar</button>
       <button id="doneBtn" class="btn primary">✓ Terminar edición</button>
     </div>
@@ -46,7 +47,7 @@
       <div class="legend">
         <div><span class="legend-line"></span><span>Relación jerárquica</span></div>
         <div><span class="legend-line dotted"></span><span>Relación de asesoría o apoyo</span></div>
-        <div><span class="legend-yellow"></span><span>Unidad / sede destacada</span></div>
+        <div><span class="legend-yellow"></span><span>Elemento nuevo / en incorporación</span></div>
       </div>
       <div class="save-note"><span></span>Los cambios se guardan automáticamente en este navegador.</div>
     </div>
@@ -60,18 +61,22 @@
       </div>
 
       <div class="dialog-body">
-        <label>
+        <label id="labelWrap">
           Texto de la casilla
           <textarea id="labelInput" rows="3" required></textarea>
         </label>
 
         <label id="parentWrap">
-          Depende de
+          <span id="parentLabel">Depende de</span>
           <select id="parentSelect"></select>
         </label>
 
+        <div id="newNodeHint" class="new-node-hint is-hidden">
+          Las casillas nuevas se crean automáticamente en amarillo para identificarlas como elementos nuevos.
+        </div>
+
         <div class="two-cols">
-          <label>
+          <label id="relationWrap">
             Tipo de relación
             <select id="relationSelect">
               <option value="hierarchical">Jerárquica</option>
@@ -79,11 +84,36 @@
             </select>
           </label>
 
-          <label>
-            Estilo de casilla
+          <label id="styleWrap">
+            Apariencia de la casilla
             <select id="styleSelect">
-              <option value="normal">Normal</option>
-              <option value="highlight">Destacada (amarillo)</option>
+              <option value="normal">Nivel normal</option>
+              <option value="sublevel">Subnivel (fondo blanco)</option>
+              <option value="new">Nuevo (amarillo)</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="anchorWrap" class="two-cols is-hidden">
+          <label>
+            La línea sale del origen por
+            <select id="sourceSideSelect">
+              <option value="auto">Automático</option>
+              <option value="top">Arriba</option>
+              <option value="right">Derecha</option>
+              <option value="bottom">Abajo</option>
+              <option value="left">Izquierda</option>
+            </select>
+          </label>
+
+          <label>
+            La línea entra al destino por
+            <select id="targetSideSelect">
+              <option value="auto">Automático</option>
+              <option value="top">Arriba</option>
+              <option value="right">Derecha</option>
+              <option value="bottom">Abajo</option>
+              <option value="left">Izquierda</option>
             </select>
           </label>
         </div>

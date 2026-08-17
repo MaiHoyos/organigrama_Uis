@@ -104,14 +104,31 @@ main{padding:0 24px 30px}
   transition:height .22s ease;
 }
 .connections,.nodes-layer{position:absolute;inset:0;width:100%;height:100%}
-.connections{overflow:visible;pointer-events:none;z-index:1}
-.nodes-layer{z-index:2}
+.connections{overflow:visible;pointer-events:auto;z-index:1}
+.nodes-layer{z-index:2;pointer-events:none}
 
 .connector{
   fill:none;
   stroke:var(--line);
   stroke-width:1.6;
   vector-effect:non-scaling-stroke;
+  pointer-events:none;
+}
+.connector-hit{
+  fill:none;
+  stroke:transparent;
+  stroke-width:15;
+  vector-effect:non-scaling-stroke;
+  pointer-events:stroke;
+  cursor:pointer;
+}
+.org-canvas:not(.editing) .connector-hit{
+  pointer-events:none;
+  cursor:default;
+}
+.connector.selected-link{
+  stroke-width:4;
+  filter:drop-shadow(0 0 3px rgba(7,94,38,.45));
 }
 .connector.advisory{stroke-dasharray:4 4;stroke-width:1.7}
 .connector.branch-turq{stroke:var(--turq)}
@@ -121,6 +138,8 @@ main{padding:0 24px 30px}
 
 .org-node{
   position:absolute;
+  pointer-events:auto;
+  z-index:1;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -165,7 +184,8 @@ main{padding:0 24px 30px}
 .org-node.branch-blue{--node-border:#8bbbe0;--node-bg:#eef6fc}
 .org-node.branch-admin{--node-border:#9ac99a;--node-bg:#f1f8f1}
 .org-node.branch-purple{--node-border:#c1a1d9;--node-bg:#fbf6fd}
-.org-node.highlight{--node-bg:var(--yellow);--node-border:#d6b749;color:#4b421d}
+.org-node.sublevel{--node-bg:#fff;color:#333}
+.org-node.new-node{--node-bg:var(--yellow);--node-border:#d6b749;color:#4b421d}
 .org-node.advisory{border-style:dashed}
 .org-node.selected{
   outline:3px solid rgba(7,94,38,.23);
@@ -202,6 +222,37 @@ main{padding:0 24px 30px}
 }
 .org-node.main .toggle-badge{color:#31523a}
 .org-node .label{pointer-events:none}
+
+
+.model-frame{
+  position:absolute;
+  border:1.4px solid #b9b9b9;
+  border-radius:34px;
+  background:#f4f4f4;
+  z-index:0;
+  color:#5b5b5b;
+  font-weight:800;
+  font-size:18px;
+  text-align:center;
+  padding-top:14px;
+  pointer-events:none;
+}
+.org-node.model-item{
+  --node-bg:#fff;
+  --node-border:#8d8d8d;
+  font-weight:700;
+  color:#333;
+}
+.new-node-hint{
+  margin:12px 20px 4px;
+  padding:10px 12px;
+  border:1px solid #dec76b;
+  border-radius:9px;
+  background:#fff7c9;
+  color:#5d5120;
+  font-size:13px;
+  font-weight:650;
+}
 
 .footer-row{
   display:flex;
