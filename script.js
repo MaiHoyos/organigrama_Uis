@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 9;
+  const SCHEMA_VERSION = 10;
   const CANVAS_WIDTH = 2800;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -249,6 +249,29 @@
     ["admin-finanzas","Escuela de Administración\ny Finanzas",46]
   ]);
 
+  // NUEVO: Escuela de Música (amarillo) y el programa Artes Plásticas (blanco)
+  add("musica", "Escuela de Música", fx[1], 1118, fw, 44, "fac-humanas", {
+    group:"facultades",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  add("artes-plasticas", "Artes Plásticas", fx[1], 1174, fw, 38, "musica", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  // NUEVO: programa adscrito a Derecho
+  add("gestion-judicial", "Tecnología en Gestión Judicial\ne Investigación Criminal", fx[1], 1224, fw, 54, "derecho", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
   addFacultyList("fac-ingenierias", fx[2], [
     ["fi-consejo","Consejo de Facultad"],
     ["diseno","Escuela de Diseño\nIndustrial",44],
@@ -295,6 +318,29 @@
     targetSide:"top"
   });
   add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700 + FACULTY_SHIFT, 1354, 165, 58, "habitat-territorio", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  // NUEVO: programas adscritos a la Escuela de Estudios Industriales y Empresariales
+  add("tecnologia-empresarial", "Tecnología Empresarial", 1680 + FACULTY_SHIFT, 1428, fw, 40, "industriales", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  add("gestion-empresarial", "Gestión Empresarial", 1680 + FACULTY_SHIFT, 1476, fw, 40, "industriales", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  // NUEVO: programa adscrito a la Escuela de Ingeniería de Sistemas e Informática
+  add("inteligencia-artificial", "Ingeniería en Inteligencia Artificial", 1680 + FACULTY_SHIFT, 1524, fw, 46, "sistemas", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
@@ -387,7 +433,7 @@
     ["salud-mental","Departamento de Salud Mental"],
     ["salud-publica","Departamento de Salud Pública"]
   ].forEach(([id,label]) => { add(id,label,1880 + FACULTY_SHIFT,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
-  add("regencia","Regencia de farmacia",1880 + FACULTY_SHIFT,1215,185,38,"fac-salud",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  add("regencia","Tecnología en Regencia de Farmacia",1880 + FACULTY_SHIFT,1215,205,40,"fac-salud",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
 
 
   // =========================
@@ -611,12 +657,31 @@
       if(n) n.style = "sublevel";
     });
 
+    // V10: nuevas incorporaciones derivadas de los mensajes.
+    const musica = get("musica");
+    if(musica) musica.style = "new";
+
+    const regencia = get("regencia");
+    if(regencia){
+      regencia.label = "Tecnología en Regencia de Farmacia";
+      regencia.style = "sublevel";
+      regencia.w = 205;
+      regencia.h = 40;
+      regencia.parent = "fac-salud";
+      regencia.group = "facultades";
+      regencia.sourceSide = "bottom";
+      regencia.targetSide = "top";
+    }
+
     [
       "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
       "programas-agroindustrial","tecnico-produccion-agropecuaria",
       "tecnologia-agroindustrial","administracion-agroindustrial",
       "alimentos","ing-construccion","arquitectura",
-      "admin-turistica-hotelera"
+      "admin-turistica-hotelera","artes-plasticas",
+      "gestion-judicial","tecnologia-empresarial",
+      "gestion-empresarial","inteligencia-artificial",
+      "regencia"
     ].forEach(id => {
       const n = get(id);
       if(n) n.style = "sublevel";
