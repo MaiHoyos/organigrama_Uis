@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 10;
+  const SCHEMA_VERSION = 11;
   const CANVAS_WIDTH = 2800;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -239,6 +239,8 @@
     ["lenguas","Instituto de Lenguas"],
     ["artes","Escuela de Artes"],
     ["derecho","Escuela de Derecho y\nCiencia Política",46],
+    // Debe verse inmediatamente debajo de Derecho.
+    ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"sublevel","derecho"],
     ["economia","Escuela de Economía\ny Administración",46],
     ["educacion","Escuela de Educación"],
     ["historia","Escuela de Historia"],
@@ -246,31 +248,12 @@
     ["trabajo-social","Escuela de Trabajo Social"],
     ["filosofia","Escuela de Filosofía"],
     ["deportes","Departamento de Educación\nFísica y Deportes",46],
-    ["admin-finanzas","Escuela de Administración\ny Finanzas",46]
+    ["admin-finanzas","Escuela de Administración\ny Finanzas",46],
+    // Unidad nueva: amarilla.
+    ["musica","Escuela de Música",44,"new","fac-humanas"],
+    // Subnivel de Música: blanco.
+    ["artes-plasticas","Artes Plásticas",40,"sublevel","musica"]
   ]);
-
-  // NUEVO: Escuela de Música (amarillo) y el programa Artes Plásticas (blanco)
-  add("musica", "Escuela de Música", fx[1], 1118, fw, 44, "fac-humanas", {
-    group:"facultades",
-    style:"new",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  add("artes-plasticas", "Artes Plásticas", fx[1], 1174, fw, 38, "musica", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  // NUEVO: programa adscrito a Derecho
-  add("gestion-judicial", "Tecnología en Gestión Judicial\ne Investigación Criminal", fx[1], 1224, fw, 54, "derecho", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
 
   addFacultyList("fac-ingenierias", fx[2], [
     ["fi-consejo","Consejo de Facultad"],
@@ -278,26 +261,23 @@
     ["civil","Escuela de Ingeniería\nCivil",44],
     ["electrica","Escuela de Ingeniería Eléctrica,\nElectrónica y Telecomunicaciones",54],
     ["industriales","Escuela de Estudios Industriales\ny Empresariales",50],
+    // Ambos programas van inmediatamente debajo de Industriales.
+    ["tecnologia-empresarial","Tecnología Empresarial",40,"sublevel","industriales"],
+    ["gestion-empresarial","Gestión Empresarial",40,"sublevel","industriales"],
     ["mecanica","Escuela de Ingeniería\nMecánica",44],
     ["sistemas","Escuela de Ingeniería de\nSistemas e Informática",50],
+    // IA debe quedar justo debajo de Sistemas.
+    ["inteligencia-artificial","Ingeniería en Inteligencia Artificial",46,"sublevel","sistemas"],
     ["geologia","Escuela de Geología"],
     ["metalurgica","Escuela de Ingeniería Metalúrgica\ny Ciencia de los Materiales",54],
     ["petroleos","Escuela de Ingeniería de Petróleos",44],
-    ["ing-quimica","Escuela de Ingeniería Química",44]
+    ["ing-quimica","Escuela de Ingeniería Química",44],
+    // Ingeniería en Alimentos justo debajo de Ingeniería Química.
+    ["alimentos","Ing. en Alimentos",40,"sublevel","ing-quimica"]
   ]);
 
-  // NUEVO dentro de Facultad de Ingenierías:
-  // Ingeniería en Alimentos depende de Escuela de Ingeniería Química,
-  // por lo tanto se presenta en blanco.
-  add("alimentos", "Ing. en Alimentos", 1700 + FACULTY_SHIFT, 1131, 165, 40, "ing-quimica", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
   // NUEVO: Escuela de Hábitat y Territorio (amarilla).
-  add("habitat-territorio", "Escuela de Hábitat\ny Territorio", 1680 + FACULTY_SHIFT, 1185, fw, 50, "fac-ingenierias", {
+  add("habitat-territorio", "Escuela de Hábitat\ny Territorio", 1680 + FACULTY_SHIFT, 1350, fw, 50, "fac-ingenierias", {
     group:"facultades",
     style:"new",
     sourceSide:"bottom",
@@ -305,42 +285,19 @@
   });
 
   // Programas dependientes de Hábitat y Territorio: blancos.
-  add("ing-construccion", "Ing. Construcción", 1700 + FACULTY_SHIFT, 1248, 165, 40, "habitat-territorio", {
+  add("ing-construccion", "Ing. Construcción", 1700 + FACULTY_SHIFT, 1412, 165, 40, "habitat-territorio", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
     targetSide:"top"
   });
-  add("arquitectura", "Arquitectura", 1700 + FACULTY_SHIFT, 1301, 165, 40, "habitat-territorio", {
+  add("arquitectura", "Arquitectura", 1700 + FACULTY_SHIFT, 1465, 165, 40, "habitat-territorio", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
     targetSide:"top"
   });
-  add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700 + FACULTY_SHIFT, 1354, 165, 58, "habitat-territorio", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  // NUEVO: programas adscritos a la Escuela de Estudios Industriales y Empresariales
-  add("tecnologia-empresarial", "Tecnología Empresarial", 1680 + FACULTY_SHIFT, 1428, fw, 40, "industriales", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  add("gestion-empresarial", "Gestión Empresarial", 1680 + FACULTY_SHIFT, 1476, fw, 40, "industriales", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  // NUEVO: programa adscrito a la Escuela de Ingeniería de Sistemas e Informática
-  add("inteligencia-artificial", "Ingeniería en Inteligencia Artificial", 1680 + FACULTY_SHIFT, 1524, fw, 46, "sistemas", {
+  add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700 + FACULTY_SHIFT, 1518, 165, 58, "habitat-territorio", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
@@ -656,6 +613,51 @@
       const n = get(id);
       if(n) n.style = "sublevel";
     });
+
+    // V11: corregir la posición visual de los subprogramas.
+    // Se conserva el desplazamiento global de cada Facultad, pero se restablece
+    // la posición relativa interna de sus dependencias para que queden debajo
+    // de la unidad a la que realmente pertenecen.
+    if(fromSchema < 11){
+      const restoreFacultyGeometry = (facultyId, nodeIds) => {
+        const currentFaculty = get(facultyId);
+        const baseFaculty = baseNodes.find(n => n.id === facultyId);
+        if(!currentFaculty || !baseFaculty) return;
+
+        const dx = currentFaculty.x - baseFaculty.x;
+        const dy = currentFaculty.y - baseFaculty.y;
+
+        nodeIds.forEach(id => {
+          const current = get(id);
+          const base = baseNodes.find(n => n.id === id);
+          if(!current || !base) return;
+
+          current.x = base.x + dx;
+          current.y = base.y + dy;
+          current.w = base.w;
+          current.h = base.h;
+          current.parent = base.parent;
+          current.group = base.group;
+          current.style = base.style;
+          current.sourceSide = base.sourceSide || "auto";
+          current.targetSide = base.targetSide || "auto";
+        });
+      };
+
+      restoreFacultyGeometry("fac-humanas", [
+        "fch-consejo","lenguas","artes","derecho","gestion-judicial",
+        "economia","educacion","historia","idiomas","trabajo-social",
+        "filosofia","deportes","admin-finanzas","musica","artes-plasticas"
+      ]);
+
+      restoreFacultyGeometry("fac-ingenierias", [
+        "fi-consejo","diseno","civil","electrica","industriales",
+        "tecnologia-empresarial","gestion-empresarial","mecanica",
+        "sistemas","inteligencia-artificial","geologia","metalurgica",
+        "petroleos","ing-quimica","alimentos","habitat-territorio",
+        "ing-construccion","arquitectura","admin-turistica-hotelera"
+      ]);
+    }
 
     // V10: nuevas incorporaciones derivadas de los mensajes.
     const musica = get("musica");
