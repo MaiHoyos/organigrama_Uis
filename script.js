@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 11;
+  const SCHEMA_VERSION = 12;
   const CANVAS_WIDTH = 2800;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -238,6 +238,7 @@
     ["fch-consejo","Consejo de Facultad"],
     ["lenguas","Instituto de Lenguas"],
     ["derecho","Escuela de Derecho y\nCiencia Política",46],
+    // Debe verse inmediatamente debajo de Derecho.
     ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"sublevel","derecho"],
     ["economia","Escuela de Economía\ny Administración",46],
     ["educacion","Escuela de Educación"],
@@ -247,9 +248,10 @@
     ["filosofia","Escuela de Filosofía"],
     ["deportes","Departamento de Educación\nFísica y Deportes",46],
     ["admin-finanzas","Escuela de Administración\ny Finanzas",46],
-    // Unidad nueva: amarilla.
-    ["artes","Escuela de Artes y Música",44,"new","fac-humanas"],
-    // Subnivel de Música: blanco.
+    // NUEVA unidad: Escuela de Artes y Música.
+    ["musica","Escuela de Artes y Música",46,"new","fac-humanas"],
+    // Dos carreras separadas debajo de la nueva escuela.
+    ["carrera-musica","Música",40,"sublevel","musica"],
     ["artes-plasticas","Artes Plásticas",40,"sublevel","musica"]
   ]);
 
@@ -645,7 +647,8 @@
       restoreFacultyGeometry("fac-humanas", [
         "fch-consejo","lenguas","derecho","gestion-judicial",
         "economia","educacion","historia","idiomas","trabajo-social",
-        "filosofia","deportes","admin-finanzas","artes","artes-plasticas"
+        "filosofia","deportes","admin-finanzas","musica",
+        "carrera-musica","artes-plasticas"
       ]);
 
       restoreFacultyGeometry("fac-ingenierias", [
@@ -657,8 +660,41 @@
       ]);
     }
 
-    // V10: nuevas incorporaciones derivadas de los mensajes.
+    // V12: eliminar la antigua Escuela de Artes y consolidar la nueva
+    // Escuela de Artes y Música con dos carreras independientes.
+    const oldArtesIndex = parsed.nodes.findIndex(n => n.id === "artes");
+    if(oldArtesIndex >= 0){
+      parsed.nodes.splice(oldArtesIndex, 1);
+    }
+
     const musica = get("musica");
+    if(musica){
+      musica.label = "Escuela de Artes y Música";
+      musica.style = "new";
+      musica.parent = "fac-humanas";
+      musica.group = "facultades";
+    }
+
+    const carreraMusica = get("carrera-musica");
+    if(carreraMusica){
+      carreraMusica.label = "Música";
+      carreraMusica.parent = "musica";
+      carreraMusica.group = "facultades";
+      carreraMusica.style = "sublevel";
+      carreraMusica.sourceSide = "bottom";
+      carreraMusica.targetSide = "top";
+    }
+
+    const artesPlasticas = get("artes-plasticas");
+    if(artesPlasticas){
+      artesPlasticas.parent = "musica";
+      artesPlasticas.group = "facultades";
+      artesPlasticas.style = "sublevel";
+      artesPlasticas.sourceSide = "bottom";
+      artesPlasticas.targetSide = "top";
+    }
+
+    // V10: nuevas incorporaciones derivadas de los mensajes.
     if(musica) musica.style = "new";
 
     const regenciaV10 = get("regencia");
@@ -678,7 +714,7 @@
       "programas-agroindustrial","tecnico-produccion-agropecuaria",
       "tecnologia-agroindustrial","administracion-agroindustrial",
       "alimentos","ing-construccion","arquitectura",
-      "admin-turistica-hotelera","artes-plasticas",
+      "admin-turistica-hotelera","carrera-musica","artes-plasticas",
       "gestion-judicial","tecnologia-empresarial",
       "gestion-empresarial","inteligencia-artificial",
       "regencia"
