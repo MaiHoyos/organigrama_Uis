@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 12;
+  const SCHEMA_VERSION = 13;
   const CANVAS_WIDTH = 2800;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -11,13 +11,12 @@
   const GRID = 5;
   const FACULTY_SHIFT = 440;
 
-  const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "proyeccion", "facultades"];
+  const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
     rectoria: "rectoria",
     vie: "investigacion",
     vacad: "vacademica",
     vadmin: "administrativa",
-    vproyeccion: "proyeccion",
     facultades: "facultades"
   };
 
@@ -26,7 +25,6 @@
     investigacion: "branch-turq",
     vacademica: "branch-blue",
     administrativa: "branch-admin",
-    proyeccion: "branch-proyeccion",
     facultades: "branch-purple",
     core: ""
   };
@@ -35,7 +33,6 @@
     investigacion: "branch-turq",
     vacademica: "branch-blue",
     administrativa: "branch-admin",
-    proyeccion: "branch-proyeccion",
     facultades: "branch-purple"
   };
 
@@ -64,15 +61,6 @@
   add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 115, 355, 325, 72, "academico", {kind:"main", css:"turq", sourceSide:"bottom", targetSide:"top"});
   add("vacad", "VICERRECTORÍA\nACADÉMICA", 500, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
   add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 865, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
-
-  // NUEVO: Vicerrectoría de Proyección Social y Territorio.
-  // Al ser una unidad nueva, su casilla principal es amarilla.
-  add(
-    "vproyeccion",
-    "VICERRECTORÍA DE\nPROYECCIÓN SOCIAL\nY TERRITORIO",
-    1275, 355, 360, 72, "academico",
-    {kind:"main", style:"new", sourceSide:"bottom", targetSide:"top"}
-  );
 
   // Se desplaza la rama de Facultades para dejar espacio limpio a la nueva Vicerrectoría.
   add("facultades", "FACULTADES", 1490 + FACULTY_SHIFT, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
@@ -155,42 +143,36 @@
   add("seguridad","Sección de Seguridad",885,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
 
   // =========================
-  // NUEVA Vicerrectoría de Proyección Social y Territorio
+  // Instituto de Desarrollo Regional
   // =========================
-  // La Vicerrectoría es amarilla; sus dependencias son blancas.
+  // Estas dependencias pasan a depender directamente del IDR.
   add(
     "comite-proyeccion",
     "Comité de Proyección Social\ny Territorio",
-    1280, 460, 350, 54, "vproyeccion",
-    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+    5, 25, 220, 60, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
   );
 
   add(
     "educacion-buen-vivir",
     "Educación y Buen Vivir",
-    1280, 528, 350, 48, "vproyeccion",
-    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+    5, 95, 220, 48, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
   );
 
   add(
     "extension-regionalizacion",
     "Extensión y Proyección Social\nde Regionalización",
-    1280, 590, 350, 60, "vproyeccion",
-    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+    5, 153, 220, 72, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
   );
 
+  // Sedes Regionales se conserva como subdependencia de Extensión.
   add(
     "sedes-regionales",
     "Sedes Regionales",
-    1310, 664, 290, 45, "extension-regionalizacion",
-    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
-  );
-
-  add(
-    "amovi",
-    "AMOVI",
-    1280, 723, 350, 48, "vproyeccion",
-    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+    25, 235, 180, 45, "extension-regionalizacion",
+    {group:"rectoria", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
   );
 
   // =========================
@@ -239,7 +221,7 @@
     ["lenguas","Instituto de Lenguas"],
     ["derecho","Escuela de Derecho y\nCiencia Política",46],
     // Debe verse inmediatamente debajo de Derecho.
-    ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"sublevel","derecho"],
+    ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"new","derecho"],
     ["economia","Escuela de Economía\ny Administración",46],
     ["educacion","Escuela de Educación"],
     ["historia","Escuela de Historia"],
@@ -247,7 +229,7 @@
     ["trabajo-social","Escuela de Trabajo Social"],
     ["filosofia","Escuela de Filosofía"],
     ["deportes","Departamento de Educación\nFísica y Deportes",46],
-    ["admin-finanzas","Escuela de Administración\ny Finanzas",46],
+    ["admin-finanzas","Escuela de Administración\ny Finanzas",46,"new"],
     // NUEVA unidad: Escuela de Artes y Música.
     ["musica","Escuela de Artes y Música",46,"new","fac-humanas"],
     // Dos carreras separadas debajo de la nueva escuela.
@@ -262,18 +244,18 @@
     ["electrica","Escuela de Ingeniería Eléctrica,\nElectrónica y Telecomunicaciones",54],
     ["industriales","Escuela de Estudios Industriales\ny Empresariales",50],
     // Ambos programas van inmediatamente debajo de Industriales.
-    ["tecnologia-empresarial","Tecnología Empresarial",40,"sublevel","industriales"],
-    ["gestion-empresarial","Gestión Empresarial",40,"sublevel","industriales"],
+    ["tecnologia-empresarial","Tecnología Empresarial",40,"new","industriales"],
+    ["gestion-empresarial","Gestión Empresarial",40,"new","industriales"],
     ["mecanica","Escuela de Ingeniería\nMecánica",44],
     ["sistemas","Escuela de Ingeniería de\nSistemas e Informática",50],
     // IA debe quedar justo debajo de Sistemas.
-    ["inteligencia-artificial","Ingeniería en Inteligencia Artificial",46,"sublevel","sistemas"],
+    ["inteligencia-artificial","Ingeniería en Inteligencia Artificial",46,"new","sistemas"],
     ["geologia","Escuela de Geología"],
     ["metalurgica","Escuela de Ingeniería Metalúrgica\ny Ciencia de los Materiales",54],
     ["petroleos","Escuela de Ingeniería de Petróleos",44],
     ["ing-quimica","Escuela de Ingeniería Química",44],
     // Ingeniería en Alimentos justo debajo de Ingeniería Química.
-    ["alimentos","Ing. en Alimentos",40,"sublevel","ing-quimica"]
+    ["alimentos","Ing. en Alimentos",40,"new","ing-quimica"]
   ]);
 
   // NUEVO: Escuela de Hábitat y Territorio (amarilla).
@@ -390,7 +372,7 @@
     ["salud-mental","Departamento de Salud Mental"],
     ["salud-publica","Departamento de Salud Pública"]
   ].forEach(([id,label]) => { add(id,label,1880 + FACULTY_SHIFT,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
-  add("regencia","Tecnología en Regencia de Farmacia",1880 + FACULTY_SHIFT,1215,205,40,"fac-salud",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("regencia","Tecnología en Regencia de Farmacia",1880 + FACULTY_SHIFT,1215,205,40,"medicina",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
 
 
   // =========================
@@ -459,7 +441,7 @@
   let drag = null;
 
   const PROTECTED_NODES = new Set([
-    "superior","rectoria","academico","vie","vacad","vadmin","vproyeccion","facultades"
+    "superior","rectoria","academico","vie","vacad","vadmin","facultades"
   ]);
 
   function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
@@ -520,7 +502,7 @@
     }
 
     // Las cuatro ramas principales salen ordenadamente desde abajo de Consejo Académico.
-    ["vie","vacad","vadmin","vproyeccion","facultades"].forEach(id => {
+    ["vie","vacad","vadmin","facultades"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "academico";
@@ -555,9 +537,16 @@
     }
 
     const regencia = get("regencia");
-    if(regencia && regencia.x >= 2000){
-      regencia.x = 1880;
-      regencia.y = 1215;
+    if(regencia && fromSchema < 13){
+      // Se conserva debajo de los departamentos de Medicina.
+      const baseRegencia = baseNodes.find(n => n.id === "regencia");
+      if(baseRegencia){
+        regencia.x = baseRegencia.x;
+        regencia.y = baseRegencia.y;
+      }
+      regencia.parent = "medicina";
+      regencia.group = "facultades";
+      regencia.style = "new";
       regencia.sourceSide = "bottom";
       regencia.targetSide = "top";
     }
@@ -603,16 +592,51 @@
     const habitat = get("habitat-territorio");
     if(habitat) habitat.style = "new";
 
-    const vproyeccion = get("vproyeccion");
-    if(vproyeccion) vproyeccion.style = "new";
-
-    [
-      "comite-proyeccion","educacion-buen-vivir",
-      "extension-regionalizacion","sedes-regionales","amovi"
-    ].forEach(id => {
-      const n = get(id);
-      if(n) n.style = "sublevel";
+    // V13: desaparece la Vicerrectoría de Proyección Social y Territorio.
+    // Se eliminan el nodo superior y AMOVI de la estructura guardada.
+    ["vproyeccion","amovi"].forEach(id => {
+      const index = parsed.nodes.findIndex(n => n.id === id);
+      if(index >= 0) parsed.nodes.splice(index, 1);
     });
+
+    // Las tres dependencias pasan al Instituto de Desarrollo Regional.
+    const idrChildren = [
+      ["comite-proyeccion", 5, 25, 220, 60],
+      ["educacion-buen-vivir", 5, 95, 220, 48],
+      ["extension-regionalizacion", 5, 153, 220, 72]
+    ];
+
+    idrChildren.forEach(([id,x,y,w,h]) => {
+      const n = get(id);
+      if(!n) return;
+      n.parent = "idr";
+      n.group = "rectoria";
+      n.style = "sublevel";
+      n.sourceSide = "left";
+      n.targetSide = "right";
+
+      if(fromSchema < 13){
+        n.x = x;
+        n.y = y;
+        n.w = w;
+        n.h = h;
+      }
+    });
+
+    const sedesRegionales = get("sedes-regionales");
+    if(sedesRegionales){
+      sedesRegionales.parent = "extension-regionalizacion";
+      sedesRegionales.group = "rectoria";
+      sedesRegionales.style = "sublevel";
+      sedesRegionales.sourceSide = "bottom";
+      sedesRegionales.targetSide = "top";
+      if(fromSchema < 13){
+        sedesRegionales.x = 25;
+        sedesRegionales.y = 235;
+        sedesRegionales.w = 180;
+        sedesRegionales.h = 45;
+      }
+    }
 
     // V11: corregir la posición visual de los subprogramas.
     // Se conserva el desplazamiento global de cada Facultad, pero se restablece
@@ -700,10 +724,11 @@
     const regenciaV10 = get("regencia");
     if(regenciaV10){
       regenciaV10.label = "Tecnología en Regencia de Farmacia";
-      regenciaV10.style = "sublevel";
+      regenciaV10.style = "new";
       regenciaV10.w = 205;
       regenciaV10.h = 40;
-      regenciaV10.parent = "fac-salud";
+      // V13: depende de Escuela de Medicina para que se oculte al contraer Medicina.
+      regenciaV10.parent = "medicina";
       regenciaV10.group = "facultades";
       regenciaV10.sourceSide = "bottom";
       regenciaV10.targetSide = "top";
@@ -713,14 +738,20 @@
       "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
       "programas-agroindustrial","tecnico-produccion-agropecuaria",
       "tecnologia-agroindustrial","administracion-agroindustrial",
-      "alimentos","ing-construccion","arquitectura",
-      "admin-turistica-hotelera","carrera-musica","artes-plasticas",
-      "gestion-judicial","tecnologia-empresarial",
-      "gestion-empresarial","inteligencia-artificial",
-      "regencia"
+      "ing-construccion","arquitectura",
+      "admin-turistica-hotelera","carrera-musica","artes-plasticas"
     ].forEach(id => {
       const n = get(id);
       if(n) n.style = "sublevel";
+    });
+
+    // V13: estos elementos nuevos deben mostrarse siempre en amarillo.
+    [
+      "admin-finanzas","regencia","alimentos","gestion-judicial",
+      "tecnologia-empresarial","gestion-empresarial","inteligencia-artificial"
+    ].forEach(id => {
+      const n = get(id);
+      if(n) n.style = "new";
     });
 
     parsed.schemaVersion = SCHEMA_VERSION;
@@ -838,7 +869,6 @@
     if(node.id === "vie") return "investigacion";
     if(node.id === "vacad") return "vacademica";
     if(node.id === "vadmin") return "administrativa";
-    if(node.id === "vproyeccion") return "proyeccion";
     if(node.id === "facultades") return "facultades";
     if(node.id === "rectoria") return "rectoria";
     return "core";
