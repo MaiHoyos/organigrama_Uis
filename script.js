@@ -3,13 +3,13 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 13;
-  const CANVAS_WIDTH = 2800;
+  const SCHEMA_VERSION = 14;
+  const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = 440;
+  const FACULTY_SHIFT = -80;
 
   const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
@@ -62,13 +62,19 @@
   add("vacad", "VICERRECTORÍA\nACADÉMICA", 500, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
   add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 865, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
 
-  // Se desplaza la rama de Facultades para dejar espacio limpio a la nueva Vicerrectoría.
+  // Facultades se ubica cerca de Vicerrectoría Administrativa para compactar la lectura.
   add("facultades", "FACULTADES", 1490 + FACULTY_SHIFT, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
   // =========================
-  add("idr", "Instituto de Desarrollo\nRegional", 500, 42, 230, 40, "rectoria", {group:"rectoria", relation:"advisory", style:"new"});
+  add("idr", "Instituto de Desarrollo\nRegional", 10, 28, 210, 48, "rectoria", {
+    group:"rectoria",
+    relation:"advisory",
+    style:"new",
+    sourceSide:"left",
+    targetSide:"left"
+  });
   add("uiaes", "Unidad de Información y\nAnálisis Estadístico - UIAES", 235, 100, 240, 47, "planeacion", {group:"rectoria", relation:"hierarchical", sourceSide:"left", targetSide:"right"});
   add("planeacion", "Planeación", 500, 100, 230, 40, "rectoria", {group:"rectoria", relation:"advisory"});
   add("control-gestion", "Dirección de Control Interno\ny Evaluación de Gestión", 500, 151, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
@@ -145,34 +151,27 @@
   // =========================
   // Instituto de Desarrollo Regional
   // =========================
-  // Estas dependencias pasan a depender directamente del IDR.
+  // Columna independiente para evitar cruces con UIAES / Planeación.
+  // Las líneas salen por el lateral izquierdo y recorren el margen.
   add(
     "comite-proyeccion",
     "Comité de Proyección Social\ny Territorio",
-    5, 25, 220, 60, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
+    10, 90, 210, 56, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"left"}
   );
 
   add(
     "educacion-buen-vivir",
     "Educación y Buen Vivir",
-    5, 95, 220, 48, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
+    10, 158, 210, 46, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"left"}
   );
 
   add(
     "extension-regionalizacion",
     "Extensión y Proyección Social\nde Regionalización",
-    5, 153, 220, 72, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
-  );
-
-  // Sedes Regionales se conserva como subdependencia de Extensión.
-  add(
-    "sedes-regionales",
-    "Sedes Regionales",
-    25, 235, 180, 45, "extension-regionalizacion",
-    {group:"rectoria", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+    10, 216, 210, 64, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"left"}
   );
 
   // =========================
@@ -479,18 +478,18 @@
       if(!existing.has(base.id)) parsed.nodes.push(deepClone(base));
     });
 
-    // Desde V8 se reserva espacio para la nueva Vicerrectoría.
-    // Solo se desplazan las casillas de Facultades que ya existían:
-    // las casillas recién incorporadas ya vienen en su nueva posición base.
-    if(fromSchema < 8){
+    const get = id => parsed.nodes.find(n => n.id === id);
+
+    // V14: acercar toda la rama de Facultades a Vicerrectoría Administrativa.
+    // Se desplaza el conjunto completo 520 px a la izquierda, conservando
+    // la distribución relativa que ya tuviera el usuario.
+    if(fromSchema < 14){
       parsed.nodes.forEach(n => {
-        if(existing.has(n.id) && (n.group === "facultades" || n.id === "facultades")){
-          n.x += FACULTY_SHIFT;
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x -= 520;
         }
       });
     }
-
-    const get = id => parsed.nodes.find(n => n.id === id);
 
     // Corrección institucional: Certificación y Gestión Documental depende de Secretaría General.
     const cert = get("certificacion");
@@ -599,11 +598,26 @@
       if(index >= 0) parsed.nodes.splice(index, 1);
     });
 
-    // Las tres dependencias pasan al Instituto de Desarrollo Regional.
+    // V14: reorganizar el Instituto de Desarrollo Regional en una columna
+    // que no se superponga con UIAES / Planeación.
+    const idrNode = get("idr");
+    if(idrNode){
+      idrNode.x = 10;
+      idrNode.y = 28;
+      idrNode.w = 210;
+      idrNode.h = 48;
+      idrNode.parent = "rectoria";
+      idrNode.group = "rectoria";
+      idrNode.relation = "advisory";
+      idrNode.style = "new";
+      idrNode.sourceSide = "left";
+      idrNode.targetSide = "left";
+    }
+
     const idrChildren = [
-      ["comite-proyeccion", 5, 25, 220, 60],
-      ["educacion-buen-vivir", 5, 95, 220, 48],
-      ["extension-regionalizacion", 5, 153, 220, 72]
+      ["comite-proyeccion", 10, 90, 210, 56],
+      ["educacion-buen-vivir", 10, 158, 210, 46],
+      ["extension-regionalizacion", 10, 216, 210, 64]
     ];
 
     idrChildren.forEach(([id,x,y,w,h]) => {
@@ -613,30 +627,16 @@
       n.group = "rectoria";
       n.style = "sublevel";
       n.sourceSide = "left";
-      n.targetSide = "right";
-
-      if(fromSchema < 13){
-        n.x = x;
-        n.y = y;
-        n.w = w;
-        n.h = h;
-      }
+      n.targetSide = "left";
+      n.x = x;
+      n.y = y;
+      n.w = w;
+      n.h = h;
     });
 
-    const sedesRegionales = get("sedes-regionales");
-    if(sedesRegionales){
-      sedesRegionales.parent = "extension-regionalizacion";
-      sedesRegionales.group = "rectoria";
-      sedesRegionales.style = "sublevel";
-      sedesRegionales.sourceSide = "bottom";
-      sedesRegionales.targetSide = "top";
-      if(fromSchema < 13){
-        sedesRegionales.x = 25;
-        sedesRegionales.y = 235;
-        sedesRegionales.w = 180;
-        sedesRegionales.h = 45;
-      }
-    }
+    // V14: Sedes Regionales se elimina completamente.
+    const sedesIndex = parsed.nodes.findIndex(n => n.id === "sedes-regionales");
+    if(sedesIndex >= 0) parsed.nodes.splice(sedesIndex, 1);
 
     // V11: corregir la posición visual de los subprogramas.
     // Se conserva el desplazamiento global de cada Facultad, pero se restablece

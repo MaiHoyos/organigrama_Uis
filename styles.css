@@ -114,7 +114,7 @@ main{padding:0 24px 30px}
 }
 .canvas-stage{
   position:relative;
-  width:2800px;
+  width:2300px;
   height:650px;
   margin:0 auto;
   transition:width .16s ease,height .16s ease;
@@ -123,8 +123,8 @@ main{padding:0 24px 30px}
   position:absolute;
   left:0;
   top:0;
-  width:2800px;
-  min-width:2800px;
+  width:2300px;
+  min-width:2300px;
   height:650px;
   min-height:650px;
   margin:0;
