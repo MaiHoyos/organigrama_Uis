@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 14;
+  const SCHEMA_VERSION = 15;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -403,14 +403,12 @@
   const fitBtn = $("#fitBtn");
   const zoomValue = $("#zoomValue");
 
-  const editBtn = $("#editBtn");
   const editBar = $("#editBar");
   const addBtn = $("#addBtn");
   const renameBtn = $("#renameBtn");
   const parentBtn = $("#parentBtn");
   const linkBtn = $("#linkBtn");
   const deleteBtn = $("#deleteBtn");
-  const doneBtn = $("#doneBtn");
   const expandBtn = $("#expandBtn");
   const collapseBtn = $("#collapseBtn");
   const resetBtn = $("#resetBtn");
@@ -433,7 +431,7 @@
   const saveDialogBtn = $("#saveDialogBtn");
 
   let state = loadState();
-  let editMode = false;
+  const editMode = true;
   let selectedId = null;
   let selectedLinkChildId = null;
   let dialogMode = "add";
@@ -876,7 +874,7 @@
 
   function render(){
     nodesLayer.innerHTML = "";
-    canvas.classList.toggle("editing", editMode);
+    canvas.classList.add("editing");
 
     state.nodes.forEach(node => {
       if(!isVisible(node)) return;
@@ -911,7 +909,7 @@
       if(node.style === "new") el.classList.add("new-node");
       if(node.relation === "advisory") el.classList.add("advisory");
       if(selectedId === node.id) el.classList.add("selected");
-      if(editMode) el.classList.add("editable");
+      el.classList.add("editable");
 
       const span = document.createElement("span");
       span.className = "label";
@@ -921,24 +919,34 @@
       });
       el.appendChild(span);
 
-      if(hasExpandableContent(node) && !editMode){
+      if(hasExpandableContent(node)){
         const badge = document.createElement("span");
         badge.className = "toggle-badge";
         badge.textContent = isExpandedForNode(node) ? "−" : "+";
+        badge.title = isExpandedForNode(node) ? "Contraer" : "Desplegar";
+
+        // El +/− controla el despliegue incluso mientras la edición está activa.
+        badge.addEventListener("pointerdown", ev => {
+          ev.stopPropagation();
+        });
+
+        badge.addEventListener("click", ev => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          toggleNodeExpansion(node);
+        });
+
         el.appendChild(badge);
       }
 
       el.addEventListener("click", ev => onNodeClick(ev,node));
       el.addEventListener("dblclick", ev => {
-        if(!editMode) return;
         ev.preventDefault();
         selectNode(node.id);
         openRename();
       });
 
-      if(node.kind !== "model-item" || editMode){
-        el.addEventListener("pointerdown", ev => startDrag(ev,node,el));
-      }
+      el.addEventListener("pointerdown", ev => startDrag(ev,node,el));
 
       nodesLayer.appendChild(el);
     });
@@ -948,15 +956,9 @@
     updateEditButtons();
   }
 
-  function onNodeClick(ev,node){
-    ev.stopPropagation();
-
-    if(editMode){
-      selectNode(node.id);
-      return;
-    }
-
+  function toggleNodeExpansion(node){
     const group = GROUP_BY_CORE[node.id];
+
     if(group){
       state.expanded[group] = !state.expanded[group];
       saveState();
@@ -971,6 +973,13 @@
     }
   }
 
+  function onNodeClick(ev,node){
+    ev.stopPropagation();
+    // La edición está siempre disponible. Un clic selecciona la casilla;
+    // el botón +/− se encarga de desplegar/contraer sin desactivar el arrastre.
+    selectNode(node.id);
+  }
+
   function selectNode(id){
     selectedId = id;
     selectedLinkChildId = null;
@@ -978,7 +987,6 @@
   }
 
   function selectLink(childId){
-    if(!editMode) return;
     selectedId = null;
     selectedLinkChildId = childId;
     render();
@@ -996,7 +1004,7 @@
   }
 
   function startDrag(ev,node,el){
-    if(!editMode || ev.button !== 0) return;
+    if(ev.button !== 0) return;
     ev.preventDefault();
     selectNodeWithoutRender(node.id);
 
@@ -1190,7 +1198,6 @@
       hit.setAttribute("class","connector-hit");
       hit.dataset.childId=node.id;
       hit.addEventListener("click",ev=>{
-        if(!editMode) return;
         ev.stopPropagation();
         selectLink(node.id);
       });
@@ -1256,20 +1263,6 @@
     // "Ajustar" reduce cuando hace falta, pero no agranda por encima del 100 %.
     setZoom(Math.min(1, available / CANVAS_WIDTH));
     shell.scrollTo({left:0, top:0, behavior:"smooth"});
-  }
-
-  function setEditMode(value){
-    editMode=value;
-    editBar.classList.toggle("is-hidden",!value);
-    editBtn.classList.toggle("active",value);
-    editBtn.textContent=value?"✓ Editando":"✎ Editar organigrama";
-
-    if(!value){
-      selectedId=null;
-      selectedLinkChildId=null;
-    }
-
-    render();
   }
 
   function fillParents(excludeId=null){
@@ -1531,8 +1524,6 @@
   zoomInBtn.addEventListener("click",()=>setZoom((state.zoom || 1) + ZOOM_STEP));
   fitBtn.addEventListener("click",fitToWidth);
 
-  editBtn.addEventListener("click",()=>setEditMode(!editMode));
-  doneBtn.addEventListener("click",()=>setEditMode(false));
   addBtn.addEventListener("click",openAdd);
   renameBtn.addEventListener("click",openRename);
   parentBtn.addEventListener("click",openChangeParent);
@@ -1569,11 +1560,9 @@
   });
 
   canvas.addEventListener("click",()=>{
-    if(editMode){
-      selectedId=null;
-      selectedLinkChildId=null;
-      render();
-    }
+    selectedId=null;
+    selectedLinkChildId=null;
+    render();
   });
 
   window.addEventListener("resize",()=>{ updateZoomStage(); drawConnections(); });
@@ -1581,7 +1570,6 @@
   // Mover con flechas del teclado mientras se edita.
   window.addEventListener("keydown",ev=>{
     if(
-      !editMode ||
       !selectedId ||
       ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)
     ) return;

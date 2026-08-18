@@ -359,3 +359,39 @@ main{padding:0 24px 30px}
 .connector.branch-proyeccion{
   stroke:#c5a93c;
 }
+
+
+/* =========================================================
+   V15 — EDICIÓN SIEMPRE ACTIVA
+   ========================================================= */
+.always-editing-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:38px;
+  padding:8px 12px;
+  border:1px solid #a8c9ad;
+  border-radius:8px;
+  background:#edf7ee;
+  color:var(--uis-dark);
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.edit-bar{
+  display:flex;
+}
+
+.org-node.editable{
+  cursor:grab;
+}
+
+.org-node.editable:active{
+  cursor:grabbing;
+}
+
+/* El control +/− debe seguir siendo clicable aunque toda la caja sea arrastrable. */
+.org-node .toggle-badge{
+  pointer-events:auto;
+  cursor:pointer;
+  z-index:3;
+}

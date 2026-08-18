@@ -20,17 +20,17 @@
         <button id="zoomInBtn" class="btn zoom-btn" type="button" title="Acercar">＋</button>
         <button id="fitBtn" class="btn" type="button" title="Ajustar el organigrama al ancho disponible">Ajustar</button>
       </div>
-      <button id="editBtn" class="btn edit">✎ Editar organigrama</button>
+      <span class="always-editing-badge" title="Las casillas pueden moverse y editarse en cualquier momento">✎ Edición siempre activa</span>
       <button id="expandBtn" class="btn">⊞ Desplegar todo</button>
       <button id="collapseBtn" class="btn">⊟ Contraer todo</button>
       <button id="resetBtn" class="btn subtle">↺ Restablecer</button>
     </div>
   </header>
 
-  <section id="editBar" class="edit-bar is-hidden" aria-label="Herramientas de edición">
+  <section id="editBar" class="edit-bar" aria-label="Herramientas de edición">
     <div class="edit-bar-left">
-      <strong>Modo edición</strong>
-      <span class="edit-help">Arrastra casillas para moverlas. También puedes hacer clic sobre una línea para editar de qué casilla sale y por qué lado se conecta.</span>
+      <strong>Edición permanente</strong>
+      <span class="edit-help">Arrastra cualquier casilla en cualquier momento. Si tiene dependencias, toda la rama se mueve con ella. Haz clic en +/− para desplegar o contraer y en una línea para editar su enlace.</span>
     </div>
     <div class="edit-actions">
       <button id="addBtn" class="btn primary">＋ Agregar casilla</button>
@@ -38,7 +38,6 @@
       <button id="parentBtn" class="btn" disabled>Cambiar dependencia</button>
       <button id="linkBtn" class="btn" disabled>Editar enlace</button>
       <button id="deleteBtn" class="btn danger" disabled>Eliminar</button>
-      <button id="doneBtn" class="btn primary">✓ Terminar edición</button>
     </div>
   </section>
 
