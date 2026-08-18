@@ -237,9 +237,9 @@
   addFacultyList("fac-humanas", fx[1], [
     ["fch-consejo","Consejo de Facultad"],
     ["lenguas","Instituto de Lenguas"],
-    ["artes","Escuela de Artes"],
+    
     ["derecho","Escuela de Derecho y\nCiencia Política",46],
-    // Debe verse inmediatamente debajo de Derecho.
+    
     ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"sublevel","derecho"],
     ["economia","Escuela de Economía\ny Administración",46],
     ["educacion","Escuela de Educación"],
@@ -250,7 +250,7 @@
     ["deportes","Departamento de Educación\nFísica y Deportes",46],
     ["admin-finanzas","Escuela de Administración\ny Finanzas",46],
     // Unidad nueva: amarilla.
-    ["musica","Escuela de Música",44,"new","fac-humanas"],
+    ["artes","Escuela de Artes y Música",44,"new","fac-humanas"],
     // Subnivel de Música: blanco.
     ["artes-plasticas","Artes Plásticas",40,"sublevel","musica"]
   ]);
