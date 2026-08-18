@@ -3,13 +3,13 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 15;
+  const SCHEMA_VERSION = 16;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = -80;
+  const FACULTY_SHIFT = -30;
 
   const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
@@ -68,12 +68,12 @@
   // =========================
   // Rectoría: asesorías/apoyos
   // =========================
-  add("idr", "Instituto de Desarrollo\nRegional", 10, 28, 210, 48, "rectoria", {
+  // Instituto de Desarrollo Regional alineado verticalmente
+  // con Planeación, Control Interno y UISALUD.
+  add("idr", "Instituto de Desarrollo\nRegional", 500, 42, 230, 40, "rectoria", {
     group:"rectoria",
     relation:"advisory",
-    style:"new",
-    sourceSide:"left",
-    targetSide:"left"
+    style:"new"
   });
   add("uiaes", "Unidad de Información y\nAnálisis Estadístico - UIAES", 235, 100, 240, 47, "planeacion", {group:"rectoria", relation:"hierarchical", sourceSide:"left", targetSide:"right"});
   add("planeacion", "Planeación", 500, 100, 230, 40, "rectoria", {group:"rectoria", relation:"advisory"});
@@ -151,27 +151,27 @@
   // =========================
   // Instituto de Desarrollo Regional
   // =========================
-  // Columna independiente para evitar cruces con UIAES / Planeación.
-  // Las líneas salen por el lateral izquierdo y recorren el margen.
+  // Sus dependencias se despliegan hacia la izquierda.
+  // Se usa una columna separada para que UIAES pueda abrirse sin superposición.
   add(
     "comite-proyeccion",
     "Comité de Proyección Social\ny Territorio",
-    10, 90, 210, 56, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"left"}
+    10, 42, 210, 56, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
   );
 
   add(
     "educacion-buen-vivir",
     "Educación y Buen Vivir",
-    10, 158, 210, 46, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"left"}
+    10, 110, 210, 46, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
   );
 
   add(
     "extension-regionalizacion",
     "Extensión y Proyección Social\nde Regionalización",
-    10, 216, 210, 64, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"left"}
+    10, 168, 210, 64, "idr",
+    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
   );
 
   // =========================
@@ -387,7 +387,8 @@
     schemaVersion: SCHEMA_VERSION,
     nodes: baseNodes,
     expanded: Object.fromEntries(GROUPS.map(g => [g,false])),
-    collapsedNodes: {},
+    // UIAES permanece oculto hasta abrir manualmente Planeación.
+    collapsedNodes: { planeacion: true },
     zoom: 1
   };
 
@@ -477,6 +478,16 @@
     });
 
     const get = id => parsed.nodes.find(n => n.id === id);
+
+    // V16: mover Facultades 50 px a la derecha respecto de V15,
+    // conservando toda la distribución interna y movimientos de la rama.
+    if(fromSchema < 16){
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x += 50;
+        }
+      });
+    }
 
     // V14: acercar toda la rama de Facultades a Vicerrectoría Administrativa.
     // Se desplaza el conjunto completo 520 px a la izquierda, conservando
@@ -596,26 +607,26 @@
       if(index >= 0) parsed.nodes.splice(index, 1);
     });
 
-    // V14: reorganizar el Instituto de Desarrollo Regional en una columna
-    // que no se superponga con UIAES / Planeación.
+    // V16: IDR alineado con la columna de Planeación / Control / UISALUD.
+    // Sus dependencias quedan a la izquierda.
     const idrNode = get("idr");
     if(idrNode){
-      idrNode.x = 10;
-      idrNode.y = 28;
-      idrNode.w = 210;
-      idrNode.h = 48;
+      idrNode.x = 500;
+      idrNode.y = 42;
+      idrNode.w = 230;
+      idrNode.h = 40;
       idrNode.parent = "rectoria";
       idrNode.group = "rectoria";
       idrNode.relation = "advisory";
       idrNode.style = "new";
-      idrNode.sourceSide = "left";
-      idrNode.targetSide = "left";
+      idrNode.sourceSide = "auto";
+      idrNode.targetSide = "auto";
     }
 
     const idrChildren = [
-      ["comite-proyeccion", 10, 90, 210, 56],
-      ["educacion-buen-vivir", 10, 158, 210, 46],
-      ["extension-regionalizacion", 10, 216, 210, 64]
+      ["comite-proyeccion", 10, 42, 210, 56],
+      ["educacion-buen-vivir", 10, 110, 210, 46],
+      ["extension-regionalizacion", 10, 168, 210, 64]
     ];
 
     idrChildren.forEach(([id,x,y,w,h]) => {
@@ -625,12 +636,18 @@
       n.group = "rectoria";
       n.style = "sublevel";
       n.sourceSide = "left";
-      n.targetSide = "left";
+      n.targetSide = "right";
       n.x = x;
       n.y = y;
       n.w = w;
       n.h = h;
     });
+
+    // V16: UIAES debe iniciar oculto hasta abrir Planeación.
+    // Solo se fuerza al migrar; después el usuario puede abrir/cerrar normalmente.
+    if(fromSchema < 16){
+      parsed.collapsedNodes.planeacion = true;
+    }
 
     // V14: Sedes Regionales se elimina completamente.
     const sedesIndex = parsed.nodes.findIndex(n => n.id === "sedes-regionales");
@@ -1540,7 +1557,7 @@
 
   collapseBtn.addEventListener("click",()=>{
     GROUPS.forEach(g=>state.expanded[g]=false);
-    state.collapsedNodes={};
+    state.collapsedNodes={planeacion:true};
     selectedId=null;
     selectedLinkChildId=null;
     saveState();

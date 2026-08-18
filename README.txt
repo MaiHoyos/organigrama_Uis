@@ -1,40 +1,39 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V15
+ORGANIGRAMA UIS — PROYECTO COMPLETO V16
 
-EDICIÓN SIEMPRE ACTIVA
-======================
+CAMBIOS V16
+===========
 
-A partir de esta versión NO existe un modo de edición que deba activarse.
+1. FACULTADES
+- Se mueve toda la rama de Facultades 50 px hacia la derecha.
+- Se conserva la posición relativa de todas sus facultades, escuelas,
+  programas y departamentos.
 
-En cualquier momento se puede:
-- arrastrar cualquier casilla;
-- mover una jerarquía superior con todos sus descendientes;
-- seleccionar una casilla;
-- renombrarla con doble clic o con el botón Renombrar;
-- cambiar su dependencia;
-- eliminarla;
-- editar una línea;
-- mover la selección con las flechas del teclado.
+2. INSTITUTO DE DESARROLLO REGIONAL
+- Se alinea con la columna formada por:
+  Planeación
+  Dirección de Control Interno y Evaluación de Gestión
+  Oficina de Control Interno Disciplinario
+  UISALUD
+- El Instituto de Desarrollo Regional queda encima de Planeación.
+- Sus dependencias se despliegan hacia el margen izquierdo:
+  Comité de Proyección Social y Territorio
+  Educación y Buen Vivir
+  Extensión y Proyección Social de Regionalización
+- Esta organización deja libre la columna donde aparece UIAES.
 
-DESPLEGAR / CONTRAER
-====================
-Como las casillas están siempre disponibles para arrastrar, el clic normal
-selecciona la casilla.
+3. UIAES
+- UIAES permanece OCULTO por defecto.
+- Para verlo se debe abrir Planeación mediante el botón +.
+- Una vez abierto, puede volver a cerrarse normalmente.
+- "Contraer todo" vuelve a dejar Planeación cerrada.
 
-Para desplegar o contraer una jerarquía se usa el pequeño botón + / −
-de la propia casilla.
+4. EDICIÓN SIEMPRE ACTIVA
+- No es necesario activar ningún modo de edición.
+- Las casillas pueden arrastrarse en cualquier momento.
+- Al mover una casilla superior se mueve toda su rama.
+- Las líneas continúan siendo seleccionables y editables.
+- Doble clic permite renombrar.
+- El botón + / − sigue controlando desplegar/contraer.
 
-Esto evita que intentar mover una casilla abra o cierre accidentalmente
-toda la rama.
-
-Se mantienen todos los cambios institucionales y visuales de la V14.
-
-GITHUB PAGES
-============
-Sube todo el proyecto:
-- index.html
-- styles.css
-- script.js
-- .nojekyll
-- assets/uis-marca.png
-
-Después recarga con Ctrl + F5.
+Para GitHub Pages:
+sube el proyecto completo y luego recarga con Ctrl + F5.
