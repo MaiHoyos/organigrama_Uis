@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 16;
+  const SCHEMA_VERSION = 17;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -403,6 +403,7 @@
   const zoomInBtn = $("#zoomInBtn");
   const fitBtn = $("#fitBtn");
   const zoomValue = $("#zoomValue");
+  const exportBtn = $("#exportBtn");
 
   const editBar = $("#editBar");
   const addBtn = $("#addBtn");
@@ -1282,6 +1283,90 @@
     shell.scrollTo({left:0, top:0, behavior:"smooth"});
   }
 
+  async function exportAsPng(){
+    if(typeof html2canvas === "undefined"){
+      alert("No se pudo cargar la librería para exportar el PNG. Recarga la página e inténtalo de nuevo.");
+      return;
+    }
+
+    const originalLabel = exportBtn ? exportBtn.textContent : "";
+    if(exportBtn){
+      exportBtn.disabled = true;
+      exportBtn.textContent = "⏳ Generando PNG...";
+    }
+
+    const prevSelectedId = selectedId;
+    const prevSelectedLinkChildId = selectedLinkChildId;
+
+    // Ocultar selección activa en la exportación
+    selectedId = null;
+    selectedLinkChildId = null;
+    render();
+
+    const previousCanvasTransform = canvas.style.transform;
+    const previousCanvasTransition = canvas.style.transition;
+    const previousStageWidth = stage.style.width;
+    const previousStageHeight = stage.style.height;
+    const previousScrollLeft = shell.scrollLeft;
+    const previousScrollTop = shell.scrollTop;
+
+    try{
+      const logicalHeight = Math.round(parseFloat(canvas.style.height) || canvas.offsetHeight || 650);
+
+      // Captura el organigrama completo, sin depender del zoom ni del scroll actual.
+      canvas.style.transform = "none";
+      canvas.style.transition = "none";
+      stage.style.width = CANVAS_WIDTH + "px";
+      stage.style.height = logicalHeight + "px";
+      shell.scrollLeft = 0;
+      shell.scrollTop = 0;
+
+      await new Promise(resolve => requestAnimationFrame(resolve));
+
+      const pngCanvas = await html2canvas(canvas, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        width: CANVAS_WIDTH,
+        height: logicalHeight,
+        windowWidth: CANVAS_WIDTH,
+        windowHeight: logicalHeight,
+        scrollX: 0,
+        scrollY: 0
+      });
+
+      const timestamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");
+      const link = document.createElement("a");
+      link.download = `organigrama-uis-${timestamp}.png`;
+      link.href = pngCanvas.toDataURL("image/png");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }catch(error){
+      console.error(error);
+      alert("No fue posible generar la imagen PNG. Intenta nuevamente.");
+    }finally{
+      canvas.style.transform = previousCanvasTransform;
+      canvas.style.transition = previousCanvasTransition;
+      stage.style.width = previousStageWidth;
+      stage.style.height = previousStageHeight;
+      shell.scrollLeft = previousScrollLeft;
+      shell.scrollTop = previousScrollTop;
+
+      selectedId = prevSelectedId;
+      selectedLinkChildId = prevSelectedLinkChildId;
+      render();
+      updateZoomStage();
+
+      if(exportBtn){
+        exportBtn.disabled = false;
+        exportBtn.textContent = originalLabel || "💾 Guardar PNG";
+      }
+    }
+  }
+
   function fillParents(excludeId=null){
     parentSelect.innerHTML="";
 
@@ -1540,6 +1625,7 @@
   zoomOutBtn.addEventListener("click",()=>setZoom((state.zoom || 1) - ZOOM_STEP));
   zoomInBtn.addEventListener("click",()=>setZoom((state.zoom || 1) + ZOOM_STEP));
   fitBtn.addEventListener("click",fitToWidth);
+  exportBtn?.addEventListener("click", exportAsPng);
 
   addBtn.addEventListener("click",openAdd);
   renameBtn.addEventListener("click",openRename);

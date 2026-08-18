@@ -1,39 +1,19 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V16
+ORGANIGRAMA UIS — PROYECTO COMPLETO V17
 
-CAMBIOS V16
-===========
+Se agrega el botón:
+💾 Guardar PNG
 
-1. FACULTADES
-- Se mueve toda la rama de Facultades 50 px hacia la derecha.
-- Se conserva la posición relativa de todas sus facultades, escuelas,
-  programas y departamentos.
+Qué hace:
+- captura el organigrama completo;
+- exporta un archivo PNG;
+- ignora el zoom actual para que salga completo;
+- no exporta el remarcado de selección activa.
 
-2. INSTITUTO DE DESARROLLO REGIONAL
-- Se alinea con la columna formada por:
-  Planeación
-  Dirección de Control Interno y Evaluación de Gestión
-  Oficina de Control Interno Disciplinario
-  UISALUD
-- El Instituto de Desarrollo Regional queda encima de Planeación.
-- Sus dependencias se despliegan hacia el margen izquierdo:
-  Comité de Proyección Social y Territorio
-  Educación y Buen Vivir
-  Extensión y Proyección Social de Regionalización
-- Esta organización deja libre la columna donde aparece UIAES.
-
-3. UIAES
-- UIAES permanece OCULTO por defecto.
-- Para verlo se debe abrir Planeación mediante el botón +.
-- Una vez abierto, puede volver a cerrarse normalmente.
-- "Contraer todo" vuelve a dejar Planeación cerrada.
-
-4. EDICIÓN SIEMPRE ACTIVA
-- No es necesario activar ningún modo de edición.
-- Las casillas pueden arrastrarse en cualquier momento.
-- Al mover una casilla superior se mueve toda su rama.
-- Las líneas continúan siendo seleccionables y editables.
-- Doble clic permite renombrar.
-- El botón + / − sigue controlando desplegar/contraer.
+Se mantienen:
+- edición siempre activa;
+- movimiento de ramas completas;
+- UIAES oculto hasta abrir Planeación;
+- IDR alineado y dependencias hacia la izquierda.
 
 Para GitHub Pages:
-sube el proyecto completo y luego recarga con Ctrl + F5.
+sube el proyecto completo y recarga con Ctrl + F5.
