@@ -237,9 +237,7 @@
   addFacultyList("fac-humanas", fx[1], [
     ["fch-consejo","Consejo de Facultad"],
     ["lenguas","Instituto de Lenguas"],
-    
     ["derecho","Escuela de Derecho y\nCiencia Política",46],
-    
     ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"sublevel","derecho"],
     ["economia","Escuela de Economía\ny Administración",46],
     ["educacion","Escuela de Educación"],
@@ -645,9 +643,9 @@
       };
 
       restoreFacultyGeometry("fac-humanas", [
-        "fch-consejo","lenguas","artes","derecho","gestion-judicial",
+        "fch-consejo","lenguas","derecho","gestion-judicial",
         "economia","educacion","historia","idiomas","trabajo-social",
-        "filosofia","deportes","admin-finanzas","musica","artes-plasticas"
+        "filosofia","deportes","admin-finanzas","artes","artes-plasticas"
       ]);
 
       restoreFacultyGeometry("fac-ingenierias", [
