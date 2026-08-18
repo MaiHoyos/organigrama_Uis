@@ -1,17 +1,17 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V18
+ORGANIGRAMA UIS — PROYECTO COMPLETO V19
 
-CORRECCIÓN PARA GITHUB PAGES
-============================
-La exportación ya NO depende de html2canvas ni de un CDN externo.
+CAMBIO V19
+==========
+Las sedes quedan nombradas de forma homogénea con Barrancabermeja:
 
-El botón "Guardar PNG":
-- convierte internamente el organigrama a SVG y luego a PNG;
-- en Chrome/Edge sobre HTTPS abre el diálogo nativo "Guardar como...";
-- en otros navegadores usa una descarga mediante Blob;
-- exporta al doble de resolución;
-- elimina de la imagen los controles +/− y los resaltados de edición.
+- Escuela de Formación y Desarrollo Territorial Barrancabermeja
+- Escuela de Formación y Desarrollo Territorial Málaga
+- Escuela de Formación y Desarrollo Territorial Socorro
+- Escuela de Formación y Desarrollo Territorial Barbosa
 
-Esto evita que la descarga dependa del atributo <a download> después de
-un proceso asíncrono o de una librería externa.
+Se conserva Consejo de Sedes y el resto de funciones del proyecto.
+La migración V19 también renombra estas casillas aunque ya existan datos
+guardados en localStorage.
 
-Sube el proyecto COMPLETO V18 a GitHub Pages y haz Ctrl + F5.
+Para GitHub Pages:
+sube el proyecto completo y recarga con Ctrl + F5.

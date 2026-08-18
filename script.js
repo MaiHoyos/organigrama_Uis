@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 18;
+  const SCHEMA_VERSION = 19;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -120,9 +120,9 @@
   add("consejo-sedes","Consejo de Sedes",500,y,300,43,"vacad",{group:"vacademica",style:"new"}); y += 53;
   [
     ["barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja"],
-    ["malaga","Sede Málaga"],
-    ["socorro","Sede Socorro"],
-    ["barbosa","Sede Barbosa"]
+    ["malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga"],
+    ["socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro"],
+    ["barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa"]
   ].forEach(([id,label]) => { add(id,label,520,y,260,45,"consejo-sedes",{group:"vacademica",style:"new"}); y += 53; });
 
   // =========================
@@ -479,6 +479,18 @@
     });
 
     const get = id => parsed.nodes.find(n => n.id === id);
+
+    // V19: unificar el nombre de las sedes con Barrancabermeja.
+    const sedeLabels = {
+      malaga: "Escuela de Formación y Desarrollo\nTerritorial Málaga",
+      socorro: "Escuela de Formación y Desarrollo\nTerritorial Socorro",
+      barbosa: "Escuela de Formación y Desarrollo\nTerritorial Barbosa"
+    };
+
+    Object.entries(sedeLabels).forEach(([id, label]) => {
+      const n = get(id);
+      if(n) n.label = label;
+    });
 
     // V16: mover Facultades 50 px a la derecha respecto de V15,
     // conservando toda la distribución interna y movimientos de la rama.
