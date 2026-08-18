@@ -661,16 +661,16 @@
     const musica = get("musica");
     if(musica) musica.style = "new";
 
-    const regencia = get("regencia");
-    if(regencia){
-      regencia.label = "Tecnología en Regencia de Farmacia";
-      regencia.style = "sublevel";
-      regencia.w = 205;
-      regencia.h = 40;
-      regencia.parent = "fac-salud";
-      regencia.group = "facultades";
-      regencia.sourceSide = "bottom";
-      regencia.targetSide = "top";
+    const regenciaV10 = get("regencia");
+    if(regenciaV10){
+      regenciaV10.label = "Tecnología en Regencia de Farmacia";
+      regenciaV10.style = "sublevel";
+      regenciaV10.w = 205;
+      regenciaV10.h = 40;
+      regenciaV10.parent = "fac-salud";
+      regenciaV10.group = "facultades";
+      regenciaV10.sourceSide = "bottom";
+      regenciaV10.targetSide = "top";
     }
 
     [
