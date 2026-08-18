@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 4;
+  const SCHEMA_VERSION = 7;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -152,6 +152,17 @@
   ];
   fHeaders.forEach(([id,label,x]) => add(id,label,x,460,fw,60,"facultades",{group:"facultades",kind:"faculty-header",sourceSide:"bottom",targetSide:"top"}));
 
+  // NUEVO: Facultad de Ciencias Agrarias.
+  // La facultad es amarilla porque corresponde a una incorporación nueva.
+  // Sus programas quedan blancos porque dependen de ella.
+  add("fac-agrarias", "FACULTAD DE CIENCIAS\nAGRARIAS", 2080, 460, fw, 60, "facultades", {
+    group:"facultades",
+    kind:"faculty-header",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
   const addFacultyList = (parent, x, items) => {
     let yy = 535;
     items.forEach(item => {
@@ -198,6 +209,65 @@
     ["ing-quimica","Escuela de Ingeniería Química",44]
   ]);
 
+  // NUEVO dentro de Facultad de Ingenierías:
+  // Ingeniería en Alimentos depende de Escuela de Ingeniería Química,
+  // por lo tanto se presenta en blanco.
+  add("alimentos", "Ing. en Alimentos", 1700, 1131, 165, 40, "ing-quimica", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  // NUEVO: Escuela de Hábitat y Territorio (amarilla).
+  add("habitat-territorio", "Escuela de Hábitat\ny Territorio", 1680, 1185, fw, 50, "fac-ingenierias", {
+    group:"facultades",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  // Programas dependientes de Hábitat y Territorio: blancos.
+  add("ing-construccion", "Ing. Construcción", 1700, 1248, 165, 40, "habitat-territorio", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  add("arquitectura", "Arquitectura", 1700, 1301, 165, 40, "habitat-territorio", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700, 1354, 165, 58, "habitat-territorio", {
+    group:"facultades",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  // NUEVO: programas de la Facultad de Ciencias Agrarias.
+  // Todos quedan blancos por depender de la nueva facultad.
+  add("ing-forestal", "Ing. Forestal", 2080, 535, fw, 40, "fac-agrarias", {
+    group:"facultades", style:"sublevel"
+  });
+  add("zootecnia", "Zootecnia", 2080, 583, fw, 40, "fac-agrarias", {
+    group:"facultades", style:"sublevel"
+  });
+  add("med-veterinaria", "Medicina Veterinaria", 2080, 631, fw, 40, "fac-agrarias", {
+    group:"facultades", style:"sublevel"
+  });
+  add("ing-agronomica", "Ing. Agronómica", 2080, 679, fw, 40, "fac-agrarias", {
+    group:"facultades", style:"sublevel"
+  });
+  add(
+    "programas-agroindustrial",
+    "Programas del área Agroindustrial\npor ciclos propedéuticos\n(Técnico profesional en producción\nagropecuaria, Tecnología Agroindustrial\ny Administración Agroindustrial)",
+    2080, 727, fw, 112, "fac-agrarias",
+    { group:"facultades", style:"sublevel" }
+  );
+
   addFacultyList("fac-salud", fx[3], [
     ["fs-consejo","Consejo de Facultad"],
     ["proinapsa","PROINAPSA"],
@@ -220,7 +290,7 @@
     ["salud-mental","Departamento de Salud Mental"],
     ["salud-publica","Departamento de Salud Pública"]
   ].forEach(([id,label]) => { add(id,label,1880,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
-  add("regencia","Regencia de farmacia",2090,823,185,38,"fac-salud",{group:"facultades",style:"new",sourceSide:"right",targetSide:"left"});
+  add("regencia","Regencia de farmacia",1880,1215,185,38,"fac-salud",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
 
 
   // =========================
@@ -346,7 +416,7 @@
     });
 
     // Las cuatro facultades salen desde abajo de la casilla FACULTADES.
-    ["fac-ciencias","fac-humanas","fac-ingenierias","fac-salud"].forEach(id => {
+    ["fac-ciencias","fac-humanas","fac-ingenierias","fac-salud","fac-agrarias"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "facultades";
@@ -371,12 +441,29 @@
     }
 
     const regencia = get("regencia");
-    if(regencia && regencia.x < 2000){
-      regencia.x = 2090;
-      regencia.y = medicina ? medicina.y : 823;
-      regencia.sourceSide = "right";
-      regencia.targetSide = "left";
+    if(regencia && regencia.x >= 2000){
+      regencia.x = 1880;
+      regencia.y = 1215;
+      regencia.sourceSide = "bottom";
+      regencia.targetSide = "top";
     }
+
+    // Estilos de los nuevos bloques:
+    // encabezados nuevos = amarillo; dependencias = blanco.
+    const agrarias = get("fac-agrarias");
+    if(agrarias) agrarias.style = "new";
+
+    const habitat = get("habitat-territorio");
+    if(habitat) habitat.style = "new";
+
+    [
+      "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
+      "programas-agroindustrial","alimentos","ing-construccion",
+      "arquitectura","admin-turistica-hotelera"
+    ].forEach(id => {
+      const n = get(id);
+      if(n) n.style = "sublevel";
+    });
 
     parsed.schemaVersion = SCHEMA_VERSION;
     return parsed;
@@ -387,7 +474,19 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if(raw){
         const parsed = JSON.parse(raw);
-        if(Array.isArray(parsed.nodes) && parsed.expanded) return normalizeState(parsed);
+        if(Array.isArray(parsed.nodes) && parsed.expanded){
+          const normalized = normalizeState(parsed);
+
+          // Si viene de una versión anterior, incorporar las nuevas dependencias
+          // sin perder las posiciones que el usuario ya haya editado.
+          if((normalized.schemaVersion || 0) < SCHEMA_VERSION){
+            const migrated = migrateLegacyState(normalized);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+            return migrated;
+          }
+
+          return normalized;
+        }
       }
 
       const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -409,6 +508,46 @@
   function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
   function byId(id){ return state.nodes.find(n => n.id === id); }
   function childrenOf(id){ return state.nodes.filter(n => n.parent === id); }
+
+  // Devuelve TODOS los descendientes de una casilla, no solo los hijos directos.
+  // Ej.: Facultad de Salud -> Escuela de Medicina -> Departamentos.
+  function descendantsOf(id){
+    const result = [];
+    const visited = new Set([id]);
+    const queue = [id];
+
+    while(queue.length){
+      const parentId = queue.shift();
+      childrenOf(parentId).forEach(child => {
+        if(visited.has(child.id)) return;
+        visited.add(child.id);
+        result.push(child);
+        queue.push(child.id);
+      });
+    }
+
+    return result;
+  }
+
+  // Mueve una casilla y toda su rama exactamente el mismo delta.
+  // También actualiza descendientes ocultos/contraídos porque trabaja sobre state.nodes.
+  function moveBranch(rootId, dx, dy){
+    const root = byId(rootId);
+    if(!root) return;
+
+    const branch = [root, ...descendantsOf(rootId)];
+
+    // No permitir que ningún elemento de la rama salga por arriba/izquierda.
+    const minX = Math.min(...branch.map(n => n.x));
+    const minY = Math.min(...branch.map(n => n.y));
+    const safeDx = Math.max(dx, 5 - minX);
+    const safeDy = Math.max(dy, 5 - minY);
+
+    branch.forEach(n => {
+      n.x += safeDx;
+      n.y += safeDy;
+    });
+  }
 
   function isNodeCollapsedByParent(node){
     let p = node.parent;
@@ -573,13 +712,22 @@
     selectNodeWithoutRender(node.id);
 
     const rect = canvas.getBoundingClientRect();
+    const branch = [node, ...descendantsOf(node.id)];
+    const startPositions = new Map(
+      branch.map(item => [item.id, {x:item.x, y:item.y}])
+    );
+
     drag = {
       id:node.id,
+      branchIds:branch.map(item => item.id),
+      startPositions,
       pointerId:ev.pointerId,
       startClientX:ev.clientX,
       startClientY:ev.clientY,
       startX:node.x,
       startY:node.y,
+      minStartX:Math.min(...branch.map(item => item.x)),
+      minStartY:Math.min(...branch.map(item => item.y)),
       canvasScale:rect.width / CANVAS_WIDTH
     };
 
@@ -601,21 +749,39 @@
 
   function moveDrag(ev){
     if(!drag || ev.pointerId !== drag.pointerId) return;
-    const node = byId(drag.id);
-    if(!node) return;
+    const root = byId(drag.id);
+    if(!root) return;
 
     const scale = drag.canvasScale || 1;
-    const dx = (ev.clientX - drag.startClientX)/scale;
-    const dy = (ev.clientY - drag.startClientY)/scale;
+    const rawDx = (ev.clientX - drag.startClientX)/scale;
+    const rawDy = (ev.clientY - drag.startClientY)/scale;
 
-    node.x = Math.max(5, Math.round((drag.startX + dx)/GRID)*GRID);
-    node.y = Math.max(5, Math.round((drag.startY + dy)/GRID)*GRID);
+    // Snap calculado desde la casilla que se está agarrando.
+    const snappedRootX = Math.round((drag.startX + rawDx)/GRID)*GRID;
+    const snappedRootY = Math.round((drag.startY + rawDy)/GRID)*GRID;
+    let deltaX = snappedRootX - drag.startX;
+    let deltaY = snappedRootY - drag.startY;
 
-    const el = document.querySelector(`.org-node[data-id="${CSS.escape(node.id)}"]`);
-    if(el){
-      el.style.left=node.x+"px";
-      el.style.top=node.y+"px";
-    }
+    // Evita sacar cualquier descendiente fuera del lienzo por arriba/izquierda.
+    deltaX = Math.max(deltaX, 5 - drag.minStartX);
+    deltaY = Math.max(deltaY, 5 - drag.minStartY);
+
+    // MUY IMPORTANTE: cada posición se recalcula desde la foto inicial del drag,
+    // para que toda la rama se mueva exactamente junta y no acumule errores.
+    drag.branchIds.forEach(id => {
+      const item = byId(id);
+      const start = drag.startPositions.get(id);
+      if(!item || !start) return;
+
+      item.x = start.x + deltaX;
+      item.y = start.y + deltaY;
+
+      const itemEl = document.querySelector(`.org-node[data-id="${CSS.escape(id)}"]`);
+      if(itemEl){
+        itemEl.style.left = item.x + "px";
+        itemEl.style.top = item.y + "px";
+      }
+    });
 
     resizeCanvas();
     drawConnections();
@@ -1135,19 +1301,18 @@
     if(!node) return;
 
     const step=ev.shiftKey?20:5;
-    let moved=true;
+    let dx=0, dy=0;
 
-    if(ev.key==="ArrowLeft") node.x=Math.max(5,node.x-step);
-    else if(ev.key==="ArrowRight") node.x+=step;
-    else if(ev.key==="ArrowUp") node.y=Math.max(5,node.y-step);
-    else if(ev.key==="ArrowDown") node.y+=step;
-    else moved=false;
+    if(ev.key==="ArrowLeft") dx=-step;
+    else if(ev.key==="ArrowRight") dx=step;
+    else if(ev.key==="ArrowUp") dy=-step;
+    else if(ev.key==="ArrowDown") dy=step;
+    else return;
 
-    if(moved){
-      ev.preventDefault();
-      saveState();
-      render();
-    }
+    ev.preventDefault();
+    moveBranch(selectedId, dx, dy);
+    saveState();
+    render();
   });
 
   render();
