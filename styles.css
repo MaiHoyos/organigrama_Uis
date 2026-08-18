@@ -114,7 +114,7 @@ main{padding:0 24px 30px}
 }
 .canvas-stage{
   position:relative;
-  width:2300px;
+  width:2800px;
   height:650px;
   margin:0 auto;
   transition:width .16s ease,height .16s ease;
@@ -123,8 +123,8 @@ main{padding:0 24px 30px}
   position:absolute;
   left:0;
   top:0;
-  width:2300px;
-  min-width:2300px;
+  width:2800px;
+  min-width:2800px;
   height:650px;
   min-height:650px;
   margin:0;
@@ -333,4 +333,29 @@ main{padding:0 24px 30px}
   .page-header{grid-template-columns:1fr;justify-items:center;padding-inline:14px}.page-header h1{order:2}.uis-brand{order:1}.main-tools{order:3}
   main{padding-inline:10px}.edit-bar{padding-inline:12px}.edit-bar-left{display:block;min-width:0}.edit-help{display:block;margin-top:4px}
   .two-cols{grid-template-columns:1fr}.footer-row{align-items:flex-start}.legend{gap:13px}
+}
+
+
+/* =========================================================
+   NUEVAS UNIDADES
+   Amarillo = unidad nueva.
+   Esta regla es más específica que los colores de las cajas
+   principales y de las facultades para evitar que queden
+   moradas, azules o verdes por herencia de su tipo.
+   ========================================================= */
+.org-node.main.new-node,
+.org-node.faculty-header.new-node{
+  background:var(--yellow);
+  border:1px solid #d6b749;
+  color:#4b421d;
+}
+
+.org-node.branch-proyeccion{
+  --node-bg:#fff;
+  --node-border:#d6b749;
+  color:#333;
+}
+
+.connector.branch-proyeccion{
+  stroke:#c5a93c;
 }

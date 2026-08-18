@@ -3,19 +3,21 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 7;
-  const CANVAS_WIDTH = 2300;
+  const SCHEMA_VERSION = 8;
+  const CANVAS_WIDTH = 2800;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
+  const FACULTY_SHIFT = 440;
 
-  const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "facultades"];
+  const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "proyeccion", "facultades"];
   const GROUP_BY_CORE = {
     rectoria: "rectoria",
     vie: "investigacion",
     vacad: "vacademica",
     vadmin: "administrativa",
+    vproyeccion: "proyeccion",
     facultades: "facultades"
   };
 
@@ -24,6 +26,7 @@
     investigacion: "branch-turq",
     vacademica: "branch-blue",
     administrativa: "branch-admin",
+    proyeccion: "branch-proyeccion",
     facultades: "branch-purple",
     core: ""
   };
@@ -32,6 +35,7 @@
     investigacion: "branch-turq",
     vacademica: "branch-blue",
     administrativa: "branch-admin",
+    proyeccion: "branch-proyeccion",
     facultades: "branch-purple"
   };
 
@@ -60,7 +64,18 @@
   add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 115, 355, 325, 72, "academico", {kind:"main", css:"turq", sourceSide:"bottom", targetSide:"top"});
   add("vacad", "VICERRECTORÍA\nACADÉMICA", 500, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
   add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 865, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
-  add("facultades", "FACULTADES", 1490, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
+
+  // NUEVO: Vicerrectoría de Proyección Social y Territorio.
+  // Al ser una unidad nueva, su casilla principal es amarilla.
+  add(
+    "vproyeccion",
+    "VICERRECTORÍA DE\nPROYECCIÓN SOCIAL\nY TERRITORIO",
+    1275, 355, 360, 72, "academico",
+    {kind:"main", style:"new", sourceSide:"bottom", targetSide:"top"}
+  );
+
+  // Se desplaza la rama de Facultades para dejar espacio limpio a la nueva Vicerrectoría.
+  add("facultades", "FACULTADES", 1490 + FACULTY_SHIFT, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
@@ -140,9 +155,48 @@
   add("seguridad","Sección de Seguridad",885,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
 
   // =========================
+  // NUEVA Vicerrectoría de Proyección Social y Territorio
+  // =========================
+  // La Vicerrectoría es amarilla; sus dependencias son blancas.
+  add(
+    "comite-proyeccion",
+    "Comité de Proyección Social\ny Territorio",
+    1280, 460, 350, 54, "vproyeccion",
+    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+  );
+
+  add(
+    "educacion-buen-vivir",
+    "Educación y Buen Vivir",
+    1280, 528, 350, 48, "vproyeccion",
+    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+  );
+
+  add(
+    "extension-regionalizacion",
+    "Extensión y Proyección Social\nde Regionalización",
+    1280, 590, 350, 60, "vproyeccion",
+    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+  );
+
+  add(
+    "sedes-regionales",
+    "Sedes Regionales",
+    1310, 664, 290, 45, "extension-regionalizacion",
+    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+  );
+
+  add(
+    "amovi",
+    "AMOVI",
+    1280, 723, 350, 48, "vproyeccion",
+    {group:"proyeccion", style:"sublevel", sourceSide:"bottom", targetSide:"top"}
+  );
+
+  // =========================
   // Facultades
   // =========================
-  const fx = [1280, 1480, 1680, 1880];
+  const fx = [1280 + FACULTY_SHIFT, 1480 + FACULTY_SHIFT, 1680 + FACULTY_SHIFT, 1880 + FACULTY_SHIFT];
   const fw = 185;
   const fHeaders = [
     ["fac-ciencias","FACULTAD\nDE CIENCIAS",fx[0]],
@@ -155,7 +209,7 @@
   // NUEVO: Facultad de Ciencias Agrarias.
   // La facultad es amarilla porque corresponde a una incorporación nueva.
   // Sus programas quedan blancos porque dependen de ella.
-  add("fac-agrarias", "FACULTAD DE CIENCIAS\nAGRARIAS", 2080, 460, fw, 60, "facultades", {
+  add("fac-agrarias", "FACULTAD DE CIENCIAS\nAGRARIAS", 2080 + FACULTY_SHIFT, 460, fw, 60, "facultades", {
     group:"facultades",
     kind:"faculty-header",
     style:"new",
@@ -212,7 +266,7 @@
   // NUEVO dentro de Facultad de Ingenierías:
   // Ingeniería en Alimentos depende de Escuela de Ingeniería Química,
   // por lo tanto se presenta en blanco.
-  add("alimentos", "Ing. en Alimentos", 1700, 1131, 165, 40, "ing-quimica", {
+  add("alimentos", "Ing. en Alimentos", 1700 + FACULTY_SHIFT, 1131, 165, 40, "ing-quimica", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
@@ -220,7 +274,7 @@
   });
 
   // NUEVO: Escuela de Hábitat y Territorio (amarilla).
-  add("habitat-territorio", "Escuela de Hábitat\ny Territorio", 1680, 1185, fw, 50, "fac-ingenierias", {
+  add("habitat-territorio", "Escuela de Hábitat\ny Territorio", 1680 + FACULTY_SHIFT, 1185, fw, 50, "fac-ingenierias", {
     group:"facultades",
     style:"new",
     sourceSide:"bottom",
@@ -228,19 +282,19 @@
   });
 
   // Programas dependientes de Hábitat y Territorio: blancos.
-  add("ing-construccion", "Ing. Construcción", 1700, 1248, 165, 40, "habitat-territorio", {
+  add("ing-construccion", "Ing. Construcción", 1700 + FACULTY_SHIFT, 1248, 165, 40, "habitat-territorio", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
     targetSide:"top"
   });
-  add("arquitectura", "Arquitectura", 1700, 1301, 165, 40, "habitat-territorio", {
+  add("arquitectura", "Arquitectura", 1700 + FACULTY_SHIFT, 1301, 165, 40, "habitat-territorio", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
     targetSide:"top"
   });
-  add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700, 1354, 165, 58, "habitat-territorio", {
+  add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700 + FACULTY_SHIFT, 1354, 165, 58, "habitat-territorio", {
     group:"facultades",
     style:"sublevel",
     sourceSide:"bottom",
@@ -249,22 +303,22 @@
 
   // NUEVO: programas de la Facultad de Ciencias Agrarias.
   // Todos quedan blancos por depender de la nueva facultad.
-  add("ing-forestal", "Ing. Forestal", 2080, 535, fw, 40, "fac-agrarias", {
+  add("ing-forestal", "Ing. Forestal", 2080 + FACULTY_SHIFT, 535, fw, 40, "fac-agrarias", {
     group:"facultades", style:"sublevel"
   });
-  add("zootecnia", "Zootecnia", 2080, 583, fw, 40, "fac-agrarias", {
+  add("zootecnia", "Zootecnia", 2080 + FACULTY_SHIFT, 583, fw, 40, "fac-agrarias", {
     group:"facultades", style:"sublevel"
   });
-  add("med-veterinaria", "Medicina Veterinaria", 2080, 631, fw, 40, "fac-agrarias", {
+  add("med-veterinaria", "Medicina Veterinaria", 2080 + FACULTY_SHIFT, 631, fw, 40, "fac-agrarias", {
     group:"facultades", style:"sublevel"
   });
-  add("ing-agronomica", "Ing. Agronómica", 2080, 679, fw, 40, "fac-agrarias", {
+  add("ing-agronomica", "Ing. Agronómica", 2080 + FACULTY_SHIFT, 679, fw, 40, "fac-agrarias", {
     group:"facultades", style:"sublevel"
   });
   add(
     "programas-agroindustrial",
     "Programas del área Agroindustrial\npor ciclos propedéuticos\n(Técnico profesional en producción\nagropecuaria, Tecnología Agroindustrial\ny Administración Agroindustrial)",
-    2080, 727, fw, 112, "fac-agrarias",
+    2080 + FACULTY_SHIFT, 727, fw, 112, "fac-agrarias",
     { group:"facultades", style:"sublevel" }
   );
 
@@ -289,8 +343,8 @@
     ["pediatria","Departamento de Pediatría"],
     ["salud-mental","Departamento de Salud Mental"],
     ["salud-publica","Departamento de Salud Pública"]
-  ].forEach(([id,label]) => { add(id,label,1880,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
-  add("regencia","Regencia de farmacia",1880,1215,185,38,"fac-salud",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  ].forEach(([id,label]) => { add(id,label,1880 + FACULTY_SHIFT,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
+  add("regencia","Regencia de farmacia",1880 + FACULTY_SHIFT,1215,185,38,"fac-salud",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
 
 
   // =========================
@@ -359,7 +413,7 @@
   let drag = null;
 
   const PROTECTED_NODES = new Set([
-    "superior","rectoria","academico","vie","vacad","vadmin","facultades"
+    "superior","rectoria","academico","vie","vacad","vadmin","vproyeccion","facultades"
   ]);
 
   function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
@@ -385,14 +439,28 @@
   }
 
   function migrateLegacyState(parsed){
+    const fromSchema = parsed.schemaVersion || 0;
     parsed = normalizeState(parsed);
 
-    // Se agregan casillas institucionales que pudieran faltar en una versión anterior,
-    // conservando las posiciones y cambios que el usuario ya hubiera hecho.
+    // IDs que ya existían antes de incorporar la versión nueva.
     const existing = new Set(parsed.nodes.map(n => n.id));
+
+    // Se agregan casillas institucionales que pudieran faltar,
+    // conservando los movimientos que el usuario ya hubiese realizado.
     baseNodes.forEach(base => {
       if(!existing.has(base.id)) parsed.nodes.push(deepClone(base));
     });
+
+    // Desde V8 se reserva espacio para la nueva Vicerrectoría.
+    // Solo se desplazan las casillas de Facultades que ya existían:
+    // las casillas recién incorporadas ya vienen en su nueva posición base.
+    if(fromSchema < 8){
+      parsed.nodes.forEach(n => {
+        if(existing.has(n.id) && (n.group === "facultades" || n.id === "facultades")){
+          n.x += FACULTY_SHIFT;
+        }
+      });
+    }
 
     const get = id => parsed.nodes.find(n => n.id === id);
 
@@ -406,7 +474,7 @@
     }
 
     // Las cuatro ramas principales salen ordenadamente desde abajo de Consejo Académico.
-    ["vie","vacad","vadmin","facultades"].forEach(id => {
+    ["vie","vacad","vadmin","vproyeccion","facultades"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "academico";
@@ -455,6 +523,17 @@
 
     const habitat = get("habitat-territorio");
     if(habitat) habitat.style = "new";
+
+    const vproyeccion = get("vproyeccion");
+    if(vproyeccion) vproyeccion.style = "new";
+
+    [
+      "comite-proyeccion","educacion-buen-vivir",
+      "extension-regionalizacion","sedes-regionales","amovi"
+    ].forEach(id => {
+      const n = get(id);
+      if(n) n.style = "sublevel";
+    });
 
     [
       "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
@@ -580,6 +659,7 @@
     if(node.id === "vie") return "investigacion";
     if(node.id === "vacad") return "vacademica";
     if(node.id === "vadmin") return "administrativa";
+    if(node.id === "vproyeccion") return "proyeccion";
     if(node.id === "facultades") return "facultades";
     if(node.id === "rectoria") return "rectoria";
     return "core";
