@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 17;
+  const SCHEMA_VERSION = 18;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -1283,13 +1283,166 @@
     shell.scrollTo({left:0, top:0, behavior:"smooth"});
   }
 
+  function cssForExport(){
+    const chunks = [];
+
+    [...document.styleSheets].forEach(sheet => {
+      try{
+        [...sheet.cssRules].forEach(rule => chunks.push(rule.cssText));
+      }catch(error){
+        // Ignora hojas que el navegador no permita leer.
+      }
+    });
+
+    return chunks.join("\n");
+  }
+
+  function cloneOrganigramForExport(width, height){
+    const clone = canvas.cloneNode(true);
+
+    clone.classList.remove("editing");
+    clone.querySelectorAll(".toggle-badge").forEach(el => el.remove());
+    clone.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+    clone.querySelectorAll(".selected-link").forEach(el => el.classList.remove("selected-link"));
+    clone.querySelectorAll(".connector-hit").forEach(el => el.remove());
+    clone.querySelectorAll(".editable").forEach(el => el.classList.remove("editable"));
+
+    Object.assign(clone.style, {
+      position: "relative",
+      left: "0",
+      top: "0",
+      width: width + "px",
+      minWidth: width + "px",
+      height: height + "px",
+      minHeight: height + "px",
+      margin: "0",
+      transform: "none",
+      transition: "none",
+      background: "#ffffff"
+    });
+
+    return clone;
+  }
+
+  function organigramToPngBlob(width, height){
+    return new Promise((resolve, reject) => {
+      try{
+        const clone = cloneOrganigramForExport(width, height);
+        const rootStyle = getComputedStyle(document.documentElement);
+
+        const vars = [
+          "--uis-dark","--uis-main","--turq","--blue","--admin",
+          "--purple","--yellow","--ink","--muted","--line",
+          "--paper","--soft","--border"
+        ].map(name => `${name}:${rootStyle.getPropertyValue(name).trim()};`).join("");
+
+        const cssText = cssForExport().replace(/<\/style/gi, "<\\/style");
+
+        const xhtml = `
+          <div xmlns="http://www.w3.org/1999/xhtml"
+               style="position:relative;width:${width}px;height:${height}px;background:#fff;${vars}">
+            <style>${cssText}</style>
+            ${clone.outerHTML}
+          </div>
+        `;
+
+        const svgText = `
+          <svg xmlns="http://www.w3.org/2000/svg"
+               xmlns:xlink="http://www.w3.org/1999/xlink"
+               width="${width}" height="${height}"
+               viewBox="0 0 ${width} ${height}">
+            <foreignObject x="0" y="0" width="100%" height="100%">
+              ${xhtml}
+            </foreignObject>
+          </svg>
+        `;
+
+        const svgBlob = new Blob([svgText], {type:"image/svg+xml;charset=utf-8"});
+        const svgUrl = URL.createObjectURL(svgBlob);
+        const img = new Image();
+
+        img.onload = () => {
+          try{
+            const scale = 2;
+            const output = document.createElement("canvas");
+            output.width = Math.round(width * scale);
+            output.height = Math.round(height * scale);
+
+            const ctx = output.getContext("2d");
+            ctx.setTransform(scale, 0, 0, scale, 0, 0);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+
+            URL.revokeObjectURL(svgUrl);
+
+            output.toBlob(blob => {
+              if(blob) resolve(blob);
+              else reject(new Error("No se pudo convertir la imagen a PNG."));
+            }, "image/png");
+          }catch(error){
+            URL.revokeObjectURL(svgUrl);
+            reject(error);
+          }
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(svgUrl);
+          reject(new Error("No se pudo renderizar el organigrama."));
+        };
+
+        img.src = svgUrl;
+      }catch(error){
+        reject(error);
+      }
+    });
+  }
+
+  async function fallbackDownload(blob, filename){
+    const url = URL.createObjectURL(blob);
+
+    try{
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.rel = "noopener";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 15000);
+    }catch(error){
+      URL.revokeObjectURL(url);
+      throw error;
+    }
+  }
+
   async function exportAsPng(){
-    if(typeof html2canvas === "undefined"){
-      alert("No se pudo cargar la librería para exportar el PNG. Recarga la página e inténtalo de nuevo.");
-      return;
+    const originalLabel = exportBtn ? exportBtn.textContent : "";
+    const timestamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");
+    const filename = `organigrama-uis-${timestamp}.png`;
+
+    let fileHandle = null;
+
+    // En GitHub Pages (HTTPS), Chrome/Edge pueden usar el selector nativo.
+    // Se llama inmediatamente tras el clic para conservar la activación del usuario.
+    if(window.isSecureContext && "showSaveFilePicker" in window){
+      try{
+        fileHandle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{
+            description: "Imagen PNG",
+            accept: {"image/png": [".png"]}
+          }]
+        });
+      }catch(error){
+        if(error?.name === "AbortError") return;
+        console.warn("No se pudo abrir el selector nativo:", error);
+        fileHandle = null;
+      }
     }
 
-    const originalLabel = exportBtn ? exportBtn.textContent : "";
     if(exportBtn){
       exportBtn.disabled = true;
       exportBtn.textContent = "⏳ Generando PNG...";
@@ -1298,63 +1451,28 @@
     const prevSelectedId = selectedId;
     const prevSelectedLinkChildId = selectedLinkChildId;
 
-    // Ocultar selección activa en la exportación
     selectedId = null;
     selectedLinkChildId = null;
     render();
 
-    const previousCanvasTransform = canvas.style.transform;
-    const previousCanvasTransition = canvas.style.transition;
-    const previousStageWidth = stage.style.width;
-    const previousStageHeight = stage.style.height;
-    const previousScrollLeft = shell.scrollLeft;
-    const previousScrollTop = shell.scrollTop;
-
     try{
-      const logicalHeight = Math.round(parseFloat(canvas.style.height) || canvas.offsetHeight || 650);
+      const logicalHeight = Math.round(
+        parseFloat(canvas.style.height) || canvas.offsetHeight || 650
+      );
 
-      // Captura el organigrama completo, sin depender del zoom ni del scroll actual.
-      canvas.style.transform = "none";
-      canvas.style.transition = "none";
-      stage.style.width = CANVAS_WIDTH + "px";
-      stage.style.height = logicalHeight + "px";
-      shell.scrollLeft = 0;
-      shell.scrollTop = 0;
+      const pngBlob = await organigramToPngBlob(CANVAS_WIDTH, logicalHeight);
 
-      await new Promise(resolve => requestAnimationFrame(resolve));
-
-      const pngCanvas = await html2canvas(canvas, {
-        backgroundColor: "#ffffff",
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        logging: false,
-        width: CANVAS_WIDTH,
-        height: logicalHeight,
-        windowWidth: CANVAS_WIDTH,
-        windowHeight: logicalHeight,
-        scrollX: 0,
-        scrollY: 0
-      });
-
-      const timestamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");
-      const link = document.createElement("a");
-      link.download = `organigrama-uis-${timestamp}.png`;
-      link.href = pngCanvas.toDataURL("image/png");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      if(fileHandle){
+        const writable = await fileHandle.createWritable();
+        await writable.write(pngBlob);
+        await writable.close();
+      }else{
+        await fallbackDownload(pngBlob, filename);
+      }
     }catch(error){
       console.error(error);
-      alert("No fue posible generar la imagen PNG. Intenta nuevamente.");
+      alert("No fue posible guardar el PNG. Recarga la página e inténtalo nuevamente.");
     }finally{
-      canvas.style.transform = previousCanvasTransform;
-      canvas.style.transition = previousCanvasTransition;
-      stage.style.width = previousStageWidth;
-      stage.style.height = previousStageHeight;
-      shell.scrollLeft = previousScrollLeft;
-      shell.scrollTop = previousScrollTop;
-
       selectedId = prevSelectedId;
       selectedLinkChildId = prevSelectedLinkChildId;
       render();

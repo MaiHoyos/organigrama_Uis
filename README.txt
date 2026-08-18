@@ -1,19 +1,17 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V17
+ORGANIGRAMA UIS — PROYECTO COMPLETO V18
 
-Se agrega el botón:
-💾 Guardar PNG
+CORRECCIÓN PARA GITHUB PAGES
+============================
+La exportación ya NO depende de html2canvas ni de un CDN externo.
 
-Qué hace:
-- captura el organigrama completo;
-- exporta un archivo PNG;
-- ignora el zoom actual para que salga completo;
-- no exporta el remarcado de selección activa.
+El botón "Guardar PNG":
+- convierte internamente el organigrama a SVG y luego a PNG;
+- en Chrome/Edge sobre HTTPS abre el diálogo nativo "Guardar como...";
+- en otros navegadores usa una descarga mediante Blob;
+- exporta al doble de resolución;
+- elimina de la imagen los controles +/− y los resaltados de edición.
 
-Se mantienen:
-- edición siempre activa;
-- movimiento de ramas completas;
-- UIAES oculto hasta abrir Planeación;
-- IDR alineado y dependencias hacia la izquierda.
+Esto evita que la descarga dependa del atributo <a download> después de
+un proceso asíncrono o de una librería externa.
 
-Para GitHub Pages:
-sube el proyecto completo y recarga con Ctrl + F5.
+Sube el proyecto COMPLETO V18 a GitHub Pages y haz Ctrl + F5.
