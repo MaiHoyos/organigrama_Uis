@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 8;
+  const SCHEMA_VERSION = 9;
   const CANVAS_WIDTH = 2800;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -315,11 +315,54 @@
   add("ing-agronomica", "Ing. Agronómica", 2080 + FACULTY_SHIFT, 679, fw, 40, "fac-agrarias", {
     group:"facultades", style:"sublevel"
   });
+  // Programas del área Agroindustrial por ciclos propedéuticos:
+  // este es el cuadro padre. Sus tres carreras se desprenden de él.
   add(
     "programas-agroindustrial",
-    "Programas del área Agroindustrial\npor ciclos propedéuticos\n(Técnico profesional en producción\nagropecuaria, Tecnología Agroindustrial\ny Administración Agroindustrial)",
-    2080 + FACULTY_SHIFT, 727, fw, 112, "fac-agrarias",
-    { group:"facultades", style:"sublevel" }
+    "Programas del área Agroindustrial\npor ciclos propedéuticos",
+    2080 + FACULTY_SHIFT, 727, fw, 58, "fac-agrarias",
+    {
+      group:"facultades",
+      style:"sublevel",
+      sourceSide:"bottom",
+      targetSide:"top"
+    }
+  );
+
+  add(
+    "tecnico-produccion-agropecuaria",
+    "Técnico profesional en\nproducción agropecuaria",
+    2080 + FACULTY_SHIFT, 797, fw, 54, "programas-agroindustrial",
+    {
+      group:"facultades",
+      style:"sublevel",
+      sourceSide:"bottom",
+      targetSide:"top"
+    }
+  );
+
+  add(
+    "tecnologia-agroindustrial",
+    "Tecnología Agroindustrial",
+    2080 + FACULTY_SHIFT, 863, fw, 42, "programas-agroindustrial",
+    {
+      group:"facultades",
+      style:"sublevel",
+      sourceSide:"bottom",
+      targetSide:"top"
+    }
+  );
+
+  add(
+    "administracion-agroindustrial",
+    "Administración Agroindustrial",
+    2080 + FACULTY_SHIFT, 917, fw, 42, "programas-agroindustrial",
+    {
+      group:"facultades",
+      style:"sublevel",
+      sourceSide:"bottom",
+      targetSide:"top"
+    }
   );
 
   addFacultyList("fac-salud", fx[3], [
@@ -521,6 +564,39 @@
     const agrarias = get("fac-agrarias");
     if(agrarias) agrarias.style = "new";
 
+    // V9: corregir la estructura del bloque Agroindustrial.
+    // Se conserva la posición que el usuario haya dado al cuadro padre.
+    const programasAgro = get("programas-agroindustrial");
+    if(programasAgro){
+      programasAgro.label = "Programas del área Agroindustrial\npor ciclos propedéuticos";
+      programasAgro.h = 58;
+      programasAgro.style = "sublevel";
+
+      const agroChildren = [
+        ["tecnico-produccion-agropecuaria", 70],
+        ["tecnologia-agroindustrial", 136],
+        ["administracion-agroindustrial", 190]
+      ];
+
+      agroChildren.forEach(([id, offsetY]) => {
+        const child = get(id);
+        if(child){
+          child.parent = "programas-agroindustrial";
+          child.group = "facultades";
+          child.style = "sublevel";
+          child.sourceSide = "bottom";
+          child.targetSide = "top";
+
+          // Si viene de una versión anterior, colocar las nuevas carreras
+          // debajo del padre, incluso si el usuario ya había movido ese padre.
+          if(fromSchema < 9){
+            child.x = programasAgro.x;
+            child.y = programasAgro.y + offsetY;
+          }
+        }
+      });
+    }
+
     const habitat = get("habitat-territorio");
     if(habitat) habitat.style = "new";
 
@@ -537,8 +613,10 @@
 
     [
       "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
-      "programas-agroindustrial","alimentos","ing-construccion",
-      "arquitectura","admin-turistica-hotelera"
+      "programas-agroindustrial","tecnico-produccion-agropecuaria",
+      "tecnologia-agroindustrial","administracion-agroindustrial",
+      "alimentos","ing-construccion","arquitectura",
+      "admin-turistica-hotelera"
     ].forEach(id => {
       const n = get(id);
       if(n) n.style = "sublevel";
