@@ -3,17 +3,18 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 19;
+  const SCHEMA_VERSION = 21;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = -30;
+  const FACULTY_SHIFT = 20;
 
-  const GROUPS = ["rectoria", "investigacion", "vacademica", "administrativa", "facultades"];
+  const GROUPS = ["rectoria", "cultura-bienestar", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
     rectoria: "rectoria",
+    vbienestar: "cultura-bienestar",
     vie: "investigacion",
     vacad: "vacademica",
     vadmin: "administrativa",
@@ -22,6 +23,7 @@
 
   const branchClass = {
     rectoria: "branch-rectoria",
+    "cultura-bienestar": "branch-wellbeing",
     investigacion: "branch-turq",
     vacademica: "branch-blue",
     administrativa: "branch-admin",
@@ -30,6 +32,7 @@
   };
 
   const connectionBranchClass = {
+    "cultura-bienestar": "branch-wellbeing",
     investigacion: "branch-turq",
     vacademica: "branch-blue",
     administrativa: "branch-admin",
@@ -58,12 +61,20 @@
   add("rectoria", "RECTORÍA", 820, 137, 360, 66, "superior", {kind:"main", css:"rectoria"});
   add("academico", "CONSEJO ACADÉMICO", 820, 238, 360, 54, "rectoria", {kind:"main", css:"dark"});
 
-  add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 115, 355, 325, 72, "academico", {kind:"main", css:"turq", sourceSide:"bottom", targetSide:"top"});
-  add("vacad", "VICERRECTORÍA\nACADÉMICA", 500, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
-  add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 865, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
+  // NUEVA Vicerrectoría. Amarilla por corresponder a una unidad nueva.
+  add("vbienestar", "VICERRECTORÍA DE\nCULTURA Y BIENESTAR", 20, 355, 300, 72, "academico", {
+    kind:"main",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
 
-  // Facultades se ubica cerca de Vicerrectoría Administrativa para compactar la lectura.
-  add("facultades", "FACULTADES", 1490 + FACULTY_SHIFT, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
+  add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 365, 355, 325, 72, "academico", {kind:"main", css:"turq", sourceSide:"bottom", targetSide:"top"});
+  add("vacad", "VICERRECTORÍA\nACADÉMICA", 745, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
+  add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 1090, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
+
+  // Facultades se mantiene compacta y dentro del ancho del lienzo.
+  add("facultades", "FACULTADES", 1510, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
@@ -90,7 +101,7 @@
   // Vicerrectoría de Investigación y Extensión
   // =========================
   let y = 460;
-  const vieX = 120, vieW = 315, rowH = 45, gap = 8;
+  const vieX = 370, vieW = 315, rowH = 45, gap = 8;
   [
     ["cie","Consejo de Investigación\ny Extensión"],
     ["ieia","Instituto de Estudios\nInterdisciplinarios y Acción"],
@@ -99,37 +110,73 @@
     ["comite-ie","Comité Operativo de\nInvestigación y Extensión"],
     ["programas","Coordinación de Programas\ny Proyectos"]
   ].forEach(([id,label]) => { add(id,label,vieX,y,vieW,rowH,"vie",{group:"investigacion"}); y += rowH+gap; });
-  add("centro-tecnico","Centro Administrativo de Estudios\nTécnicos y Tecnológicos",vieX,y,vieW,52,"vie",{group:"investigacion",style:"new"});
+
+  // =========================
+  // Vicerrectoría de Cultura y Bienestar
+  // =========================
+  y = 460;
+  const vbX = 20, vbW = 300;
+
+  add("cultural","Dirección Cultural",vbX,y,vbW,rowH,"vbienestar",{
+    group:"cultura-bienestar",
+    style:"sublevel"
+  });
+  y += rowH + gap;
+
+  add("bienestar","Bienestar Estudiantil",vbX,y,vbW,rowH,"vbienestar",{
+    group:"cultura-bienestar",
+    style:"sublevel"
+  });
+  y += rowH + gap;
+
+  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",40,y,260,52,"bienestar",{
+    group:"cultura-bienestar",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 60;
+
+  add("alimentacion","Coordinación de Servicios\nde Alimentación",40,y,260,47,"bienestar",{
+    group:"cultura-bienestar",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
 
   // =========================
   // Vicerrectoría Académica
   // =========================
   y = 460;
-  const vaX = 500, vaW = 300;
+  const vaX = 745, vaW = 300;
   [
     ["posgrados","Dirección de Posgrados"],
     ["calidad","Coordinación de Evaluación\nde la Calidad"],
-    ["cultural","Dirección Cultural"],
     ["admisiones","Dirección de Admisiones\ny Registro Académico"],
     ["biblioteca","Biblioteca"],
-    ["cededuis","CEDEDUIS"],
-    ["bienestar","Bienestar Estudiantil"]
+    ["cededuis","CEDEDUIS"]
   ].forEach(([id,label]) => { add(id,label,vaX,y,vaW,rowH,"vacad",{group:"vacademica"}); y += rowH+gap; });
-  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",520,y,260,52,"bienestar",{group:"vacademica",style:"sublevel"}); y += 60;
-  add("alimentacion","Coordinación de Servicios\nde Alimentación",520,y,260,47,"bienestar",{group:"vacademica",style:"sublevel"}); y += 58;
-  add("consejo-sedes","Consejo de Sedes",500,y,300,43,"vacad",{group:"vacademica",style:"new"}); y += 53;
+
+  // Trasladado desde Investigación y renombrado.
+  add("centro-tecnico","Escuela de Estudios\nTécnicos y Tecnológicos",vaX,y,vaW,52,"vacad",{
+    group:"vacademica",
+    style:"new"
+  });
+  y += 60;
+
+  add("consejo-sedes","Consejo de Sedes",vaX,y,vaW,43,"vacad",{group:"vacademica",style:"new"}); y += 53;
   [
     ["barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja"],
     ["malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga"],
     ["socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro"],
     ["barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa"]
-  ].forEach(([id,label]) => { add(id,label,520,y,260,45,"consejo-sedes",{group:"vacademica",style:"new"}); y += 53; });
+  ].forEach(([id,label]) => { add(id,label,vaX+20,y,260,45,"consejo-sedes",{group:"vacademica",style:"new"}); y += 53; });
 
   // =========================
   // Vicerrectoría Administrativa
   // =========================
   y = 460;
-  const adX = 865, adW = 360;
+  const adX = 1090, adW = 360;
   add("financiera","División Financiera",adX,y,adW,43,"vadmin",{group:"administrativa"}); y += 51;
   [
     ["inventarios","Sección de Inventarios"],
@@ -137,7 +184,7 @@
     ["presupuesto","Sección de Presupuesto"],
     ["tesoreria","Sección de Tesorería"],
     ["contabilidad","Sección de Contabilidad"]
-  ].forEach(([id,label]) => { add(id,label,885,y,320,35,"financiera",{group:"administrativa",style:"sublevel"}); y += 42; });
+  ].forEach(([id,label]) => { add(id,label,1110,y,320,35,"financiera",{group:"administrativa",style:"sublevel"}); y += 42; });
   [
     ["talento","División de Gestión de Talento Humano",43],
     ["contratacion","División de Contratación",43],
@@ -146,7 +193,7 @@
     ["mantenimiento","División de Mantenimiento Tecnológico",43],
     ["planta","División de Planta Física",43]
   ].forEach(([id,label,h]) => { add(id,label,adX,y,adW,h,"vadmin",{group:"administrativa"}); y += h+8; });
-  add("seguridad","Sección de Seguridad",885,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
+  add("seguridad","Sección de Seguridad",1110,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
 
   // =========================
   // Instituto de Desarrollo Regional
@@ -440,7 +487,7 @@
   let drag = null;
 
   const PROTECTED_NODES = new Set([
-    "superior","rectoria","academico","vie","vacad","vadmin","facultades"
+    "superior","rectoria","academico","vbienestar","vie","vacad","vadmin","facultades"
   ]);
 
   function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
@@ -479,6 +526,160 @@
     });
 
     const get = id => parsed.nodes.find(n => n.id === id);
+
+    // V21: nueva Vicerrectoría de Cultura y Bienestar.
+    // Los movimientos anteriores de las otras ramas se preservan como traslación,
+    // pero la nueva estructura interna se fija según la reorganización institucional.
+    if(fromSchema < 21){
+      const moveExistingGroup = (rootId, groupName, dx, dy=0) => {
+        parsed.nodes.forEach(n => {
+          if(n.id === rootId || n.group === groupName){
+            n.x += dx;
+            n.y += dy;
+          }
+        });
+      };
+
+      // Redistribuir ramas existentes para hacer espacio a la nueva Vicerrectoría.
+      moveExistingGroup("vie", "investigacion", 250);
+      moveExistingGroup("vacad", "vacademica", 245);
+      moveExistingGroup("vadmin", "administrativa", 225);
+      moveExistingGroup("facultades", "facultades", 50);
+
+      // Cultural y Bienestar pasan a la nueva Vicerrectoría.
+      const vb = get("vbienestar");
+      if(vb){
+        vb.x = 20; vb.y = 355; vb.w = 300; vb.h = 72;
+        vb.parent = "academico";
+        vb.group = "core";
+        vb.kind = "main";
+        vb.style = "new";
+        vb.sourceSide = "bottom";
+        vb.targetSide = "top";
+      }
+
+      const culturalNode = get("cultural");
+      if(culturalNode){
+        culturalNode.parent = "vbienestar";
+        culturalNode.group = "cultura-bienestar";
+        culturalNode.style = "sublevel";
+        culturalNode.x = 20;
+        culturalNode.y = 460;
+        culturalNode.w = 300;
+        culturalNode.h = 45;
+      }
+
+      const bienestarNode = get("bienestar");
+      if(bienestarNode){
+        bienestarNode.parent = "vbienestar";
+        bienestarNode.group = "cultura-bienestar";
+        bienestarNode.style = "sublevel";
+        bienestarNode.x = 20;
+        bienestarNode.y = 513;
+        bienestarNode.w = 300;
+        bienestarNode.h = 45;
+      }
+
+      const serviciosNode = get("servicios-salud");
+      if(serviciosNode){
+        serviciosNode.parent = "bienestar";
+        serviciosNode.group = "cultura-bienestar";
+        serviciosNode.style = "sublevel";
+        serviciosNode.x = 40;
+        serviciosNode.y = 566;
+        serviciosNode.w = 260;
+        serviciosNode.h = 52;
+        serviciosNode.sourceSide = "bottom";
+        serviciosNode.targetSide = "top";
+      }
+
+      const alimentacionNode = get("alimentacion");
+      if(alimentacionNode){
+        alimentacionNode.parent = "bienestar";
+        alimentacionNode.group = "cultura-bienestar";
+        alimentacionNode.style = "sublevel";
+        alimentacionNode.x = 40;
+        alimentacionNode.y = 626;
+        alimentacionNode.w = 260;
+        alimentacionNode.h = 47;
+        alimentacionNode.sourceSide = "bottom";
+        alimentacionNode.targetSide = "top";
+      }
+
+      // Escuela de Estudios Técnicos y Tecnológicos pasa a Vicerrectoría Académica.
+      const escuelaTecnicos = get("centro-tecnico");
+      if(escuelaTecnicos){
+        escuelaTecnicos.label = "Escuela de Estudios\nTécnicos y Tecnológicos";
+        escuelaTecnicos.parent = "vacad";
+        escuelaTecnicos.group = "vacademica";
+        escuelaTecnicos.style = "new";
+        escuelaTecnicos.x = 745;
+        escuelaTecnicos.y = 725;
+        escuelaTecnicos.w = 300;
+        escuelaTecnicos.h = 52;
+      }
+
+      // Reorganizar verticalmente la rama académica sin Cultural/Bienestar.
+      const academicLayout = [
+        ["posgrados",460,45],
+        ["calidad",513,45],
+        ["admisiones",566,45],
+        ["biblioteca",619,45],
+        ["cededuis",672,45],
+        ["centro-tecnico",725,52],
+        ["consejo-sedes",785,43],
+        ["barranca",838,45],
+        ["malaga",891,45],
+        ["socorro",944,45],
+        ["barbosa",997,45]
+      ];
+
+      academicLayout.forEach(([id,y,h]) => {
+        const n = get(id);
+        if(!n) return;
+        n.group = "vacademica";
+        n.x = ["barranca","malaga","socorro","barbosa"].includes(id) ? 765 : 745;
+        n.y = y;
+        n.w = ["barranca","malaga","socorro","barbosa"].includes(id) ? 260 : 300;
+        n.h = h;
+        if(id === "centro-tecnico"){
+          n.parent = "vacad";
+          n.style = "new";
+        }
+      });
+
+      // Las cuatro sedes siguen dependiendo de Consejo de Sedes.
+      ["barranca","malaga","socorro","barbosa"].forEach(id => {
+        const n = get(id);
+        if(n){
+          n.parent = "consejo-sedes";
+          n.style = "new";
+        }
+      });
+
+      // Centro técnico ya no debe quedar dentro de Investigación.
+      const researchIds = ["cie","ieia","transferencia","direcciones-ie","comite-ie","programas"];
+      researchIds.forEach((id,index) => {
+        const n = get(id);
+        if(!n) return;
+        n.parent = "vie";
+        n.group = "investigacion";
+        n.x = 370;
+        n.y = 460 + index*53;
+        n.w = 315;
+        n.h = 45;
+      });
+
+      // Asegurar los enlaces principales desde Consejo Académico.
+      ["vbienestar","vie","vacad","vadmin","facultades"].forEach(id => {
+        const n = get(id);
+        if(n){
+          n.parent = "academico";
+          n.sourceSide = "bottom";
+          n.targetSide = "top";
+        }
+      });
+    }
 
     // V19: unificar el nombre de las sedes con Barrancabermeja.
     const sedeLabels = {
@@ -523,7 +724,7 @@
     }
 
     // Las cuatro ramas principales salen ordenadamente desde abajo de Consejo Académico.
-    ["vie","vacad","vadmin","facultades"].forEach(id => {
+    ["vbienestar","vie","vacad","vadmin","facultades"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "academico";
@@ -894,6 +1095,7 @@
 
   function nodeBranch(node){
     if(node.group && node.group !== "core") return node.group;
+    if(node.id === "vbienestar") return "cultura-bienestar";
     if(node.id === "vie") return "investigacion";
     if(node.id === "vacad") return "vacademica";
     if(node.id === "vadmin") return "administrativa";
@@ -1295,115 +1497,229 @@
     shell.scrollTo({left:0, top:0, behavior:"smooth"});
   }
 
-  function cssForExport(){
-    const chunks = [];
+  function rgbaOrFallback(value, fallback){
+    if(!value || value === "none" || value === "transparent" || value === "rgba(0, 0, 0, 0)"){
+      return fallback;
+    }
+    return value;
+  }
 
-    [...document.styleSheets].forEach(sheet => {
-      try{
-        [...sheet.cssRules].forEach(rule => chunks.push(rule.cssText));
-      }catch(error){
-        // Ignora hojas que el navegador no permita leer.
+  function roundedRectPath(ctx, x, y, w, h, radius){
+    const r = Math.max(0, Math.min(Number(radius) || 0, w/2, h/2));
+
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y);
+    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r);
+    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h);
+    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r);
+    ctx.quadraticCurveTo(x, y, x+r, y);
+    ctx.closePath();
+  }
+
+  function wrapTextForCanvas(ctx, text, maxWidth){
+    const paragraphs = String(text || "").split("\n");
+    const lines = [];
+
+    paragraphs.forEach(paragraph => {
+      const clean = paragraph.trim();
+
+      if(!clean){
+        lines.push("");
+        return;
       }
+
+      const words = clean.split(/\s+/);
+      let current = "";
+
+      words.forEach(word => {
+        const test = current ? current + " " + word : word;
+
+        if(current && ctx.measureText(test).width > maxWidth){
+          lines.push(current);
+          current = word;
+        }else{
+          current = test;
+        }
+      });
+
+      if(current) lines.push(current);
     });
 
-    return chunks.join("\n");
+    return lines;
   }
 
-  function cloneOrganigramForExport(width, height){
-    const clone = canvas.cloneNode(true);
+  function drawConnectorToExport(ctx, path){
+    const d = path.getAttribute("d");
+    if(!d) return;
 
-    clone.classList.remove("editing");
-    clone.querySelectorAll(".toggle-badge").forEach(el => el.remove());
-    clone.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
-    clone.querySelectorAll(".selected-link").forEach(el => el.classList.remove("selected-link"));
-    clone.querySelectorAll(".connector-hit").forEach(el => el.remove());
-    clone.querySelectorAll(".editable").forEach(el => el.classList.remove("editable"));
+    const style = getComputedStyle(path);
+    const stroke = rgbaOrFallback(style.stroke, "#2c7a45");
+    const width = parseFloat(style.strokeWidth) || 1.6;
 
-    Object.assign(clone.style, {
-      position: "relative",
-      left: "0",
-      top: "0",
-      width: width + "px",
-      minWidth: width + "px",
-      height: height + "px",
-      minHeight: height + "px",
-      margin: "0",
-      transform: "none",
-      transition: "none",
-      background: "#ffffff"
+    ctx.save();
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = width;
+    ctx.lineCap = "butt";
+    ctx.lineJoin = "miter";
+
+    const dash = style.strokeDasharray;
+    if(dash && dash !== "none"){
+      const values = dash
+        .split(/[ ,]+/)
+        .map(Number)
+        .filter(Number.isFinite);
+
+      if(values.length) ctx.setLineDash(values);
+    }
+
+    try{
+      ctx.stroke(new Path2D(d));
+    }catch(error){
+      console.warn("No se pudo dibujar un enlace en el PNG:", error);
+    }
+
+    ctx.restore();
+  }
+
+  function drawModelFrameToExport(ctx, frame){
+    const style = getComputedStyle(frame);
+    const x = parseFloat(frame.style.left) || frame.offsetLeft;
+    const y = parseFloat(frame.style.top) || frame.offsetTop;
+    const w = parseFloat(frame.style.width) || frame.offsetWidth;
+    const h = parseFloat(frame.style.height) || frame.offsetHeight;
+
+    const radius = parseFloat(style.borderTopLeftRadius) || 0;
+    const borderWidth = parseFloat(style.borderTopWidth) || 1;
+    const fill = rgbaOrFallback(style.backgroundColor, "#f4f4f4");
+    const border = rgbaOrFallback(style.borderTopColor, "#b9b9b9");
+
+    roundedRectPath(ctx, x, y, w, h, radius);
+    ctx.fillStyle = fill;
+    ctx.fill();
+
+    ctx.lineWidth = borderWidth;
+    ctx.strokeStyle = border;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.fillStyle = rgbaOrFallback(style.color, "#5b5b5b");
+    ctx.font = `${style.fontWeight || "700"} ${style.fontSize || "18px"} ${style.fontFamily || "Arial"}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText(frame.textContent || "", x+w/2, y+14);
+    ctx.restore();
+  }
+
+  function drawNodeToExport(ctx, el){
+    const style = getComputedStyle(el);
+    const node = byId(el.dataset.id);
+
+    const x = parseFloat(el.style.left) || el.offsetLeft;
+    const y = parseFloat(el.style.top) || el.offsetTop;
+    const w = parseFloat(el.style.width) || el.offsetWidth;
+    const h = parseFloat(el.style.height) || el.offsetHeight;
+
+    const radius = parseFloat(style.borderTopLeftRadius) || 0;
+    const borderWidth = parseFloat(style.borderTopWidth) || 0;
+    const fill = rgbaOrFallback(style.backgroundColor, "#ffffff");
+    const border = rgbaOrFallback(style.borderTopColor, "#9abb9f");
+
+    ctx.save();
+
+    roundedRectPath(ctx, x, y, w, h, radius);
+    ctx.fillStyle = fill;
+    ctx.fill();
+
+    if(borderWidth > 0 && style.borderTopStyle !== "none"){
+      ctx.lineWidth = borderWidth;
+      ctx.strokeStyle = border;
+
+      if(style.borderTopStyle === "dashed"){
+        ctx.setLineDash([5,4]);
+      }
+
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    const fontSize = parseFloat(style.fontSize) || 14;
+    const fontWeight = style.fontWeight || "680";
+    const fontFamily = style.fontFamily || 'Arial, sans-serif';
+    const lineHeightRaw = parseFloat(style.lineHeight);
+    const lineHeight = Number.isFinite(lineHeightRaw) ? lineHeightRaw : fontSize * 1.12;
+
+    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+    ctx.fillStyle = rgbaOrFallback(style.color, "#263028");
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const label = node ? node.label : (el.querySelector(".label")?.textContent || el.textContent || "");
+    const maxTextWidth = Math.max(20, w - 18);
+    const lines = wrapTextForCanvas(ctx, label, maxTextWidth);
+
+    const totalHeight = Math.max(lineHeight, lines.length * lineHeight);
+    let firstY = y + h/2 - totalHeight/2 + lineHeight/2;
+
+    lines.forEach((line, index) => {
+      ctx.fillText(line, x+w/2, firstY + index*lineHeight);
     });
 
-    return clone;
+    ctx.restore();
   }
 
-  function organigramToPngBlob(width, height){
+  function createOrganigramPngBlob(){
     return new Promise((resolve, reject) => {
       try{
-        const clone = cloneOrganigramForExport(width, height);
-        const rootStyle = getComputedStyle(document.documentElement);
+        // Nos aseguramos de que el DOM y las líneas correspondan al estado actual.
+        render();
 
-        const vars = [
-          "--uis-dark","--uis-main","--turq","--blue","--admin",
-          "--purple","--yellow","--ink","--muted","--line",
-          "--paper","--soft","--border"
-        ].map(name => `${name}:${rootStyle.getPropertyValue(name).trim()};`).join("");
+        const logicalHeight = Math.round(
+          parseFloat(canvas.style.height) || canvas.offsetHeight || 650
+        );
 
-        const cssText = cssForExport().replace(/<\/style/gi, "<\\/style");
+        const scale = 2;
+        const output = document.createElement("canvas");
+        output.width = Math.round(CANVAS_WIDTH * scale);
+        output.height = Math.round(logicalHeight * scale);
 
-        const xhtml = `
-          <div xmlns="http://www.w3.org/1999/xhtml"
-               style="position:relative;width:${width}px;height:${height}px;background:#fff;${vars}">
-            <style>${cssText}</style>
-            ${clone.outerHTML}
-          </div>
-        `;
+        const ctx = output.getContext("2d");
+        if(!ctx){
+          reject(new Error("El navegador no pudo crear el lienzo PNG."));
+          return;
+        }
 
-        const svgText = `
-          <svg xmlns="http://www.w3.org/2000/svg"
-               xmlns:xlink="http://www.w3.org/1999/xlink"
-               width="${width}" height="${height}"
-               viewBox="0 0 ${width} ${height}">
-            <foreignObject x="0" y="0" width="100%" height="100%">
-              ${xhtml}
-            </foreignObject>
-          </svg>
-        `;
+        ctx.scale(scale, scale);
 
-        const svgBlob = new Blob([svgText], {type:"image/svg+xml;charset=utf-8"});
-        const svgUrl = URL.createObjectURL(svgBlob);
-        const img = new Image();
+        // Fondo blanco.
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, CANVAS_WIDTH, logicalHeight);
 
-        img.onload = () => {
-          try{
-            const scale = 2;
-            const output = document.createElement("canvas");
-            output.width = Math.round(width * scale);
-            output.height = Math.round(height * scale);
+        // 1. Líneas reales visibles.
+        svg.querySelectorAll("path.connector").forEach(path => {
+          drawConnectorToExport(ctx, path);
+        });
 
-            const ctx = output.getContext("2d");
-            ctx.setTransform(scale, 0, 0, scale, 0, 0);
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, width, height);
-            ctx.drawImage(img, 0, 0, width, height);
+        // 2. Recuadros informativos.
+        nodesLayer.querySelectorAll(".model-frame").forEach(frame => {
+          drawModelFrameToExport(ctx, frame);
+        });
 
-            URL.revokeObjectURL(svgUrl);
+        // 3. Casillas visibles.
+        nodesLayer.querySelectorAll(".org-node").forEach(el => {
+          drawNodeToExport(ctx, el);
+        });
 
-            output.toBlob(blob => {
-              if(blob) resolve(blob);
-              else reject(new Error("No se pudo convertir la imagen a PNG."));
-            }, "image/png");
-          }catch(error){
-            URL.revokeObjectURL(svgUrl);
-            reject(error);
+        output.toBlob(blob => {
+          if(blob){
+            resolve(blob);
+          }else{
+            reject(new Error("El navegador no pudo convertir el organigrama a PNG."));
           }
-        };
-
-        img.onerror = () => {
-          URL.revokeObjectURL(svgUrl);
-          reject(new Error("No se pudo renderizar el organigrama."));
-        };
-
-        img.src = svgUrl;
+        }, "image/png");
       }catch(error){
         reject(error);
       }
@@ -1419,6 +1735,7 @@
       link.download = filename;
       link.rel = "noopener";
       link.style.display = "none";
+
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -1437,8 +1754,8 @@
 
     let fileHandle = null;
 
-    // En GitHub Pages (HTTPS), Chrome/Edge pueden usar el selector nativo.
-    // Se llama inmediatamente tras el clic para conservar la activación del usuario.
+    // El selector se abre directamente desde el clic del usuario.
+    // Esto funciona especialmente bien en Chrome/Edge sobre GitHub Pages (HTTPS).
     if(window.isSecureContext && "showSaveFilePicker" in window){
       try{
         fileHandle = await window.showSaveFilePicker({
@@ -1450,8 +1767,7 @@
         });
       }catch(error){
         if(error?.name === "AbortError") return;
-        console.warn("No se pudo abrir el selector nativo:", error);
-        fileHandle = null;
+        console.warn("No se pudo usar Guardar como; se intentará descarga directa:", error);
       }
     }
 
@@ -1463,16 +1779,12 @@
     const prevSelectedId = selectedId;
     const prevSelectedLinkChildId = selectedLinkChildId;
 
+    // La imagen no debe mostrar selección activa.
     selectedId = null;
     selectedLinkChildId = null;
-    render();
 
     try{
-      const logicalHeight = Math.round(
-        parseFloat(canvas.style.height) || canvas.offsetHeight || 650
-      );
-
-      const pngBlob = await organigramToPngBlob(CANVAS_WIDTH, logicalHeight);
+      const pngBlob = await createOrganigramPngBlob();
 
       if(fileHandle){
         const writable = await fileHandle.createWritable();
@@ -1482,8 +1794,13 @@
         await fallbackDownload(pngBlob, filename);
       }
     }catch(error){
-      console.error(error);
-      alert("No fue posible guardar el PNG. Recarga la página e inténtalo nuevamente.");
+      console.error("ERROR EXPORTANDO PNG:", error);
+
+      // El mensaje incluye el error real para poder detectar cualquier caso de navegador.
+      alert(
+        "No fue posible guardar el PNG.\n\n" +
+        (error?.message || String(error))
+      );
     }finally{
       selectedId = prevSelectedId;
       selectedLinkChildId = prevSelectedLinkChildId;

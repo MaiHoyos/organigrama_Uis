@@ -398,3 +398,17 @@ main{padding:0 24px 30px}
 
 
 #exportBtn{white-space:nowrap;}
+
+
+/* =========================================================
+   V21 — Vicerrectoría de Cultura y Bienestar
+   ========================================================= */
+.org-node.branch-wellbeing{
+  --node-bg:#fff;
+  --node-border:#d6b749;
+  color:#333;
+}
+
+.connector.branch-wellbeing{
+  stroke:#c5a93c;
+}
