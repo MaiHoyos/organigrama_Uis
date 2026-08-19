@@ -3,13 +3,13 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 21;
+  const SCHEMA_VERSION = 22;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = 20;
+  const FACULTY_SHIFT = 80;
 
   const GROUPS = ["rectoria", "cultura-bienestar", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
@@ -74,7 +74,7 @@
   add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 1090, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
 
   // Facultades se mantiene compacta y dentro del ancho del lienzo.
-  add("facultades", "FACULTADES", 1510, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
+  add("facultades", "FACULTADES", 1570, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
@@ -91,6 +91,12 @@
   add("control-gestion", "Dirección de Control Interno\ny Evaluación de Gestión", 500, 151, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
   add("control-disciplinario", "Oficina de Control Interno\nDisciplinario", 500, 209, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
   add("uisalud", "Unidad Especializada en Salud\n- UISALUD", 500, 267, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
+
+  // NUEVA dependencia de Rectoría.
+  add("seccional-arauca", "Seccional Arauca", 1285, 42, 235, 40, "rectoria", {
+    group:"rectoria",
+    style:"new"
+  });
 
   add("relaciones", "Relaciones Exteriores", 1285, 100, 235, 40, "rectoria", {group:"rectoria"});
   add("secretaria", "Secretaría General", 1285, 151, 235, 40, "rectoria", {group:"rectoria"});
@@ -165,12 +171,136 @@
   y += 60;
 
   add("consejo-sedes","Consejo de Sedes",vaX,y,vaW,43,"vacad",{group:"vacademica",style:"new"}); y += 53;
+
+  // ---------------------------------------------------------
+  // Barrancabermeja
+  // ---------------------------------------------------------
+  add("barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja",vaX+20,y,260,45,"consejo-sedes",{
+    group:"vacademica",
+    style:"new"
+  });
+  y += 53;
+
+  add("inteligencia-artificial","Ingeniería en Inteligencia Artificial",vaX+40,y,220,46,"barranca",{
+    group:"vacademica",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 54;
+
+  add("tecnico-fotovoltaico","Técnico en Fotovoltaico",vaX+40,y,220,42,"barranca",{
+    group:"vacademica",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 54;
+
+  // ---------------------------------------------------------
+  // Málaga: recibe la estructura que dependía de Ciencias Agrarias.
+  // ---------------------------------------------------------
+  add("malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga",vaX+20,y,260,45,"consejo-sedes",{
+    group:"vacademica",
+    style:"new"
+  });
+  y += 53;
+
   [
-    ["barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja"],
-    ["malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga"],
-    ["socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro"],
-    ["barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa"]
-  ].forEach(([id,label]) => { add(id,label,vaX+20,y,260,45,"consejo-sedes",{group:"vacademica",style:"new"}); y += 53; });
+    ["ing-forestal","Ing. Forestal",40],
+    ["zootecnia","Zootecnia",40],
+    ["med-veterinaria","Medicina Veterinaria",40],
+    ["ing-agronomica","Ing. Agronómica",40]
+  ].forEach(([id,label,h]) => {
+    add(id,label,vaX+40,y,220,h,"malaga",{
+      group:"vacademica",
+      style:"sublevel",
+      sourceSide:"bottom",
+      targetSide:"top"
+    });
+    y += h + 8;
+  });
+
+  add("programas-agroindustrial","Programas del área Agroindustrial\npor ciclos propedéuticos",vaX+40,y,220,58,"malaga",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 66;
+
+  add("tecnico-produccion-agropecuaria","Técnico profesional en\nproducción agropecuaria",vaX+60,y,200,54,"programas-agroindustrial",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 62;
+
+  add("tecnologia-agroindustrial","Tecnología Agroindustrial",vaX+60,y,200,42,"programas-agroindustrial",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 50;
+
+  add("administracion-agroindustrial","Administración Agroindustrial",vaX+60,y,200,42,"programas-agroindustrial",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 54;
+
+  // ---------------------------------------------------------
+  // Socorro: recibe Construcción, Arquitectura y Turismo.
+  // ---------------------------------------------------------
+  add("socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro",vaX+20,y,260,45,"consejo-sedes",{
+    group:"vacademica",
+    style:"new"
+  });
+  y += 53;
+
+  add("ing-construccion","Ing. Construcción",vaX+40,y,220,40,"socorro",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 48;
+
+  add("arquitectura","Arquitectura",vaX+40,y,220,40,"socorro",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 48;
+
+  add("admin-turistica-hotelera","Administración de Empresas\nTurísticas y Hoteleras",vaX+40,y,220,58,"socorro",{
+    group:"vacademica",
+    style:"sublevel",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+  y += 66;
+
+  // ---------------------------------------------------------
+  // Barbosa: recibe Ingeniería en Alimentos.
+  // ---------------------------------------------------------
+  add("barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa",vaX+20,y,260,45,"consejo-sedes",{
+    group:"vacademica",
+    style:"new"
+  });
+  y += 53;
+
+  add("alimentos","Ing. en Alimentos",vaX+40,y,220,40,"barbosa",{
+    group:"vacademica",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
 
   // =========================
   // Vicerrectoría Administrativa
@@ -234,17 +364,6 @@
   ];
   fHeaders.forEach(([id,label,x]) => add(id,label,x,460,fw,60,"facultades",{group:"facultades",kind:"faculty-header",sourceSide:"bottom",targetSide:"top"}));
 
-  // NUEVO: Facultad de Ciencias Agrarias.
-  // La facultad es amarilla porque corresponde a una incorporación nueva.
-  // Sus programas quedan blancos porque dependen de ella.
-  add("fac-agrarias", "FACULTAD DE CIENCIAS\nAGRARIAS", 2080 + FACULTY_SHIFT, 460, fw, 60, "facultades", {
-    group:"facultades",
-    kind:"faculty-header",
-    style:"new",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
   const addFacultyList = (parent, x, items) => {
     let yy = 535;
     items.forEach(item => {
@@ -294,107 +413,11 @@
     ["gestion-empresarial","Gestión Empresarial",40,"new","industriales"],
     ["mecanica","Escuela de Ingeniería\nMecánica",44],
     ["sistemas","Escuela de Ingeniería de\nSistemas e Informática",50],
-    // IA debe quedar justo debajo de Sistemas.
-    ["inteligencia-artificial","Ingeniería en Inteligencia Artificial",46,"new","sistemas"],
     ["geologia","Escuela de Geología"],
     ["metalurgica","Escuela de Ingeniería Metalúrgica\ny Ciencia de los Materiales",54],
     ["petroleos","Escuela de Ingeniería de Petróleos",44],
-    ["ing-quimica","Escuela de Ingeniería Química",44],
-    // Ingeniería en Alimentos justo debajo de Ingeniería Química.
-    ["alimentos","Ing. en Alimentos",40,"new","ing-quimica"]
+    ["ing-quimica","Escuela de Ingeniería Química",44]
   ]);
-
-  // NUEVO: Escuela de Hábitat y Territorio (amarilla).
-  add("habitat-territorio", "Escuela de Hábitat\ny Territorio", 1680 + FACULTY_SHIFT, 1350, fw, 50, "fac-ingenierias", {
-    group:"facultades",
-    style:"new",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  // Programas dependientes de Hábitat y Territorio: blancos.
-  add("ing-construccion", "Ing. Construcción", 1700 + FACULTY_SHIFT, 1412, 165, 40, "habitat-territorio", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  add("arquitectura", "Arquitectura", 1700 + FACULTY_SHIFT, 1465, 165, 40, "habitat-territorio", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  add("admin-turistica-hotelera", "Administración de Empresas\nTurísticas y Hoteleras", 1700 + FACULTY_SHIFT, 1518, 165, 58, "habitat-territorio", {
-    group:"facultades",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
-  // NUEVO: programas de la Facultad de Ciencias Agrarias.
-  // Todos quedan blancos por depender de la nueva facultad.
-  add("ing-forestal", "Ing. Forestal", 2080 + FACULTY_SHIFT, 535, fw, 40, "fac-agrarias", {
-    group:"facultades", style:"sublevel"
-  });
-  add("zootecnia", "Zootecnia", 2080 + FACULTY_SHIFT, 583, fw, 40, "fac-agrarias", {
-    group:"facultades", style:"sublevel"
-  });
-  add("med-veterinaria", "Medicina Veterinaria", 2080 + FACULTY_SHIFT, 631, fw, 40, "fac-agrarias", {
-    group:"facultades", style:"sublevel"
-  });
-  add("ing-agronomica", "Ing. Agronómica", 2080 + FACULTY_SHIFT, 679, fw, 40, "fac-agrarias", {
-    group:"facultades", style:"sublevel"
-  });
-  // Programas del área Agroindustrial por ciclos propedéuticos:
-  // este es el cuadro padre. Sus tres carreras se desprenden de él.
-  add(
-    "programas-agroindustrial",
-    "Programas del área Agroindustrial\npor ciclos propedéuticos",
-    2080 + FACULTY_SHIFT, 727, fw, 58, "fac-agrarias",
-    {
-      group:"facultades",
-      style:"sublevel",
-      sourceSide:"bottom",
-      targetSide:"top"
-    }
-  );
-
-  add(
-    "tecnico-produccion-agropecuaria",
-    "Técnico profesional en\nproducción agropecuaria",
-    2080 + FACULTY_SHIFT, 797, fw, 54, "programas-agroindustrial",
-    {
-      group:"facultades",
-      style:"sublevel",
-      sourceSide:"bottom",
-      targetSide:"top"
-    }
-  );
-
-  add(
-    "tecnologia-agroindustrial",
-    "Tecnología Agroindustrial",
-    2080 + FACULTY_SHIFT, 863, fw, 42, "programas-agroindustrial",
-    {
-      group:"facultades",
-      style:"sublevel",
-      sourceSide:"bottom",
-      targetSide:"top"
-    }
-  );
-
-  add(
-    "administracion-agroindustrial",
-    "Administración Agroindustrial",
-    2080 + FACULTY_SHIFT, 917, fw, 42, "programas-agroindustrial",
-    {
-      group:"facultades",
-      style:"sublevel",
-      sourceSide:"bottom",
-      targetSide:"top"
-    }
-  );
 
   addFacultyList("fac-salud", fx[3], [
     ["fs-consejo","Consejo de Facultad"],
@@ -734,7 +757,7 @@
     });
 
     // Las cuatro facultades salen desde abajo de la casilla FACULTADES.
-    ["fac-ciencias","fac-humanas","fac-ingenierias","fac-salud","fac-agrarias"].forEach(id => {
+    ["fac-ciencias","fac-humanas","fac-ingenierias","fac-salud"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "facultades";
@@ -775,9 +798,6 @@
 
     // Estilos de los nuevos bloques:
     // encabezados nuevos = amarillo; dependencias = blanco.
-    const agrarias = get("fac-agrarias");
-    if(agrarias) agrarias.style = "new";
-
     // V9: corregir la estructura del bloque Agroindustrial.
     // Se conserva la posición que el usuario haya dado al cuadro padre.
     const programasAgro = get("programas-agroindustrial");
@@ -810,9 +830,6 @@
         }
       });
     }
-
-    const habitat = get("habitat-territorio");
-    if(habitat) habitat.style = "new";
 
     // V13: desaparece la Vicerrectoría de Proyección Social y Territorio.
     // Se eliminan el nodo superior y AMOVI de la estructura guardada.
@@ -907,9 +924,8 @@
       restoreFacultyGeometry("fac-ingenierias", [
         "fi-consejo","diseno","civil","electrica","industriales",
         "tecnologia-empresarial","gestion-empresarial","mecanica",
-        "sistemas","inteligencia-artificial","geologia","metalurgica",
-        "petroleos","ing-quimica","alimentos","habitat-territorio",
-        "ing-construccion","arquitectura","admin-turistica-hotelera"
+        "sistemas","geologia","metalurgica",
+        "petroleos","ing-quimica"
       ]);
     }
 
@@ -983,6 +999,94 @@
       if(n) n.style = "new";
     });
 
+    // =====================================================
+    // V22 — Reorganización definitiva de Facultades y Sedes
+    // =====================================================
+    if(fromSchema < 22){
+      // Facultades se corre 60 px a la derecha como bloque completo.
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x += 60;
+        }
+      });
+    }
+
+    // Eliminar unidades que dejan de existir en esta propuesta.
+    ["fac-agrarias","habitat-territorio"].forEach(id => {
+      const index = parsed.nodes.findIndex(n => n.id === id);
+      if(index >= 0) parsed.nodes.splice(index, 1);
+    });
+
+    // Seccional Arauca: nueva dependencia de Rectoría.
+    const arauca = get("seccional-arauca");
+    if(arauca){
+      arauca.label = "Seccional Arauca";
+      arauca.parent = "rectoria";
+      arauca.group = "rectoria";
+      arauca.style = "new";
+      arauca.x = 1285;
+      arauca.y = 42;
+      arauca.w = 235;
+      arauca.h = 40;
+    }
+
+    // Layout definitivo de Consejo de Sedes y sus programas.
+    const academicNodes = {
+      "consejo-sedes": [745,785,300,43,"vacad","new"],
+      "barranca": [765,838,260,45,"consejo-sedes","new"],
+      "inteligencia-artificial": [785,891,220,46,"barranca","new"],
+      "tecnico-fotovoltaico": [785,945,220,42,"barranca","new"],
+
+      "malaga": [765,999,260,45,"consejo-sedes","new"],
+      "ing-forestal": [785,1052,220,40,"malaga","sublevel"],
+      "zootecnia": [785,1100,220,40,"malaga","sublevel"],
+      "med-veterinaria": [785,1148,220,40,"malaga","sublevel"],
+      "ing-agronomica": [785,1196,220,40,"malaga","sublevel"],
+      "programas-agroindustrial": [785,1244,220,58,"malaga","sublevel"],
+      "tecnico-produccion-agropecuaria": [805,1310,200,54,"programas-agroindustrial","sublevel"],
+      "tecnologia-agroindustrial": [805,1372,200,42,"programas-agroindustrial","sublevel"],
+      "administracion-agroindustrial": [805,1422,200,42,"programas-agroindustrial","sublevel"],
+
+      "socorro": [765,1476,260,45,"consejo-sedes","new"],
+      "ing-construccion": [785,1529,220,40,"socorro","sublevel"],
+      "arquitectura": [785,1577,220,40,"socorro","sublevel"],
+      "admin-turistica-hotelera": [785,1625,220,58,"socorro","sublevel"],
+
+      "barbosa": [765,1691,260,45,"consejo-sedes","new"],
+      "alimentos": [785,1744,220,40,"barbosa","new"]
+    };
+
+    Object.entries(academicNodes).forEach(([id,values]) => {
+      const n = get(id);
+      if(!n) return;
+
+      const [x,y,w,h,parent,style] = values;
+      n.x = x;
+      n.y = y;
+      n.w = w;
+      n.h = h;
+      n.parent = parent;
+      n.group = "vacademica";
+      n.style = style;
+      n.sourceSide = "bottom";
+      n.targetSide = "top";
+    });
+
+    // Los programas trasladados ya no pertenecen a la rama Facultades.
+    [
+      "inteligencia-artificial","tecnico-fotovoltaico",
+      "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
+      "programas-agroindustrial","tecnico-produccion-agropecuaria",
+      "tecnologia-agroindustrial","administracion-agroindustrial",
+      "ing-construccion","arquitectura","admin-turistica-hotelera","alimentos"
+    ].forEach(id => {
+      const n = get(id);
+      if(n) n.group = "vacademica";
+    });
+
+    // UIAES inicia siempre oculto.
+    parsed.collapsedNodes.planeacion = true;
+
     parsed.schemaVersion = SCHEMA_VERSION;
     return parsed;
   }
@@ -999,10 +1103,14 @@
           // sin perder las posiciones que el usuario ya haya editado.
           if((normalized.schemaVersion || 0) < SCHEMA_VERSION){
             const migrated = migrateLegacyState(normalized);
+            migrated.collapsedNodes.planeacion = true;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
             return migrated;
           }
 
+          // UIAES siempre inicia oculto. Solo se muestra si el usuario
+          // abre Planeación manualmente durante esta sesión.
+          normalized.collapsedNodes.planeacion = true;
           return normalized;
         }
       }
@@ -1012,6 +1120,7 @@
         const legacy = JSON.parse(legacyRaw);
         if(Array.isArray(legacy.nodes) && legacy.expanded){
           const migrated = migrateLegacyState(legacy);
+          migrated.collapsedNodes.planeacion = true;
           localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
           return migrated;
         }
@@ -1463,7 +1572,7 @@
     const visible = state.nodes.filter(isVisible);
     let maxY=610;
     visible.forEach(n => maxY=Math.max(maxY,n.y+n.h+70));
-    canvas.style.height=Math.min(Math.max(maxY,650),1800)+"px";
+    canvas.style.height=Math.min(Math.max(maxY,650),2200)+"px";
     updateZoomStage();
   }
 
@@ -2083,7 +2192,8 @@
 
   expandBtn.addEventListener("click",()=>{
     GROUPS.forEach(g=>state.expanded[g]=true);
-    state.collapsedNodes={};
+    // UIAES no se abre con "Desplegar todo"; Planeación debe abrirse manualmente.
+    state.collapsedNodes={planeacion:true};
     saveState();
     render();
   });

@@ -1,49 +1,67 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V21
+ORGANIGRAMA UIS — PROYECTO COMPLETO V22
 
-CAMBIOS V21
+CAMBIOS V22
 ===========
 
-1. Se crea una nueva Vicerrectoría a la izquierda de Investigación:
-   VICERRECTORÍA DE CULTURA Y BIENESTAR
+FACULTADES
+----------
+- Toda la rama FACULTADES se corre 60 px hacia la derecha.
+- Se elimina Facultad de Ciencias Agrarias.
+- Se elimina Escuela de Hábitat y Territorio.
 
-   Al ser una unidad nueva, queda en amarillo.
+SEDE MÁLAGA
+-----------
+Recibe todo lo que estaba bajo Facultad de Ciencias Agrarias:
+- Ing. Forestal
+- Zootecnia
+- Medicina Veterinaria
+- Ing. Agronómica
+- Programas del área Agroindustrial por ciclos propedéuticos
+  - Técnico profesional en producción agropecuaria
+  - Tecnología Agroindustrial
+  - Administración Agroindustrial
 
-2. Se trasladan a esta nueva Vicerrectoría:
-   - Dirección Cultural
-   - Bienestar Estudiantil
+BARRANCABERMEJA
+---------------
+Debajo de la Escuela de Formación y Desarrollo Territorial Barrancabermeja:
+- Ingeniería en Inteligencia Artificial
+- Técnico en Fotovoltaico
 
-3. Bienestar Estudiantil conserva sus dos coordinaciones:
-   - Coordinación de Servicios Integrales de Salud y Desarrollo
-   - Coordinación de Servicios de Alimentación
+SOCORRO
+-------
+Debajo de la Escuela de Formación y Desarrollo Territorial Socorro:
+- Ing. Construcción
+- Arquitectura
+- Administración de Empresas Turísticas y Hoteleras
 
-4. El antiguo:
-   "Centro Administrativo de Estudios Técnicos y Tecnológicos"
+Por este traslado se elimina Escuela de Hábitat y Territorio.
 
-   se traslada desde Vicerrectoría de Investigación y Extensión
-   hacia Vicerrectoría Académica y se renombra:
+BARBOSA
+-------
+Debajo de la Escuela de Formación y Desarrollo Territorial Barbosa:
+- Ing. en Alimentos
 
-   "Escuela de Estudios Técnicos y Tecnológicos"
+RECTORÍA
+--------
+Se agrega una nueva dependencia, encima de Relaciones Exteriores:
+- Seccional Arauca
 
-   Mantiene color amarillo como elemento nuevo.
+PLANEACIÓN / UIAES
+------------------
+- UIAES inicia siempre oculto.
+- "Desplegar todo" NO abre UIAES.
+- Para mostrar UIAES se debe abrir Planeación manualmente con su botón +.
+- Al recargar la página, Planeación vuelve a iniciar cerrada.
 
-5. Se reorganizan horizontalmente las ramas principales para hacer espacio
-   a la nueva Vicerrectoría, manteniendo todo dentro del lienzo.
-
-6. Se conservan todos los cambios anteriores:
-   - edición siempre activa;
-   - movimiento de ramas completas;
-   - UIAES oculto hasta abrir Planeación;
-   - exportación PNG V20;
-   - enlaces editables;
-   - nuevos elementos amarillos;
-   - estructura de Facultades y sedes ya ajustada.
-
-NOTA
-====
-El nombre usado para la nueva unidad es "Vicerrectoría de Cultura y Bienestar",
-de acuerdo con las dos dependencias trasladadas. Como el organigrama es
-editable permanentemente, puede renombrarse directamente si el nombre
-institucional definitivo cambia.
+SE CONSERVA
+-----------
+- Edición siempre activa.
+- Movimiento de ramas completas.
+- Zoom.
+- Líneas editables.
+- Guardado automático en el navegador.
+- Exportación del organigrama como PNG.
+- Todos los cambios institucionales realizados hasta V21.
 
 Para GitHub Pages:
-sube el proyecto completo y haz Ctrl + F5.
+sube el proyecto completo V22 y luego haz Ctrl + F5.
