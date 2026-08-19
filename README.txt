@@ -1,67 +1,49 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V22
+ORGANIGRAMA UIS — PROYECTO COMPLETO V23
 
-CAMBIOS V22
+CAMBIOS V23
 ===========
 
-FACULTADES
-----------
-- Toda la rama FACULTADES se corre 60 px hacia la derecha.
-- Se elimina Facultad de Ciencias Agrarias.
-- Se elimina Escuela de Hábitat y Territorio.
+1. FACULTADES
+- Toda la rama de Facultades se desplaza 80 px adicionales hacia la derecha.
+- Se conserva la estructura interna y el movimiento jerárquico de la rama.
 
-SEDE MÁLAGA
------------
-Recibe todo lo que estaba bajo Facultad de Ciencias Agrarias:
-- Ing. Forestal
-- Zootecnia
-- Medicina Veterinaria
-- Ing. Agronómica
-- Programas del área Agroindustrial por ciclos propedéuticos
-  - Técnico profesional en producción agropecuaria
-  - Tecnología Agroindustrial
-  - Administración Agroindustrial
+2. AUTOAJUSTE AL DESPLEGAR / CONTRAER
+- Cuando se contrae una casilla, las casillas que están debajo suben
+  automáticamente para eliminar el espacio vacío.
+- Cuando se vuelve a desplegar, las casillas inferiores bajan
+  automáticamente para hacer espacio a las dependencias que aparecen.
+- Esto funciona en:
+  * Vicerrectoría de Cultura y Bienestar
+  * Vicerrectoría de Investigación y Extensión
+  * Vicerrectoría Académica
+  * Vicerrectoría Administrativa
+  * cada columna de Facultad de forma independiente
 
-BARRANCABERMEJA
----------------
-Debajo de la Escuela de Formación y Desarrollo Territorial Barrancabermeja:
-- Ingeniería en Inteligencia Artificial
-- Técnico en Fotovoltaico
+3. FACULTADES
+- Cada Facultad se compacta de manera independiente.
+- Contraer una Escuela dentro de una Facultad no mueve las otras Facultades,
+  solo reorganiza verticalmente esa columna.
 
-SOCORRO
--------
-Debajo de la Escuela de Formación y Desarrollo Territorial Socorro:
-- Ing. Construcción
-- Arquitectura
-- Administración de Empresas Turísticas y Hoteleras
+4. VICERRECTORÍA ACADÉMICA / SEDES
+- Al contraer Barrancabermeja, Málaga, Socorro o Barbosa,
+  las sedes siguientes se desplazan inmediatamente hacia arriba.
+- Al abrirlas de nuevo, recuperan automáticamente el espacio necesario
+  según los programas visibles.
 
-Por este traslado se elimina Escuela de Hábitat y Territorio.
-
-BARBOSA
--------
-Debajo de la Escuela de Formación y Desarrollo Territorial Barbosa:
-- Ing. en Alimentos
-
-RECTORÍA
---------
-Se agrega una nueva dependencia, encima de Relaciones Exteriores:
-- Seccional Arauca
-
-PLANEACIÓN / UIAES
-------------------
-- UIAES inicia siempre oculto.
-- "Desplegar todo" NO abre UIAES.
-- Para mostrar UIAES se debe abrir Planeación manualmente con su botón +.
-- Al recargar la página, Planeación vuelve a iniciar cerrada.
+5. RECTORÍA
+- Se mantiene el diseño lateral especial de Rectoría.
+- Planeación/UIAES conserva su comportamiento especial:
+  UIAES permanece oculto hasta abrir Planeación manualmente.
 
 SE CONSERVA
------------
-- Edición siempre activa.
-- Movimiento de ramas completas.
-- Zoom.
-- Líneas editables.
-- Guardado automático en el navegador.
-- Exportación del organigrama como PNG.
-- Todos los cambios institucionales realizados hasta V21.
+===========
+- edición siempre activa;
+- movimiento manual de ramas completas;
+- zoom;
+- líneas editables;
+- guardado automático;
+- exportación PNG;
+- todos los cambios institucionales de V22.
 
 Para GitHub Pages:
-sube el proyecto completo V22 y luego haz Ctrl + F5.
+sube el proyecto completo V23 y luego haz Ctrl + F5.

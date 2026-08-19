@@ -3,13 +3,13 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 22;
+  const SCHEMA_VERSION = 23;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = 80;
+  const FACULTY_SHIFT = 160;
 
   const GROUPS = ["rectoria", "cultura-bienestar", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
@@ -74,7 +74,7 @@
   add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 1090, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
 
   // Facultades se mantiene compacta y dentro del ancho del lienzo.
-  add("facultades", "FACULTADES", 1570, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
+  add("facultades", "FACULTADES", 1650, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
@@ -999,6 +999,15 @@
       if(n) n.style = "new";
     });
 
+    // V23: mover toda la rama de Facultades 80 px a la derecha.
+    if(fromSchema < 23){
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x += 80;
+        }
+      });
+    }
+
     // =====================================================
     // V22 — Reorganización definitiva de Facultades y Sedes
     // =====================================================
@@ -1297,11 +1306,112 @@
     updateEditButtons();
   }
 
+  const AUTO_LAYOUT_GAP = 8;
+
+  function visibleChildrenSorted(parentId){
+    return childrenOf(parentId)
+      .filter(isVisible)
+      .sort((a,b) => {
+        if(a.y !== b.y) return a.y - b.y;
+        return a.x - b.x;
+      });
+  }
+
+  function layoutLinearChildren(parentId, startY, gap=AUTO_LAYOUT_GAP){
+    let cursorY = startY;
+    const children = visibleChildrenSorted(parentId);
+
+    children.forEach(child => {
+      child.y = Math.round(cursorY);
+      cursorY += child.h + gap;
+
+      // Si el hijo está desplegado, sus descendientes visibles ocupan
+      // inmediatamente el espacio siguiente. De esta forma no quedan huecos.
+      if(!state.collapsedNodes[child.id]){
+        const visibleGrandchildren = visibleChildrenSorted(child.id);
+        if(visibleGrandchildren.length){
+          cursorY = layoutLinearChildren(child.id, cursorY, gap);
+        }
+      }
+    });
+
+    return cursorY;
+  }
+
+  function topFacultyAncestor(node){
+    let current = node;
+
+    while(current?.parent){
+      const parent = byId(current.parent);
+      if(!parent) return null;
+      if(parent.id === "facultades") return current;
+      current = parent;
+    }
+
+    return null;
+  }
+
+  function compactFacultyColumn(faculty){
+    if(!faculty) return;
+    // Los encabezados de Facultad están en y=460 y tienen 60px.
+    // 15px conserva el aire visual del organigrama original.
+    layoutLinearChildren(faculty.id, faculty.y + faculty.h + 15, 7);
+  }
+
+  function compactGroup(groupName){
+    if(!state.expanded[groupName]) return;
+
+    const rootId = Object.keys(GROUP_BY_CORE)
+      .find(id => GROUP_BY_CORE[id] === groupName);
+
+    const root = rootId ? byId(rootId) : null;
+    if(!root) return;
+
+    if(groupName === "facultades"){
+      childrenOf("facultades")
+        .filter(isVisible)
+        .forEach(compactFacultyColumn);
+      return;
+    }
+
+    // Rectoría conserva una composición lateral, no una lista vertical.
+    // Por eso no se fuerza su distribución automática.
+    if(groupName === "rectoria") return;
+
+    layoutLinearChildren(root.id, root.y + root.h + 33, AUTO_LAYOUT_GAP);
+  }
+
+  function compactAfterToggle(node){
+    const group = GROUP_BY_CORE[node.id] || node.group || nodeBranch(node);
+
+    if(group === "facultades"){
+      if(node.id === "facultades"){
+        compactGroup("facultades");
+      }else{
+        compactFacultyColumn(topFacultyAncestor(node));
+      }
+      return;
+    }
+
+    if(["cultura-bienestar","investigacion","vacademica","administrativa"].includes(group)){
+      compactGroup(group);
+    }
+  }
+
+  function compactAllExpandedGroups(){
+    ["cultura-bienestar","investigacion","vacademica","administrativa","facultades"]
+      .forEach(compactGroup);
+  }
+
   function toggleNodeExpansion(node){
     const group = GROUP_BY_CORE[node.id];
 
     if(group){
       state.expanded[group] = !state.expanded[group];
+
+      // Cuando se abre una rama completa, se compacta antes de dibujarla.
+      if(state.expanded[group]) compactAfterToggle(node);
+
       saveState();
       render();
       return;
@@ -1309,6 +1419,11 @@
 
     if(childrenOf(node.id).length){
       state.collapsedNodes[node.id] = !state.collapsedNodes[node.id];
+
+      // Tanto al abrir como al cerrar, los elementos que siguen se corren
+      // automáticamente hacia arriba/abajo para ocupar el espacio correcto.
+      compactAfterToggle(node);
+
       saveState();
       render();
     }
@@ -2194,6 +2309,7 @@
     GROUPS.forEach(g=>state.expanded[g]=true);
     // UIAES no se abre con "Desplegar todo"; Planeación debe abrirse manualmente.
     state.collapsedNodes={planeacion:true};
+    compactAllExpandedGroups();
     saveState();
     render();
   });
@@ -2216,6 +2332,7 @@
     selectedId=null;
     selectedLinkChildId=null;
     localStorage.removeItem(STORAGE_KEY);
+    compactAllExpandedGroups();
     render();
   });
 
