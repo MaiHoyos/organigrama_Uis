@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 24;
+  const SCHEMA_VERSION = 25;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -387,14 +387,17 @@
     ["derecho","Escuela de Derecho y\nCiencia Política",46],
     // Debe verse inmediatamente debajo de Derecho.
     ["gestion-judicial","Tecnología en Gestión Judicial\ne Investigación Criminal",54,"new","derecho"],
-    ["economia","Escuela de Economía\ny Administración",46],
+    // Cambio solicitado: esta unidad reemplaza "Escuela de Economía y Administración".
+    ["economia","Escuela de Administración\ny Finanzas",46,"new"],
+    // Los programas empresariales se trasladan a esta Escuela.
+    ["tecnologia-empresarial","Tecnología Empresarial",40,"new","economia"],
+    ["gestion-empresarial","Gestión Empresarial",40,"new","economia"],
     ["educacion","Escuela de Educación"],
     ["historia","Escuela de Historia"],
     ["idiomas","Escuela de Idiomas"],
     ["trabajo-social","Escuela de Trabajo Social"],
     ["filosofia","Escuela de Filosofía"],
     ["deportes","Departamento de Educación\nFísica y Deportes",46],
-    ["admin-finanzas","Escuela de Administración\ny Finanzas",46,"new"],
     // NUEVA unidad: Escuela de Artes y Música.
     ["musica","Escuela de Artes y Música",46,"new","fac-humanas"],
     // Dos carreras separadas debajo de la nueva escuela.
@@ -408,9 +411,6 @@
     ["civil","Escuela de Ingeniería\nCivil",44],
     ["electrica","Escuela de Ingeniería Eléctrica,\nElectrónica y Telecomunicaciones",54],
     ["industriales","Escuela de Estudios Industriales\ny Empresariales",50],
-    // Ambos programas van inmediatamente debajo de Industriales.
-    ["tecnologia-empresarial","Tecnología Empresarial",40,"new","industriales"],
-    ["gestion-empresarial","Gestión Empresarial",40,"new","industriales"],
     ["mecanica","Escuela de Ingeniería\nMecánica",44],
     ["sistemas","Escuela de Ingeniería de\nSistemas e Informática",50],
     ["geologia","Escuela de Geología"],
@@ -916,15 +916,15 @@
 
       restoreFacultyGeometry("fac-humanas", [
         "fch-consejo","lenguas","derecho","gestion-judicial",
-        "economia","educacion","historia","idiomas","trabajo-social",
-        "filosofia","deportes","admin-finanzas","musica",
+        "economia","tecnologia-empresarial","gestion-empresarial",
+        "educacion","historia","idiomas","trabajo-social",
+        "filosofia","deportes","musica",
         "carrera-musica","artes-plasticas"
       ]);
 
       restoreFacultyGeometry("fac-ingenierias", [
         "fi-consejo","diseno","civil","electrica","industriales",
-        "tecnologia-empresarial","gestion-empresarial","mecanica",
-        "sistemas","geologia","metalurgica",
+        "mecanica","sistemas","geologia","metalurgica",
         "petroleos","ing-quimica"
       ]);
     }
@@ -992,8 +992,9 @@
 
     // V13: estos elementos nuevos deben mostrarse siempre en amarillo.
     [
-      "admin-finanzas","regencia","alimentos","gestion-judicial",
-      "tecnologia-empresarial","gestion-empresarial","inteligencia-artificial"
+      "regencia","alimentos","gestion-judicial",
+      "tecnologia-empresarial","gestion-empresarial","inteligencia-artificial",
+      "economia"
     ].forEach(id => {
       const n = get(id);
       if(n) n.style = "new";
@@ -1014,6 +1015,106 @@
         if(n.id === "facultades" || n.group === "facultades"){
           n.x += 60;
         }
+      });
+    }
+
+    // V25: La unidad "economia" se convierte en
+    // "Escuela de Administración y Finanzas" y recibe
+    // Tecnología Empresarial y Gestión Empresarial.
+    if(fromSchema < 25){
+      const removeNode = id => {
+        const idx = parsed.nodes.findIndex(n => n.id === id);
+        if(idx >= 0) parsed.nodes.splice(idx, 1);
+      };
+
+      removeNode("admin-finanzas");
+
+      const getNode = id => parsed.nodes.find(n => n.id === id);
+
+      const economia = getNode("economia");
+      if(economia){
+        economia.label = "Escuela de Administración\ny Finanzas";
+        economia.style = "new";
+        economia.parent = "fac-humanas";
+        economia.group = "facultades";
+        economia.x = 1700;
+        economia.y = 747;
+        economia.w = 185;
+        economia.h = 46;
+      }
+
+      const te = getNode("tecnologia-empresarial");
+      if(te){
+        te.parent = "economia";
+        te.group = "facultades";
+        te.style = "new";
+        te.x = 1700;
+        te.y = 801;
+        te.w = 185;
+        te.h = 40;
+        te.sourceSide = "bottom";
+        te.targetSide = "top";
+      }
+
+      const ge = getNode("gestion-empresarial");
+      if(ge){
+        ge.parent = "economia";
+        ge.group = "facultades";
+        ge.style = "new";
+        ge.x = 1700;
+        ge.y = 849;
+        ge.w = 185;
+        ge.h = 40;
+        ge.sourceSide = "bottom";
+        ge.targetSide = "top";
+      }
+
+      [
+        ["educacion",897,40],
+        ["historia",945,40],
+        ["idiomas",993,40],
+        ["trabajo-social",1041,40],
+        ["filosofia",1089,40],
+        ["deportes",1137,46],
+        ["musica",1191,46],
+        ["carrera-musica",1245,40],
+        ["artes-plasticas",1293,40]
+      ].forEach(([id,y,h]) => {
+        const node = getNode(id);
+        if(!node) return;
+        node.group = "facultades";
+        node.x = 1700;
+        node.y = y;
+        node.w = 185;
+        node.h = h;
+      });
+
+      const carreraMusica = getNode("carrera-musica");
+      if(carreraMusica) carreraMusica.parent = "musica";
+
+      const artesPlasticas = getNode("artes-plasticas");
+      if(artesPlasticas) artesPlasticas.parent = "musica";
+
+      [
+        ["fi-consejo",535,40],
+        ["diseno",583,44],
+        ["civil",635,44],
+        ["electrica",687,54],
+        ["industriales",749,50],
+        ["mecanica",807,44],
+        ["sistemas",859,50],
+        ["geologia",917,40],
+        ["metalurgica",965,54],
+        ["petroleos",1027,44],
+        ["ing-quimica",1079,44]
+      ].forEach(([id,y,h]) => {
+        const node = getNode(id);
+        if(!node) return;
+        node.group = "facultades";
+        node.x = 1900;
+        node.y = y;
+        node.w = 185;
+        node.h = h;
       });
     }
 
