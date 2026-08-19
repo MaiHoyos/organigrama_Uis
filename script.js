@@ -3,13 +3,13 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 23;
+  const SCHEMA_VERSION = 24;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = 160;
+  const FACULTY_SHIFT = 220;
 
   const GROUPS = ["rectoria", "cultura-bienestar", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
@@ -74,7 +74,7 @@
   add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 1090, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
 
   // Facultades se mantiene compacta y dentro del ancho del lienzo.
-  add("facultades", "FACULTADES", 1650, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
+  add("facultades", "FACULTADES", 1710, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
@@ -1008,6 +1008,15 @@
       });
     }
 
+    // V24: Facultades se corre 60 px adicionales a la derecha.
+    if(fromSchema < 24){
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x += 60;
+        }
+      });
+    }
+
     // =====================================================
     // V22 — Reorganización definitiva de Facultades y Sedes
     // =====================================================
@@ -1776,7 +1785,7 @@
     return lines;
   }
 
-  function drawConnectorToExport(ctx, path){
+  function drawConnectorToExport(ctx, path, offsetX=0, offsetY=0){
     const d = path.getAttribute("d");
     if(!d) return;
 
@@ -1785,6 +1794,7 @@
     const width = parseFloat(style.strokeWidth) || 1.6;
 
     ctx.save();
+    ctx.translate(offsetX, offsetY);
     ctx.strokeStyle = stroke;
     ctx.lineWidth = width;
     ctx.lineCap = "butt";
@@ -1809,10 +1819,10 @@
     ctx.restore();
   }
 
-  function drawModelFrameToExport(ctx, frame){
+  function drawModelFrameToExport(ctx, frame, offsetX=0, offsetY=0){
     const style = getComputedStyle(frame);
-    const x = parseFloat(frame.style.left) || frame.offsetLeft;
-    const y = parseFloat(frame.style.top) || frame.offsetTop;
+    const x = (parseFloat(frame.style.left) || frame.offsetLeft) + offsetX;
+    const y = (parseFloat(frame.style.top) || frame.offsetTop) + offsetY;
     const w = parseFloat(frame.style.width) || frame.offsetWidth;
     const h = parseFloat(frame.style.height) || frame.offsetHeight;
 
@@ -1838,12 +1848,12 @@
     ctx.restore();
   }
 
-  function drawNodeToExport(ctx, el){
+  function drawNodeToExport(ctx, el, offsetX=0, offsetY=0){
     const style = getComputedStyle(el);
     const node = byId(el.dataset.id);
 
-    const x = parseFloat(el.style.left) || el.offsetLeft;
-    const y = parseFloat(el.style.top) || el.offsetTop;
+    const x = (parseFloat(el.style.left) || el.offsetLeft) + offsetX;
+    const y = (parseFloat(el.style.top) || el.offsetTop) + offsetY;
     const w = parseFloat(el.style.width) || el.offsetWidth;
     const h = parseFloat(el.style.height) || el.offsetHeight;
 
@@ -1886,7 +1896,7 @@
     const lines = wrapTextForCanvas(ctx, label, maxTextWidth);
 
     const totalHeight = Math.max(lineHeight, lines.length * lineHeight);
-    let firstY = y + h/2 - totalHeight/2 + lineHeight/2;
+    const firstY = y + h/2 - totalHeight/2 + lineHeight/2;
 
     lines.forEach((line, index) => {
       ctx.fillText(line, x+w/2, firstY + index*lineHeight);
@@ -1895,20 +1905,71 @@
     ctx.restore();
   }
 
+  function exportBounds(){
+    const PADDING = 28;
+    const items = [];
+
+    nodesLayer.querySelectorAll(".org-node, .model-frame").forEach(el => {
+      const x = parseFloat(el.style.left) || el.offsetLeft || 0;
+      const y = parseFloat(el.style.top) || el.offsetTop || 0;
+      const w = parseFloat(el.style.width) || el.offsetWidth || 0;
+      const h = parseFloat(el.style.height) || el.offsetHeight || 0;
+      items.push({minX:x, minY:y, maxX:x+w, maxY:y+h});
+    });
+
+    svg.querySelectorAll("path.connector").forEach(path => {
+      try{
+        const box = path.getBBox();
+        const stroke = parseFloat(getComputedStyle(path).strokeWidth) || 2;
+        items.push({
+          minX: box.x - stroke,
+          minY: box.y - stroke,
+          maxX: box.x + box.width + stroke,
+          maxY: box.y + box.height + stroke
+        });
+      }catch(error){
+        // Si algún navegador no entrega getBBox, se ignora ese path:
+        // las casillas visibles siguen garantizando un recorte correcto.
+      }
+    });
+
+    if(!items.length){
+      return {
+        minX:0, minY:0,
+        maxX:CANVAS_WIDTH, maxY:Math.round(parseFloat(canvas.style.height) || 650),
+        width:CANVAS_WIDTH, height:Math.round(parseFloat(canvas.style.height) || 650),
+        offsetX:0, offsetY:0
+      };
+    }
+
+    const minX = Math.floor(Math.min(...items.map(i => i.minX)));
+    const minY = Math.floor(Math.min(...items.map(i => i.minY)));
+    const maxX = Math.ceil(Math.max(...items.map(i => i.maxX)));
+    const maxY = Math.ceil(Math.max(...items.map(i => i.maxY)));
+
+    const width = Math.max(200, maxX - minX + PADDING*2);
+    const height = Math.max(200, maxY - minY + PADDING*2);
+
+    return {
+      minX, minY, maxX, maxY,
+      width, height,
+      offsetX: PADDING - minX,
+      offsetY: PADDING - minY
+    };
+  }
+
   function createOrganigramPngBlob(){
     return new Promise((resolve, reject) => {
       try{
         // Nos aseguramos de que el DOM y las líneas correspondan al estado actual.
         render();
 
-        const logicalHeight = Math.round(
-          parseFloat(canvas.style.height) || canvas.offsetHeight || 650
-        );
+        const bounds = exportBounds();
 
         const scale = 2;
         const output = document.createElement("canvas");
-        output.width = Math.round(CANVAS_WIDTH * scale);
-        output.height = Math.round(logicalHeight * scale);
+        output.width = Math.round(bounds.width * scale);
+        output.height = Math.round(bounds.height * scale);
 
         const ctx = output.getContext("2d");
         if(!ctx){
@@ -1920,21 +1981,21 @@
 
         // Fondo blanco.
         ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, CANVAS_WIDTH, logicalHeight);
+        ctx.fillRect(0, 0, bounds.width, bounds.height);
 
         // 1. Líneas reales visibles.
         svg.querySelectorAll("path.connector").forEach(path => {
-          drawConnectorToExport(ctx, path);
+          drawConnectorToExport(ctx, path, bounds.offsetX, bounds.offsetY);
         });
 
         // 2. Recuadros informativos.
         nodesLayer.querySelectorAll(".model-frame").forEach(frame => {
-          drawModelFrameToExport(ctx, frame);
+          drawModelFrameToExport(ctx, frame, bounds.offsetX, bounds.offsetY);
         });
 
         // 3. Casillas visibles.
         nodesLayer.querySelectorAll(".org-node").forEach(el => {
-          drawNodeToExport(ctx, el);
+          drawNodeToExport(ctx, el, bounds.offsetX, bounds.offsetY);
         });
 
         output.toBlob(blob => {

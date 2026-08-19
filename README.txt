@@ -1,49 +1,36 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V23
+ORGANIGRAMA UIS — PROYECTO COMPLETO V24
 
-CAMBIOS V23
+CAMBIOS V24
 ===========
 
 1. FACULTADES
-- Toda la rama de Facultades se desplaza 80 px adicionales hacia la derecha.
-- Se conserva la estructura interna y el movimiento jerárquico de la rama.
+- Toda la rama de Facultades se mueve 60 px adicionales hacia la derecha.
 
-2. AUTOAJUSTE AL DESPLEGAR / CONTRAER
-- Cuando se contrae una casilla, las casillas que están debajo suben
-  automáticamente para eliminar el espacio vacío.
-- Cuando se vuelve a desplegar, las casillas inferiores bajan
-  automáticamente para hacer espacio a las dependencias que aparecen.
-- Esto funciona en:
-  * Vicerrectoría de Cultura y Bienestar
-  * Vicerrectoría de Investigación y Extensión
-  * Vicerrectoría Académica
-  * Vicerrectoría Administrativa
-  * cada columna de Facultad de forma independiente
+2. EXPORTACIÓN PNG SIN RECORTE
+- El sistema de guardado PNG ya no usa un ancho/alto fijo para el recorte.
+- Ahora calcula automáticamente los límites reales del contenido visible:
+  - casillas;
+  - líneas;
+  - recuadros informativos.
+- Luego exporta únicamente el área necesaria, con márgenes de seguridad.
+- Esto evita que el PNG salga cortado cuando el organigrama crece en altura
+  o cuando alguna rama queda más a la derecha.
 
-3. FACULTADES
-- Cada Facultad se compacta de manera independiente.
-- Contraer una Escuela dentro de una Facultad no mueve las otras Facultades,
-  solo reorganiza verticalmente esa columna.
-
-4. VICERRECTORÍA ACADÉMICA / SEDES
-- Al contraer Barrancabermeja, Málaga, Socorro o Barbosa,
-  las sedes siguientes se desplazan inmediatamente hacia arriba.
-- Al abrirlas de nuevo, recuperan automáticamente el espacio necesario
-  según los programas visibles.
-
-5. RECTORÍA
-- Se mantiene el diseño lateral especial de Rectoría.
-- Planeación/UIAES conserva su comportamiento especial:
-  UIAES permanece oculto hasta abrir Planeación manualmente.
+3. EL PNG INCLUYE COMPLETO EL CONTENIDO VISIBLE
+- Si una rama está desplegada, se exporta completa.
+- Si una rama está contraída, se exporta en el estado actual visible.
+- La imagen se genera con padding alrededor para que no quede pegada al borde.
 
 SE CONSERVA
 ===========
 - edición siempre activa;
-- movimiento manual de ramas completas;
+- autoajuste vertical al desplegar/contraer;
+- UIAES oculto hasta abrir Planeación manualmente;
+- exportación PNG mediante canvas;
 - zoom;
 - líneas editables;
 - guardado automático;
-- exportación PNG;
-- todos los cambios institucionales de V22.
+- todos los cambios institucionales de V23.
 
 Para GitHub Pages:
-sube el proyecto completo V23 y luego haz Ctrl + F5.
+sube el proyecto completo V24 y luego haz Ctrl + F5.
