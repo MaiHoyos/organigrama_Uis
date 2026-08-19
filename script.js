@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 25;
+  const SCHEMA_VERSION = 26;
   const CANVAS_WIDTH = 2300;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
@@ -1115,6 +1115,88 @@
         node.y = y;
         node.w = 185;
         node.h = h;
+      });
+    }
+
+    // V26: asegurar explícitamente que Tecnología Empresarial y
+    // Gestión Empresarial dependan de Escuela de Administración y Finanzas.
+    if(fromSchema < 26){
+      const getNode = id => parsed.nodes.find(n => n.id === id);
+
+      const economia = getNode("economia");
+      if(economia){
+        economia.label = "Escuela de Administración\ny Finanzas";
+        economia.parent = "fac-humanas";
+        economia.group = "facultades";
+        economia.style = "new";
+        economia.x = 1700;
+        economia.y = 747;
+        economia.w = 185;
+        economia.h = 46;
+        economia.sourceSide = "bottom";
+        economia.targetSide = "top";
+      }
+
+      const te = getNode("tecnologia-empresarial");
+      if(te){
+        te.label = "Tecnología Empresarial";
+        te.parent = "economia";
+        te.group = "facultades";
+        te.style = "new";
+        te.x = 1700;
+        te.y = 801;
+        te.w = 185;
+        te.h = 40;
+        te.sourceSide = "bottom";
+        te.targetSide = "top";
+      }
+
+      const ge = getNode("gestion-empresarial");
+      if(ge){
+        ge.label = "Gestión Empresarial";
+        ge.parent = "economia";
+        ge.group = "facultades";
+        ge.style = "new";
+        ge.x = 1700;
+        ge.y = 849;
+        ge.w = 185;
+        ge.h = 40;
+        ge.sourceSide = "bottom";
+        ge.targetSide = "top";
+      }
+
+      // La escuela de Estudios Industriales y Empresariales se conserva,
+      // pero sin esos dos programas.
+      const industriales = getNode("industriales");
+      if(industriales){
+        industriales.parent = "fac-ingenierias";
+        industriales.group = "facultades";
+        industriales.x = 1900;
+        industriales.y = 749;
+        industriales.w = 185;
+        industriales.h = 50;
+      }
+
+      // Reafirmar los padres de Ciencias Humanas en esta zona.
+      [
+        ["educacion", "fac-humanas", 897, 40],
+        ["historia", "fac-humanas", 945, 40],
+        ["idiomas", "fac-humanas", 993, 40],
+        ["trabajo-social", "fac-humanas", 1041, 40],
+        ["filosofia", "fac-humanas", 1089, 40],
+        ["deportes", "fac-humanas", 1137, 46],
+        ["musica", "fac-humanas", 1191, 46],
+        ["carrera-musica", "musica", 1245, 40],
+        ["artes-plasticas", "musica", 1293, 40]
+      ].forEach(([id,parent,y,h]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.parent = parent;
+        n.group = "facultades";
+        n.x = 1700;
+        n.y = y;
+        n.w = 185;
+        n.h = h;
       });
     }
 
