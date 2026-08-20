@@ -412,3 +412,14 @@ main{padding:0 24px 30px}
 .connector.branch-wellbeing{
   stroke:#c5a93c;
 }
+
+/* =========================================================
+   V38 — CONECTORES INVISIBLES
+   Las relaciones y la estructura se conservan en el JavaScript.
+   Solo se oculta visualmente la capa SVG de líneas.
+   No modifica posiciones, tamaños ni orden del organigrama.
+   ========================================================= */
+.connections{
+  opacity:0 !important;
+}
+

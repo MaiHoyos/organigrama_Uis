@@ -1,21 +1,21 @@
-ORGANIGRAMA UIS — PROYECTO COMPLETO V26
+ORGANIGRAMA UIS — PROYECTO COMPLETO V38
 
-CAMBIOS V26
-===========
+CAMBIO V38
+==========
+- Se mantiene exactamente la estructura, distribución y orden del proyecto V37.
+- Las líneas/conectores se conservan internamente, pero son invisibles en pantalla.
+- La exportación PNG también se genera sin líneas.
+- No se modificaron las posiciones de las casillas ni la lógica de despliegue/contracción.
 
-- Se reafirma que:
-  * Tecnología Empresarial
-  * Gestión Empresarial
+ESTRUCTURA
+==========
+index.html
+styles.css
+script.js
+assets/
+  uis-marca.png
 
-  dependen de:
-
-  * Escuela de Administración y Finanzas
-
-- Se conserva la Escuela de Estudios Industriales y Empresariales,
-  pero ya sin esas dos dependencias.
-
-- Esta versión fuerza la migración incluso si el navegador tenía
-  posiciones o relaciones guardadas desde la V25.
-
-Para GitHub Pages:
-sube el proyecto completo V26 y luego haz Ctrl + F5.
+USO
+===
+1. Sube todos los archivos respetando la estructura de carpetas.
+2. Si lo publicas en GitHub Pages, usa Ctrl + F5 después de actualizar.

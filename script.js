@@ -3,17 +3,18 @@
 
   const STORAGE_KEY = "uis-organigrama-canvas-v4";
   const LEGACY_STORAGE_KEY = "uis-organigrama-canvas-v3";
-  const SCHEMA_VERSION = 26;
-  const CANVAS_WIDTH = 2300;
+  const SCHEMA_VERSION = 37;
+  const CANVAS_WIDTH = 3700;
   const MIN_ZOOM = 0.35;
   const MAX_ZOOM = 1.50;
   const ZOOM_STEP = 0.10;
   const GRID = 5;
-  const FACULTY_SHIFT = 220;
+  const FACULTY_SHIFT = 420;
 
-  const GROUPS = ["rectoria", "cultura-bienestar", "investigacion", "vacademica", "administrativa", "facultades"];
+  const GROUPS = ["rectoria", "desarrollo-social", "cultura-bienestar", "investigacion", "vacademica", "administrativa", "facultades"];
   const GROUP_BY_CORE = {
     rectoria: "rectoria",
+    vdesarrollo: "desarrollo-social",
     vbienestar: "cultura-bienestar",
     vie: "investigacion",
     vacad: "vacademica",
@@ -23,6 +24,7 @@
 
   const branchClass = {
     rectoria: "branch-rectoria",
+    "desarrollo-social": "branch-wellbeing",
     "cultura-bienestar": "branch-wellbeing",
     investigacion: "branch-turq",
     vacademica: "branch-blue",
@@ -32,6 +34,7 @@
   };
 
   const connectionBranchClass = {
+    "desarrollo-social": "branch-wellbeing",
     "cultura-bienestar": "branch-wellbeing",
     investigacion: "branch-turq",
     vacademica: "branch-blue",
@@ -61,31 +64,32 @@
   add("rectoria", "RECTORÍA", 820, 137, 360, 66, "superior", {kind:"main", css:"rectoria"});
   add("academico", "CONSEJO ACADÉMICO", 820, 238, 360, 54, "rectoria", {kind:"main", css:"dark"});
 
-  // NUEVA Vicerrectoría. Amarilla por corresponder a una unidad nueva.
-  add("vbienestar", "VICERRECTORÍA DE\nCULTURA Y BIENESTAR", 20, 355, 300, 72, "academico", {
+  // Vicerrectoría de Cultura y Bienestar (izquierda).
+  add("vbienestar", "VICERRECTORÍA DE\nCULTURA Y BIENESTAR", 10, 355, 280, 72, "academico", {
     kind:"main",
     style:"new",
     sourceSide:"bottom",
     targetSide:"top"
   });
 
-  add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 365, 355, 325, 72, "academico", {kind:"main", css:"turq", sourceSide:"bottom", targetSide:"top"});
-  add("vacad", "VICERRECTORÍA\nACADÉMICA", 745, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
-  add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 1090, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
+  // Nueva Vicerrectoría de Desarrollo y Proyección Social.
+  add("vdesarrollo", "VICERRECTORÍA DE\nDESARROLLO Y\nPROYECCIÓN SOCIAL", 315, 355, 220, 72, "academico", {
+    kind:"main",
+    style:"new",
+    sourceSide:"bottom",
+    targetSide:"top"
+  });
+
+  add("vie", "VICERRECTORÍA DE\nINVESTIGACIÓN Y EXTENSIÓN", 620, 355, 315, 72, "academico", {kind:"main", css:"turq", sourceSide:"bottom", targetSide:"top"});
+  add("vacad", "VICERRECTORÍA\nACADÉMICA", 970, 355, 300, 72, "academico", {kind:"main", css:"blue", sourceSide:"bottom", targetSide:"top"});
+  add("vadmin", "VICERRECTORÍA\nADMINISTRATIVA", 1320, 355, 360, 72, "academico", {kind:"main", css:"admin", sourceSide:"bottom", targetSide:"top"});
 
   // Facultades se mantiene compacta y dentro del ancho del lienzo.
-  add("facultades", "FACULTADES", 1710, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
+  add("facultades", "FACULTADES", 2190, 355, 235, 72, "academico", {kind:"main", css:"purple", sourceSide:"bottom", targetSide:"top"});
 
   // =========================
   // Rectoría: asesorías/apoyos
   // =========================
-  // Instituto de Desarrollo Regional alineado verticalmente
-  // con Planeación, Control Interno y UISALUD.
-  add("idr", "Instituto de Desarrollo\nRegional", 500, 42, 230, 40, "rectoria", {
-    group:"rectoria",
-    relation:"advisory",
-    style:"new"
-  });
   add("uiaes", "Unidad de Información y\nAnálisis Estadístico - UIAES", 235, 100, 240, 47, "planeacion", {group:"rectoria", relation:"hierarchical", sourceSide:"left", targetSide:"right"});
   add("planeacion", "Planeación", 500, 100, 230, 40, "rectoria", {group:"rectoria", relation:"advisory"});
   add("control-gestion", "Dirección de Control Interno\ny Evaluación de Gestión", 500, 151, 230, 47, "rectoria", {group:"rectoria", relation:"advisory"});
@@ -107,7 +111,7 @@
   // Vicerrectoría de Investigación y Extensión
   // =========================
   let y = 460;
-  const vieX = 370, vieW = 315, rowH = 45, gap = 8;
+  const vieX = 620, vieW = 315, rowH = 45, gap = 8;
   [
     ["cie","Consejo de Investigación\ny Extensión"],
     ["ieia","Instituto de Estudios\nInterdisciplinarios y Acción"],
@@ -118,10 +122,32 @@
   ].forEach(([id,label]) => { add(id,label,vieX,y,vieW,rowH,"vie",{group:"investigacion"}); y += rowH+gap; });
 
   // =========================
+  // Vicerrectoría de Desarrollo y Proyección Social
+  // =========================
+  y = 460;
+  const vdX = 315, vdW = 220;
+
+  add("comite-proyeccion","Comité de Proyección Social\ny Territorio",vdX,y,vdW,56,"vdesarrollo",{
+    group:"desarrollo-social",
+    style:"sublevel"
+  });
+  y += 64;
+
+  add("educacion-buen-vivir","Educación y Buen Vivir",vdX,y,vdW,46,"vdesarrollo",{
+    group:"desarrollo-social",
+    style:"sublevel"
+  });
+  y += 54;
+
+  add("extension-regionalizacion","Extensión y Proyección Social\nde Regionalización",vdX,y,vdW,64,"vdesarrollo",{
+    group:"desarrollo-social",
+    style:"sublevel"
+  });
+  // =========================
   // Vicerrectoría de Cultura y Bienestar
   // =========================
   y = 460;
-  const vbX = 20, vbW = 300;
+  const vbX = 10, vbW = 280;
 
   add("cultural","Dirección Cultural",vbX,y,vbW,rowH,"vbienestar",{
     group:"cultura-bienestar",
@@ -135,7 +161,7 @@
   });
   y += rowH + gap;
 
-  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",40,y,260,52,"bienestar",{
+  add("servicios-salud","Coordinación de Servicios Integrales\nde Salud y Desarrollo",30,y,240,52,"bienestar",{
     group:"cultura-bienestar",
     style:"sublevel",
     sourceSide:"bottom",
@@ -143,7 +169,7 @@
   });
   y += 60;
 
-  add("alimentacion","Coordinación de Servicios\nde Alimentación",40,y,260,47,"bienestar",{
+  add("alimentacion","Coordinación de Servicios\nde Alimentación",30,y,240,47,"bienestar",{
     group:"cultura-bienestar",
     style:"sublevel",
     sourceSide:"bottom",
@@ -154,7 +180,7 @@
   // Vicerrectoría Académica
   // =========================
   y = 460;
-  const vaX = 745, vaW = 300;
+  const vaX = 970, vaW = 300;
   [
     ["posgrados","Dirección de Posgrados"],
     ["calidad","Coordinación de Evaluación\nde la Calidad"],
@@ -163,150 +189,11 @@
     ["cededuis","CEDEDUIS"]
   ].forEach(([id,label]) => { add(id,label,vaX,y,vaW,rowH,"vacad",{group:"vacademica"}); y += rowH+gap; });
 
-  // Trasladado desde Investigación y renombrado.
-  add("centro-tecnico","Escuela de Estudios\nTécnicos y Tecnológicos",vaX,y,vaW,52,"vacad",{
-    group:"vacademica",
-    style:"new"
-  });
-  y += 60;
-
-  add("consejo-sedes","Consejo de Sedes",vaX,y,vaW,43,"vacad",{group:"vacademica",style:"new"}); y += 53;
-
-  // ---------------------------------------------------------
-  // Barrancabermeja
-  // ---------------------------------------------------------
-  add("barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja",vaX+20,y,260,45,"consejo-sedes",{
-    group:"vacademica",
-    style:"new"
-  });
-  y += 53;
-
-  add("inteligencia-artificial","Ingeniería en Inteligencia Artificial",vaX+40,y,220,46,"barranca",{
-    group:"vacademica",
-    style:"new",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 54;
-
-  add("tecnico-fotovoltaico","Técnico en Fotovoltaico",vaX+40,y,220,42,"barranca",{
-    group:"vacademica",
-    style:"new",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 54;
-
-  // ---------------------------------------------------------
-  // Málaga: recibe la estructura que dependía de Ciencias Agrarias.
-  // ---------------------------------------------------------
-  add("malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga",vaX+20,y,260,45,"consejo-sedes",{
-    group:"vacademica",
-    style:"new"
-  });
-  y += 53;
-
-  [
-    ["ing-forestal","Ing. Forestal",40],
-    ["zootecnia","Zootecnia",40],
-    ["med-veterinaria","Medicina Veterinaria",40],
-    ["ing-agronomica","Ing. Agronómica",40]
-  ].forEach(([id,label,h]) => {
-    add(id,label,vaX+40,y,220,h,"malaga",{
-      group:"vacademica",
-      style:"sublevel",
-      sourceSide:"bottom",
-      targetSide:"top"
-    });
-    y += h + 8;
-  });
-
-  add("programas-agroindustrial","Programas del área Agroindustrial\npor ciclos propedéuticos",vaX+40,y,220,58,"malaga",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 66;
-
-  add("tecnico-produccion-agropecuaria","Técnico profesional en\nproducción agropecuaria",vaX+60,y,200,54,"programas-agroindustrial",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 62;
-
-  add("tecnologia-agroindustrial","Tecnología Agroindustrial",vaX+60,y,200,42,"programas-agroindustrial",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 50;
-
-  add("administracion-agroindustrial","Administración Agroindustrial",vaX+60,y,200,42,"programas-agroindustrial",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 54;
-
-  // ---------------------------------------------------------
-  // Socorro: recibe Construcción, Arquitectura y Turismo.
-  // ---------------------------------------------------------
-  add("socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro",vaX+20,y,260,45,"consejo-sedes",{
-    group:"vacademica",
-    style:"new"
-  });
-  y += 53;
-
-  add("ing-construccion","Ing. Construcción",vaX+40,y,220,40,"socorro",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 48;
-
-  add("arquitectura","Arquitectura",vaX+40,y,220,40,"socorro",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 48;
-
-  add("admin-turistica-hotelera","Administración de Empresas\nTurísticas y Hoteleras",vaX+40,y,220,58,"socorro",{
-    group:"vacademica",
-    style:"sublevel",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-  y += 66;
-
-  // ---------------------------------------------------------
-  // Barbosa: recibe Ingeniería en Alimentos.
-  // ---------------------------------------------------------
-  add("barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa",vaX+20,y,260,45,"consejo-sedes",{
-    group:"vacademica",
-    style:"new"
-  });
-  y += 53;
-
-  add("alimentos","Ing. en Alimentos",vaX+40,y,220,40,"barbosa",{
-    group:"vacademica",
-    style:"new",
-    sourceSide:"bottom",
-    targetSide:"top"
-  });
-
   // =========================
   // Vicerrectoría Administrativa
   // =========================
   y = 460;
-  const adX = 1090, adW = 360;
+  const adX = 1320, adW = 360;
   add("financiera","División Financiera",adX,y,adW,43,"vadmin",{group:"administrativa"}); y += 51;
   [
     ["inventarios","Sección de Inventarios"],
@@ -314,7 +201,7 @@
     ["presupuesto","Sección de Presupuesto"],
     ["tesoreria","Sección de Tesorería"],
     ["contabilidad","Sección de Contabilidad"]
-  ].forEach(([id,label]) => { add(id,label,1110,y,320,35,"financiera",{group:"administrativa",style:"sublevel"}); y += 42; });
+  ].forEach(([id,label]) => { add(id,label,1340,y,320,35,"financiera",{group:"administrativa",style:"sublevel"}); y += 42; });
   [
     ["talento","División de Gestión de Talento Humano",43],
     ["contratacion","División de Contratación",43],
@@ -323,38 +210,18 @@
     ["mantenimiento","División de Mantenimiento Tecnológico",43],
     ["planta","División de Planta Física",43]
   ].forEach(([id,label,h]) => { add(id,label,adX,y,adW,h,"vadmin",{group:"administrativa"}); y += h+8; });
-  add("seguridad","Sección de Seguridad",1110,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
+  add("seguridad","Sección de Seguridad",1340,y,320,35,"planta",{group:"administrativa",style:"sublevel"});
 
   // =========================
   // Instituto de Desarrollo Regional
   // =========================
-  // Sus dependencias se despliegan hacia la izquierda.
-  // Se usa una columna separada para que UIAES pueda abrirse sin superposición.
-  add(
-    "comite-proyeccion",
-    "Comité de Proyección Social\ny Territorio",
-    10, 42, 210, 56, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
-  );
-
-  add(
-    "educacion-buen-vivir",
-    "Educación y Buen Vivir",
-    10, 110, 210, 46, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
-  );
-
-  add(
-    "extension-regionalizacion",
-    "Extensión y Proyección Social\nde Regionalización",
-    10, 168, 210, 64, "idr",
-    {group:"rectoria", style:"sublevel", sourceSide:"left", targetSide:"right"}
-  );
+  // Las dependencias de proyección se trasladan a la nueva Vicerrectoría
+  // de Desarrollo y Proyección Social.
 
   // =========================
   // Facultades
   // =========================
-  const fx = [1280 + FACULTY_SHIFT, 1480 + FACULTY_SHIFT, 1680 + FACULTY_SHIFT, 1880 + FACULTY_SHIFT];
+  const fx = [1280 + FACULTY_SHIFT, 1480 + FACULTY_SHIFT, 1680 + FACULTY_SHIFT, 1880 + FACULTY_SHIFT, 2080 + FACULTY_SHIFT];
   const fw = 185;
   const fHeaders = [
     ["fac-ciencias","FACULTAD\nDE CIENCIAS",fx[0]],
@@ -363,6 +230,7 @@
     ["fac-salud","FACULTAD\nDE SALUD",fx[3]]
   ];
   fHeaders.forEach(([id,label,x]) => add(id,label,x,460,fw,60,"facultades",{group:"facultades",kind:"faculty-header",sourceSide:"bottom",targetSide:"top"}));
+  add("fac-regionales","Facultad de Estudios Regionales",fx[4] + 320,460,205,60,"facultades",{group:"facultades",kind:"faculty-header",style:"new",sourceSide:"bottom",targetSide:"top"});
 
   const addFacultyList = (parent, x, items) => {
     let yy = 535;
@@ -443,6 +311,33 @@
   ].forEach(([id,label]) => { add(id,label,1880 + FACULTY_SHIFT,my,185,34,"medicina",{group:"facultades",style:"sublevel"}); my += 41; });
   add("regencia","Tecnología en Regencia de Farmacia",1880 + FACULTY_SHIFT,1215,205,40,"medicina",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
 
+  // Facultad de Estudios Regionales
+  add("consejo-sedes","Consejo de Facultad",2400 + FACULTY_SHIFT,535,205,40,"fac-regionales",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+
+  add("barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja",2400 + FACULTY_SHIFT,583,205,45,"consejo-sedes",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  add("inteligencia-artificial","Ingeniería en Inteligencia\nArtificial",2400 + FACULTY_SHIFT,636,205,46,"barranca",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  add("tecnico-fotovoltaico","Técnico en Fotovoltaico",2400 + FACULTY_SHIFT,690,205,42,"barranca",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+
+  add("malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga",2400 + FACULTY_SHIFT,740,205,45,"consejo-sedes",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  add("ing-forestal","Ing. Forestal",2400 + FACULTY_SHIFT,793,205,40,"malaga",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("zootecnia","Zootecnia",2400 + FACULTY_SHIFT,841,205,40,"malaga",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("med-veterinaria","Medicina Veterinaria",2400 + FACULTY_SHIFT,889,205,40,"malaga",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("ing-agronomica","Ing. Agronómica",2400 + FACULTY_SHIFT,937,205,40,"malaga",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("programas-agroindustrial","Programas del área\nAgroindustrial\npor ciclos propedéuticos",2400 + FACULTY_SHIFT,985,205,58,"malaga",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("tecnico-produccion-agropecuaria","Técnico profesional en\nproducción agropecuaria",2400 + FACULTY_SHIFT,1051,205,54,"programas-agroindustrial",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("tecnologia-agroindustrial","Tecnología Agroindustrial",2400 + FACULTY_SHIFT,1113,205,42,"programas-agroindustrial",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("administracion-agroindustrial","Administración\nAgroindustrial",2400 + FACULTY_SHIFT,1163,205,42,"programas-agroindustrial",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+
+  add("socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro",2400 + FACULTY_SHIFT,1213,205,45,"consejo-sedes",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  add("ing-construccion","Ing. Construcción",2400 + FACULTY_SHIFT,1266,205,40,"socorro",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("arquitectura","Arquitectura",2400 + FACULTY_SHIFT,1314,205,40,"socorro",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+  add("admin-turistica-hotelera","Administración de Empresas\nTurísticas y Hoteleras",2400 + FACULTY_SHIFT,1362,205,58,"socorro",{group:"facultades",style:"sublevel",sourceSide:"bottom",targetSide:"top"});
+
+  add("barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa",2400 + FACULTY_SHIFT,1428,205,45,"consejo-sedes",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+  add("alimentos","Ing. en Alimentos",2400 + FACULTY_SHIFT,1481,205,40,"barbosa",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+
+  add("centro-tecnico","Escuela de Estudios Técnicos y\nTecnológicos",2400 + FACULTY_SHIFT,1529,205,45,"fac-regionales",{group:"facultades",style:"new",sourceSide:"bottom",targetSide:"top"});
+
 
   // =========================
   // Modelo interno de Escuela (recuadro informativo de la referencia)
@@ -510,7 +405,7 @@
   let drag = null;
 
   const PROTECTED_NODES = new Set([
-    "superior","rectoria","academico","vbienestar","vie","vacad","vadmin","facultades"
+    "superior","rectoria","academico","vdesarrollo","vbienestar","vie","vacad","vadmin","facultades"
   ]);
 
   function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
@@ -694,7 +589,7 @@
       });
 
       // Asegurar los enlaces principales desde Consejo Académico.
-      ["vbienestar","vie","vacad","vadmin","facultades"].forEach(id => {
+      ["vdesarrollo","vbienestar","vie","vacad","vadmin","facultades"].forEach(id => {
         const n = get(id);
         if(n){
           n.parent = "academico";
@@ -747,7 +642,7 @@
     }
 
     // Las cuatro ramas principales salen ordenadamente desde abajo de Consejo Académico.
-    ["vbienestar","vie","vacad","vadmin","facultades"].forEach(id => {
+    ["vdesarrollo","vbienestar","vie","vacad","vadmin","facultades"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "academico";
@@ -757,7 +652,7 @@
     });
 
     // Las cuatro facultades salen desde abajo de la casilla FACULTADES.
-    ["fac-ciencias","fac-humanas","fac-ingenierias","fac-salud"].forEach(id => {
+    ["fac-ciencias","fac-humanas","fac-ingenierias","fac-salud","fac-regionales"].forEach(id => {
       const n = get(id);
       if(n){
         n.parent = "facultades";
@@ -836,42 +731,6 @@
     ["vproyeccion","amovi"].forEach(id => {
       const index = parsed.nodes.findIndex(n => n.id === id);
       if(index >= 0) parsed.nodes.splice(index, 1);
-    });
-
-    // V16: IDR alineado con la columna de Planeación / Control / UISALUD.
-    // Sus dependencias quedan a la izquierda.
-    const idrNode = get("idr");
-    if(idrNode){
-      idrNode.x = 500;
-      idrNode.y = 42;
-      idrNode.w = 230;
-      idrNode.h = 40;
-      idrNode.parent = "rectoria";
-      idrNode.group = "rectoria";
-      idrNode.relation = "advisory";
-      idrNode.style = "new";
-      idrNode.sourceSide = "auto";
-      idrNode.targetSide = "auto";
-    }
-
-    const idrChildren = [
-      ["comite-proyeccion", 10, 42, 210, 56],
-      ["educacion-buen-vivir", 10, 110, 210, 46],
-      ["extension-regionalizacion", 10, 168, 210, 64]
-    ];
-
-    idrChildren.forEach(([id,x,y,w,h]) => {
-      const n = get(id);
-      if(!n) return;
-      n.parent = "idr";
-      n.group = "rectoria";
-      n.style = "sublevel";
-      n.sourceSide = "left";
-      n.targetSide = "right";
-      n.x = x;
-      n.y = y;
-      n.w = w;
-      n.h = h;
     });
 
     // V16: UIAES debe iniciar oculto hasta abrir Planeación.
@@ -1231,33 +1090,37 @@
       arauca.h = 40;
     }
 
-    // Layout definitivo de Consejo de Sedes y sus programas.
-    const academicNodes = {
-      "consejo-sedes": [745,785,300,43,"vacad","new"],
-      "barranca": [765,838,260,45,"consejo-sedes","new"],
-      "inteligencia-artificial": [785,891,220,46,"barranca","new"],
-      "tecnico-fotovoltaico": [785,945,220,42,"barranca","new"],
+    // Layout definitivo de la Facultad de Estudios Regionales.
+    const regionalNodes = {
+      "fac-regionales": [2300,460,205,60,"facultades","new"],
+      "consejo-sedes": [2300,535,205,40,"fac-regionales","new"],
 
-      "malaga": [765,999,260,45,"consejo-sedes","new"],
-      "ing-forestal": [785,1052,220,40,"malaga","sublevel"],
-      "zootecnia": [785,1100,220,40,"malaga","sublevel"],
-      "med-veterinaria": [785,1148,220,40,"malaga","sublevel"],
-      "ing-agronomica": [785,1196,220,40,"malaga","sublevel"],
-      "programas-agroindustrial": [785,1244,220,58,"malaga","sublevel"],
-      "tecnico-produccion-agropecuaria": [805,1310,200,54,"programas-agroindustrial","sublevel"],
-      "tecnologia-agroindustrial": [805,1372,200,42,"programas-agroindustrial","sublevel"],
-      "administracion-agroindustrial": [805,1422,200,42,"programas-agroindustrial","sublevel"],
+      "barranca": [2300,583,205,45,"consejo-sedes","new"],
+      "inteligencia-artificial": [2300,636,205,46,"barranca","new"],
+      "tecnico-fotovoltaico": [2300,690,205,42,"barranca","new"],
 
-      "socorro": [765,1476,260,45,"consejo-sedes","new"],
-      "ing-construccion": [785,1529,220,40,"socorro","sublevel"],
-      "arquitectura": [785,1577,220,40,"socorro","sublevel"],
-      "admin-turistica-hotelera": [785,1625,220,58,"socorro","sublevel"],
+      "malaga": [2300,740,205,45,"consejo-sedes","new"],
+      "ing-forestal": [2300,793,205,40,"malaga","sublevel"],
+      "zootecnia": [2300,841,205,40,"malaga","sublevel"],
+      "med-veterinaria": [2300,889,205,40,"malaga","sublevel"],
+      "ing-agronomica": [2300,937,205,40,"malaga","sublevel"],
+      "programas-agroindustrial": [2300,985,205,58,"malaga","sublevel"],
+      "tecnico-produccion-agropecuaria": [2300,1051,205,54,"programas-agroindustrial","sublevel"],
+      "tecnologia-agroindustrial": [2300,1113,205,42,"programas-agroindustrial","sublevel"],
+      "administracion-agroindustrial": [2300,1163,205,42,"programas-agroindustrial","sublevel"],
 
-      "barbosa": [765,1691,260,45,"consejo-sedes","new"],
-      "alimentos": [785,1744,220,40,"barbosa","new"]
+      "socorro": [2300,1213,205,45,"consejo-sedes","new"],
+      "ing-construccion": [2300,1266,205,40,"socorro","sublevel"],
+      "arquitectura": [2300,1314,205,40,"socorro","sublevel"],
+      "admin-turistica-hotelera": [2300,1362,205,58,"socorro","sublevel"],
+
+      "barbosa": [2300,1428,205,45,"consejo-sedes","new"],
+      "alimentos": [2300,1481,205,40,"barbosa","new"],
+
+      "centro-tecnico": [2300,1529,205,45,"fac-regionales","new"]
     };
 
-    Object.entries(academicNodes).forEach(([id,values]) => {
+    Object.entries(regionalNodes).forEach(([id,values]) => {
       const n = get(id);
       if(!n) return;
 
@@ -1267,26 +1130,387 @@
       n.w = w;
       n.h = h;
       n.parent = parent;
-      n.group = "vacademica";
+      n.group = "facultades";
       n.style = style;
       n.sourceSide = "bottom";
       n.targetSide = "top";
+      if(id === "fac-regionales") n.kind = "faculty-header";
     });
 
-    // Los programas trasladados ya no pertenecen a la rama Facultades.
+    // La rama regional pertenece a Facultades.
     [
-      "inteligencia-artificial","tecnico-fotovoltaico",
-      "ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
+      "consejo-sedes","barranca","inteligencia-artificial","tecnico-fotovoltaico",
+      "malaga","ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
       "programas-agroindustrial","tecnico-produccion-agropecuaria",
       "tecnologia-agroindustrial","administracion-agroindustrial",
-      "ing-construccion","arquitectura","admin-turistica-hotelera","alimentos"
+      "socorro","ing-construccion","arquitectura","admin-turistica-hotelera",
+      "barbosa","alimentos","centro-tecnico"
     ].forEach(id => {
       const n = get(id);
-      if(n) n.group = "vacademica";
+      if(n) n.group = "facultades";
+    });
+
+    // La rama académica vuelve a terminar en CEDEDUIS.
+    [
+      ["posgrados",970,460,300,45],["calidad",970,513,300,45],
+      ["admisiones",970,566,300,45],["biblioteca",970,619,300,45],
+      ["cededuis",970,672,300,45]
+    ].forEach(([id,x,y,w,h]) => {
+      const n = get(id);
+      if(!n) return;
+      n.parent = "vacad";
+      n.group = "vacademica";
+      n.x = x; n.y = y; n.w = w; n.h = h;
     });
 
     // UIAES inicia siempre oculto.
     parsed.collapsedNodes.planeacion = true;
+
+    // V28: composición final según la referencia más reciente.
+    if(fromSchema < 28){
+      const getNode = id => parsed.nodes.find(n => n.id === id);
+      const removeNode = id => {
+        const i = parsed.nodes.findIndex(n => n.id === id);
+        if(i >= 0) parsed.nodes.splice(i, 1);
+      };
+
+      // AMOVI no hace parte de esta versión final.
+      removeNode("amovi");
+
+      // Raíces bajo Consejo Académico.
+      [
+        ["vbienestar",10,355,280,72,"new"],
+        ["vdesarrollo",315,355,220,72,"new"],
+        ["vie",620,355,315,72,"normal"],
+        ["vacad",970,355,300,72,"normal"],
+        ["vadmin",1320,355,360,72,"normal"],
+        ["facultades",2190,355,235,72,"normal"]
+      ].forEach(([id,x,y,w,h,style]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.parent = "academico";
+        n.x = x; n.y = y; n.w = w; n.h = h;
+        n.group = "core";
+        n.kind = "main";
+        if(style === "new") n.style = "new";
+        n.sourceSide = "bottom";
+        n.targetSide = "top";
+      });
+
+      // Cultura y Bienestar.
+      [
+        ["cultural",10,460,280,45,"vbienestar"],
+        ["bienestar",10,513,280,45,"vbienestar"],
+        ["servicios-salud",30,566,240,52,"bienestar"],
+        ["alimentacion",30,626,240,47,"bienestar"]
+      ].forEach(([id,x,y,w,h,parent]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.parent = parent;
+        n.group = "cultura-bienestar";
+        n.style = "sublevel";
+        n.x=x; n.y=y; n.w=w; n.h=h;
+      });
+
+      // Desarrollo y Proyección Social.
+      [
+        ["comite-proyeccion","Comité de Proyección Social\ny Territorio",315,460,220,56],
+        ["educacion-buen-vivir","Educación y Buen Vivir",315,524,220,46],
+        ["extension-regionalizacion","Extensión y Proyección Social\nde Regionalización",315,578,220,64]
+      ].forEach(([id,label,x,y,w,h]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.label = label;
+        n.parent = "vdesarrollo";
+        n.group = "desarrollo-social";
+        n.style = "sublevel";
+        n.x=x; n.y=y; n.w=w; n.h=h;
+      });
+
+      // Académica queda solo hasta CEDEDUIS.
+      [
+        ["posgrados",970,460,300,45],["calidad",970,513,300,45],
+        ["admisiones",970,566,300,45],["biblioteca",970,619,300,45],
+        ["cededuis",970,672,300,45]
+      ].forEach(([id,x,y,w,h]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.parent = "vacad";
+        n.group = "vacademica";
+        n.x=x; n.y=y; n.w=w; n.h=h;
+      });
+
+      // Facultad de Estudios Regionales.
+      const facReg = getNode("fac-regionales");
+      if(facReg){
+        facReg.parent = "facultades";
+        facReg.group = "facultades";
+        facReg.kind = "faculty-header";
+        facReg.style = "new";
+        facReg.x = 2300; facReg.y = 460; facReg.w = 205; facReg.h = 60;
+        facReg.sourceSide = "bottom";
+        facReg.targetSide = "top";
+      }
+
+      [
+        ["consejo-sedes","Consejo de Facultad",2820,535,205,40,"fac-regionales","new"],
+        ["barranca","Escuela de Formación y Desarrollo\nTerritorial Barrancabermeja",2820,583,205,45,"consejo-sedes","new"],
+        ["inteligencia-artificial","Ingeniería en Inteligencia\nArtificial",2820,636,205,46,"barranca","new"],
+        ["tecnico-fotovoltaico","Técnico en Fotovoltaico",2820,690,205,42,"barranca","new"],
+        ["malaga","Escuela de Formación y Desarrollo\nTerritorial Málaga",2820,740,205,45,"consejo-sedes","new"],
+        ["ing-forestal","Ing. Forestal",2820,793,205,40,"malaga","sublevel"],
+        ["zootecnia","Zootecnia",2820,841,205,40,"malaga","sublevel"],
+        ["med-veterinaria","Medicina Veterinaria",2820,889,205,40,"malaga","sublevel"],
+        ["ing-agronomica","Ing. Agronómica",2820,937,205,40,"malaga","sublevel"],
+        ["programas-agroindustrial","Programas del área\nAgroindustrial\npor ciclos propedéuticos",2820,985,205,58,"malaga","sublevel"],
+        ["tecnico-produccion-agropecuaria","Técnico profesional en\nproducción agropecuaria",2820,1051,205,54,"programas-agroindustrial","sublevel"],
+        ["tecnologia-agroindustrial","Tecnología Agroindustrial",2820,1113,205,42,"programas-agroindustrial","sublevel"],
+        ["administracion-agroindustrial","Administración\nAgroindustrial",2820,1163,205,42,"programas-agroindustrial","sublevel"],
+        ["socorro","Escuela de Formación y Desarrollo\nTerritorial Socorro",2820,1213,205,45,"consejo-sedes","new"],
+        ["ing-construccion","Ing. Construcción",2820,1266,205,40,"socorro","sublevel"],
+        ["arquitectura","Arquitectura",2820,1314,205,40,"socorro","sublevel"],
+        ["admin-turistica-hotelera","Administración de Empresas\nTurísticas y Hoteleras",2820,1362,205,58,"socorro","sublevel"],
+        ["barbosa","Escuela de Formación y Desarrollo\nTerritorial Barbosa",2820,1428,205,45,"consejo-sedes","new"],
+        ["alimentos","Ing. en Alimentos",2820,1481,205,40,"barbosa","new"],
+        ["centro-tecnico","Escuela de Estudios Técnicos y\nTecnológicos",2820,1529,205,45,"fac-regionales","new"]
+      ].forEach(([id,label,x,y,w,h,parent,style]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.label = label;
+        n.parent = parent;
+        n.group = "facultades";
+        n.style = style;
+        n.x=x; n.y=y; n.w=w; n.h=h;
+        n.sourceSide = "bottom";
+        n.targetSide = "top";
+      });
+    }
+
+    // V27: nueva Vicerrectoría de Desarrollo y Proyección Social,
+    // a la izquierda de Cultura; Cultura se mueve a la izquierda de Investigación.
+    if(fromSchema < 27){
+      const getNode = id => parsed.nodes.find(n => n.id === id);
+      const removeNode = id => {
+        const i = parsed.nodes.findIndex(n => n.id === id);
+        if(i >= 0) parsed.nodes.splice(i, 1);
+      };
+
+      removeNode("vproyeccion");
+
+      [
+        ["vdesarrollo",10,355,280,72,"new"],
+        ["vbienestar",315,355,280,72,"new"],
+        ["vie",620,355,315,72,"normal"],
+        ["vacad",970,355,300,72,"normal"],
+        ["vadmin",1320,355,360,72,"normal"],
+        ["facultades",1710,355,235,72,"normal"]
+      ].forEach(([id,x,y,w,h,style]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.parent = "academico";
+        n.x = x; n.y = y; n.w = w; n.h = h;
+        n.group = "core";
+        n.kind = "main";
+        if(style === "new") n.style = "new";
+        n.sourceSide = "bottom";
+        n.targetSide = "top";
+      });
+
+      [
+        ["comite-proyeccion","Comité de Proyección Social\ny Territorio",10,460,280,56],
+        ["educacion-buen-vivir","Educación y Buen Vivir",10,524,280,46],
+        ["extension-regionalizacion","Extensión y Proyección Social\nde Regionalización",10,578,280,64],
+        ["amovi","AMOVI",10,650,280,46]
+      ].forEach(([id,label,x,y,w,h]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.label = label;
+        n.parent = "vdesarrollo";
+        n.group = "desarrollo-social";
+        n.style = "sublevel";
+        n.x = x; n.y = y; n.w = w; n.h = h;
+        n.sourceSide = "bottom";
+        n.targetSide = "top";
+      });
+
+      const cultural = getNode("cultural");
+      if(cultural){
+        cultural.parent = "vbienestar";
+        cultural.group = "cultura-bienestar";
+        cultural.style = "sublevel";
+        cultural.x = 315; cultural.y = 460; cultural.w = 280; cultural.h = 45;
+      }
+
+      const bienestar = getNode("bienestar");
+      if(bienestar){
+        bienestar.parent = "vbienestar";
+        bienestar.group = "cultura-bienestar";
+        bienestar.style = "sublevel";
+        bienestar.x = 315; bienestar.y = 513; bienestar.w = 280; bienestar.h = 45;
+      }
+
+      const servicios = getNode("servicios-salud");
+      if(servicios){
+        servicios.parent = "bienestar";
+        servicios.group = "cultura-bienestar";
+        servicios.style = "sublevel";
+        servicios.x = 335; servicios.y = 566; servicios.w = 240; servicios.h = 52;
+        servicios.sourceSide = "bottom";
+        servicios.targetSide = "top";
+      }
+
+      const alimentacion = getNode("alimentacion");
+      if(alimentacion){
+        alimentacion.parent = "bienestar";
+        alimentacion.group = "cultura-bienestar";
+        alimentacion.style = "sublevel";
+        alimentacion.x = 335; alimentacion.y = 626; alimentacion.w = 240; alimentacion.h = 47;
+        alimentacion.sourceSide = "bottom";
+        alimentacion.targetSide = "top";
+      }
+
+      parsed.nodes.forEach(n => {
+        if(n.group === "investigacion" || n.id === "vie"){
+          n.x += 250;
+        }
+        if(n.group === "vacademica" || n.id === "vacad"){
+          n.x += 225;
+        }
+        if(n.group === "administrativa" || n.id === "vadmin"){
+          n.x += 230;
+        }
+      });
+    }
+
+
+    // V30: correr toda la rama de Facultades un poco más a la derecha
+    // para evitar superposición con Vicerrectoría Administrativa.
+    if(fromSchema < 30){
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x += 120;
+        }
+      });
+    }
+
+
+    // V31: mover toda la rama de Facultades 80 px adicionales a la derecha.
+    if(fromSchema < 31){
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades" || n.group === "facultades"){
+          n.x += 80;
+        }
+      });
+    }
+
+
+    // V32: correr un poco más a la derecha solo la Facultad de Estudios Regionales
+    // y toda su rama para evitar superposición con la Facultad de Salud.
+    if(fromSchema < 32){
+      const regionalIds = new Set([
+        "fac-regionales","consejo-sedes","barranca","inteligencia-artificial","tecnico-fotovoltaico",
+        "malaga","ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
+        "programas-agroindustrial","tecnico-produccion-agropecuaria","tecnologia-agroindustrial",
+        "administracion-agroindustrial","socorro","ing-construccion","arquitectura",
+        "admin-turistica-hotelera","barbosa","alimentos","centro-tecnico"
+      ]);
+      parsed.nodes.forEach(n => {
+        if(regionalIds.has(n.id)) n.x += 140;
+      });
+    }
+
+
+    // V33: correr todavía más a la derecha la Facultad de Estudios Regionales
+    // y mover un poco el bloque principal de Facultades.
+    if(fromSchema < 33){
+      const regionalIds = new Set([
+        "fac-regionales","consejo-sedes","barranca","inteligencia-artificial","tecnico-fotovoltaico",
+        "malaga","ing-forestal","zootecnia","med-veterinaria","ing-agronomica",
+        "programas-agroindustrial","tecnico-produccion-agropecuaria","tecnologia-agroindustrial",
+        "administracion-agroindustrial","socorro","ing-construccion","arquitectura",
+        "admin-turistica-hotelera","barbosa","alimentos","centro-tecnico"
+      ]);
+      parsed.nodes.forEach(n => {
+        if(n.id === "facultades") n.x += 80;
+        if(regionalIds.has(n.id)) n.x += 180;
+      });
+    }
+
+
+    // V34 quedó sin efecto en V35; la Vicerrectoría de Desarrollo y Proyección Social se conserva.
+
+    // V35: conservar la Vicerrectoría de Desarrollo y Proyección Social,
+    // eliminar solo el Instituto de Desarrollo Regional y restaurar la
+    // posición de Investigación, Académica y Administrativa.
+    if(fromSchema < 35){
+      const getNode = id => parsed.nodes.find(n => n.id === id);
+      const removeNode = id => {
+        const i = parsed.nodes.findIndex(n => n.id === id);
+        if(i >= 0) parsed.nodes.splice(i, 1);
+      };
+
+      removeNode("idr");
+
+      // Restaurar o crear la Vicerrectoría de Desarrollo y Proyección Social.
+      let vdes = getNode("vdesarrollo");
+      if(!vdes){
+        vdes = {
+          id:"vdesarrollo", label:"VICERRECTORÍA DE\nDESARROLLO Y\nPROYECCIÓN SOCIAL",
+          x:315, y:355, w:220, h:72, parent:"academico", group:"core",
+          kind:"main", style:"new", sourceSide:"bottom", targetSide:"top"
+        };
+        parsed.nodes.push(vdes);
+      } else {
+        Object.assign(vdes, {x:315,y:355,w:220,h:72,parent:"academico",group:"core",kind:"main",style:"new",sourceSide:"bottom",targetSide:"top"});
+      }
+
+      const ensureChild = (id,label,x,y,w,h) => {
+        let n = getNode(id);
+        if(!n){
+          n = {id, label, x, y, w, h, parent:"vdesarrollo", group:"desarrollo-social", style:"sublevel", sourceSide:"bottom", targetSide:"top"};
+          parsed.nodes.push(n);
+        } else {
+          Object.assign(n, {label, x, y, w, h, parent:"vdesarrollo", group:"desarrollo-social", style:"sublevel", sourceSide:"bottom", targetSide:"top"});
+        }
+      };
+      ensureChild("comite-proyeccion","Comité de Proyección Social\ny Territorio",315,460,220,56);
+      ensureChild("educacion-buen-vivir","Educación y Buen Vivir",315,524,220,46);
+      ensureChild("extension-regionalizacion","Extensión y Proyección Social\nde Regionalización",315,578,220,64);
+
+      // Restaurar posiciones de ramas centrales.
+      parsed.nodes.forEach(n => {
+        if(n.id === "vie" || n.group === "investigacion") n.x += 305;
+        if(n.id === "vacad" || n.group === "vacademica") n.x += 305;
+        if(n.id === "vadmin" || n.group === "administrativa") n.x += 305;
+      });
+    }
+
+    // V36: asegurar que el Instituto de Desarrollo Regional desaparezca
+    // también en estados viejos y que sus dependencias vuelvan a la
+    // Vicerrectoría de Desarrollo y Proyección Social.
+    if(fromSchema < 36){
+      const getNode = id => parsed.nodes.find(n => n.id === id);
+      parsed.nodes = parsed.nodes.filter(n => n.id !== "idr");
+
+      const remap = [
+        ["comite-proyeccion",315,460,220,56],
+        ["educacion-buen-vivir",315,524,220,46],
+        ["extension-regionalizacion",315,578,220,64]
+      ];
+      remap.forEach(([id,x,y,w,h]) => {
+        const n = getNode(id);
+        if(!n) return;
+        n.parent = "vdesarrollo";
+        n.group = "desarrollo-social";
+        n.style = "sublevel";
+        n.sourceSide = "bottom";
+        n.targetSide = "top";
+        // Solo corregir posición si venían colgando del antiguo IDR.
+        if(n.x <= 220) {
+          n.x = x; n.y = y; n.w = w; n.h = h;
+        }
+      });
+    }
 
     parsed.schemaVersion = SCHEMA_VERSION;
     return parsed;
@@ -1405,6 +1629,7 @@
 
   function nodeBranch(node){
     if(node.group && node.group !== "core") return node.group;
+    if(node.id === "vdesarrollo") return "desarrollo-social";
     if(node.id === "vbienestar") return "cultura-bienestar";
     if(node.id === "vie") return "investigacion";
     if(node.id === "vacad") return "vacademica";
@@ -1585,13 +1810,13 @@
       return;
     }
 
-    if(["cultura-bienestar","investigacion","vacademica","administrativa"].includes(group)){
+    if(["desarrollo-social","cultura-bienestar","investigacion","vacademica","administrativa"].includes(group)){
       compactGroup(group);
     }
   }
 
   function compactAllExpandedGroups(){
-    ["cultura-bienestar","investigacion","vacademica","administrativa","facultades"]
+    ["desarrollo-social","cultura-bienestar","investigacion","vacademica","administrativa","facultades"]
       .forEach(compactGroup);
   }
 
@@ -2100,21 +2325,9 @@
       items.push({minX:x, minY:y, maxX:x+w, maxY:y+h});
     });
 
-    svg.querySelectorAll("path.connector").forEach(path => {
-      try{
-        const box = path.getBBox();
-        const stroke = parseFloat(getComputedStyle(path).strokeWidth) || 2;
-        items.push({
-          minX: box.x - stroke,
-          minY: box.y - stroke,
-          maxX: box.x + box.width + stroke,
-          maxY: box.y + box.height + stroke
-        });
-      }catch(error){
-        // Si algún navegador no entrega getBBox, se ignora ese path:
-        // las casillas visibles siguen garantizando un recorte correcto.
-      }
-    });
+    // V38: las líneas están ocultas visualmente, por lo que no intervienen
+    // en el recorte de la exportación. Las relaciones jerárquicas se conservan
+    // intactas en el estado y en el DOM.
 
     if(!items.length){
       return {
@@ -2166,10 +2379,8 @@
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, bounds.width, bounds.height);
 
-        // 1. Líneas reales visibles.
-        svg.querySelectorAll("path.connector").forEach(path => {
-          drawConnectorToExport(ctx, path, bounds.offsetX, bounds.offsetY);
-        });
+        // 1. V38: conectores omitidos intencionalmente en la imagen PNG.
+        // La estructura y las dependencias siguen existiendo; solo no se dibujan.
 
         // 2. Recuadros informativos.
         nodesLayer.querySelectorAll(".model-frame").forEach(frame => {
